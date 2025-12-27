@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 import CountUp from 'react-countup';
 import Navbar from '../../components/Navbar';
+import HeroParticles from '../../components/HeroParticles';
 import Footer from '../../components/Footer';
 import { FaCode, FaPenFancy, FaChartLine, FaMobileAlt, FaLaptopCode, FaRocket, FaUsers } from 'react-icons/fa';
 import './Home.css';
@@ -40,6 +41,7 @@ const Home = () => {
 
             {/* Hero Section with Floating Shapes */}
             <section className="hero">
+                <HeroParticles />
                 <div className="floating-shape shape1"></div>
                 <div className="floating-shape shape2"></div>
                 <div className="floating-shape shape3"></div>

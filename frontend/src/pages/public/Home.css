@@ -4,8 +4,8 @@
     -45deg,
     #0ea5e9,
     #06b6d4,
-    #8b5cf6,
-    #6366f1,
+    #7dd3fc,
+    #38bdf8,
     #0ea5e9
   );
   background-size: 400% 400%;
@@ -36,6 +36,20 @@
   100% {
     background-position: 0% 50%;
   }
+}
+
+/* subtle cyan overlay to reduce purple hues and keep blue/cyan focus */
+.hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(2, 132, 199, 0.08),
+    rgba(14, 165, 233, 0.04)
+  );
+  pointer-events: none;
+  z-index: 0;
 }
 
 @keyframes fadeIn {
@@ -86,7 +100,7 @@
 .floating-shape {
   position: absolute;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.06);
   backdrop-filter: blur(10px);
   animation: floatParticle 20s infinite ease-in-out;
   will-change: transform;
@@ -137,6 +151,22 @@
   position: relative;
   z-index: 1;
   animation: slideUp 0.8s ease-out 0.3s both;
+}
+
+/* Disable heavy floating shapes and reduce hero height on small screens for performance */
+@media (max-width: 768px) {
+  .shape1,
+  .shape2,
+  .shape3 {
+    display: none;
+  }
+
+  .hero {
+    min-height: 420px;
+    padding: 80px 0;
+    background-size: 300% 300%;
+    animation-duration: 25s;
+  }
 }
 
 @keyframes slideUp {

@@ -121,6 +121,197 @@
   box-shadow: 0 6px 20px rgba(255, 255, 255, 0.5);
 }
 
+/* Hamburger Button (hidden on desktop) */
+.hamburger {
+  display: none;
+  width: 52px;
+  height: 40px;
+  border: none;
+  background: rgba(255, 255, 255, 0.04);
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 10px;
+  border-radius: 10px;
+  transition: background 160ms ease, transform 160ms ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.hamburger:hover {
+  background: rgba(255, 255, 255, 0.08);
+  transform: translateY(-1px);
+}
+
+/* three horizontal stacked bars (one after another) */
+.hamburger span {
+  display: block;
+  width: 26px;
+  height: 3px;
+  background: white;
+  margin: 3px 0;
+  border-radius: 3px;
+  transition: transform 0.28s cubic-bezier(0.2, 0.9, 0.2, 1), opacity 0.18s ease;
+}
+
+.hamburger:focus {
+  outline: 3px solid rgba(14, 165, 233, 0.18);
+  border-radius: 8px;
+}
+
+/* open -> morph top and bottom bars into an X, middle bar fades */
+.hamburger.open span:nth-child(1) {
+  transform: translateY(8px) rotate(45deg);
+}
+.hamburger.open span:nth-child(2) {
+  opacity: 0;
+}
+.hamburger.open span:nth-child(3) {
+  transform: translateY(-8px) rotate(-45deg);
+}
+
+/* Mobile menu overlay */
+.drawer-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(2, 6, 23, 0);
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity 220ms ease, background 220ms ease;
+  z-index: 1900;
+}
+
+.drawer-backdrop.visible {
+  visibility: visible;
+  opacity: 1;
+  background: rgba(2, 6, 23, 0.42);
+}
+
+.mobile-menu {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 280px;
+  max-width: calc(100% - 72px);
+  background: linear-gradient(180deg, #ffffff, #fbfeff);
+  box-shadow: -20px 0 48px rgba(2, 6, 23, 0.18);
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  z-index: 2000;
+  padding: 18px 14px 22px 14px;
+  transform: translateX(110%);
+  transition: transform 340ms cubic-bezier(0.2, 0.9, 0.2, 1);
+  border-left: 1px solid rgba(15, 23, 42, 0.05);
+  border-top-left-radius: 10px;
+}
+
+.mobile-menu.show {
+  transform: translateX(0);
+}
+
+.mobile-menu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+}
+
+.drawer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 8px;
+}
+
+.drawer-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+}
+
+.drawer-title {
+  color: #0f172a;
+  font-weight: 800;
+  font-size: 18px;
+}
+
+.drawer-close {
+  background: transparent;
+  border: none;
+  font-size: 20px;
+  line-height: 1;
+  padding: 6px 8px;
+  cursor: pointer;
+  color: rgba(15, 23, 42, 0.8);
+}
+
+.drawer-close:hover {
+  color: rgba(15, 23, 42, 1);
+}
+
+.drawer-nav {
+  margin-top: 20px;
+  flex: 1 1 auto;
+}
+
+.drawer-nav ul li {
+  margin: 12px 0;
+}
+
+.drawer-nav a {
+  color: #0f172a;
+  text-decoration: none;
+  font-size: 15px;
+  font-weight: 700;
+  padding: 8px 6px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-radius: 8px;
+  transition: background 160ms ease, color 160ms ease, transform 160ms ease;
+}
+
+.drawer-nav a:hover {
+  background: rgba(14, 165, 233, 0.06);
+  transform: translateX(4px);
+}
+
+.drawer-icon {
+  color: #0284c7;
+  min-width: 20px;
+  display: inline-block;
+}
+
+.drawer-nav li + li {
+  border-top: 1px dashed rgba(15, 23, 42, 0.04);
+  padding-top: 12px;
+  margin-top: 8px;
+}
+
+.drawer-cta {
+  margin-top: 18px;
+  display: flex;
+  justify-content: center;
+}
+
+.drawer-cta .login-btn {
+  background: #0ea5e9 !important;
+  color: white !important;
+  padding: 10px 22px !important;
+  border-radius: 999px;
+}
+
+.drawer-footer {
+  text-align: center;
+  color: rgba(15, 23, 42, 0.6);
+  font-size: 12px;
+  padding-top: 12px;
+}
+
 /* Tablet Responsive */
 @media (max-width: 968px) {
   .navbar {
@@ -161,16 +352,13 @@
     padding: 0 15px;
   }
 
+  /* hide desktop links and show hamburger */
   .nav-links {
-    gap: 12px;
-    font-size: 13px;
-    flex-wrap: wrap;
-    justify-content: center;
+    display: none;
   }
 
-  .nav-links a {
-    font-size: 13px;
-    padding: 5px 8px;
+  .hamburger {
+    display: flex;
   }
 
   .logo h2 {
@@ -186,6 +374,17 @@
   .login-btn {
     padding: 6px 16px !important;
     font-size: 13px;
+  }
+}
+
+/* Ensure hamburger is hidden on larger screens and desktop nav is visible */
+@media (min-width: 769px) {
+  .hamburger {
+    display: none !important;
+  }
+
+  .nav-links {
+    display: flex !important;
   }
 }
 
