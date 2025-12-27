@@ -1,0 +1,312 @@
+import React from 'react';
+import { motion } from 'framer-motion';
+import Navbar from '../../components/Navbar';
+import Footer from '../../components/Footer';
+import CountUp from 'react-countup';
+import { useInView } from 'react-intersection-observer';
+import { FaLightbulb, FaUsers, FaRocket, FaHeart, FaAward, FaGlobeAmericas } from 'react-icons/fa';
+import './About.css';
+
+const About = () => {
+    const [ref, inView] = useInView({ triggerOnce: true, threshold: 0.1 });
+
+    const stats = [
+        { number: 500, label: 'Projects Completed', suffix: '+' },
+        { number: 350, label: 'Happy Clients', suffix: '+' },
+        { number: 50, label: 'Team Members', suffix: '+' },
+        { number: 8, label: 'Years Experience', suffix: '+' }
+    ];
+
+    const values = [
+        {
+            icon: <FaLightbulb />,
+            title: 'Innovation',
+            description: 'We constantly explore new technologies and methodologies to deliver cutting-edge solutions.',
+            color: '#f59e0b'
+        },
+        {
+            icon: <FaHeart />,
+            title: 'Passion',
+            description: 'We love what we do and it shows in the quality of our work and client relationships.',
+            color: '#ef4444'
+        },
+        {
+            icon: <FaAward />,
+            title: 'Excellence',
+            description: 'We strive for perfection in every project, ensuring the highest standards of quality.',
+            color: '#8b5cf6'
+        },
+        {
+            icon: <FaUsers />,
+            title: 'Collaboration',
+            description: 'We believe in teamwork and work closely with clients to achieve their goals.',
+            color: '#3b82f6'
+        },
+        {
+            icon: <FaRocket />,
+            title: 'Growth',
+            description: 'We are committed to continuous learning and helping our clients grow their business.',
+            color: '#10b981'
+        },
+        {
+            icon: <FaGlobeAmericas />,
+            title: 'Global Reach',
+            description: 'We serve clients worldwide with round-the-clock support and dedicated service.',
+            color: '#06b6d4'
+        }
+    ];
+
+    const team = [
+        {
+            name: 'John Anderson',
+            role: 'CEO & Founder',
+            image: 'https://ui-avatars.com/api/?name=John+Anderson&size=300&background=0ea5e9&color=fff&bold=true',
+            bio: '10+ years in IT industry, passionate about delivering excellence'
+        },
+        {
+            name: 'Sarah Mitchell',
+            role: 'CTO',
+            image: 'https://ui-avatars.com/api/?name=Sarah+Mitchell&size=300&background=06b6d4&color=fff&bold=true',
+            bio: 'Technology leader with expertise in modern web architectures'
+        },
+        {
+            name: 'Michael Chen',
+            role: 'Head of Development',
+            image: 'https://ui-avatars.com/api/?name=Michael+Chen&size=300&background=0284c7&color=fff&bold=true',
+            bio: 'Full-stack expert specializing in MERN and cloud solutions'
+        },
+        {
+            name: 'Emily Rodriguez',
+            role: 'Lead Designer',
+            image: 'https://ui-avatars.com/api/?name=Emily+Rodriguez&size=300&background=0891b2&color=fff&bold=true',
+            bio: 'Creative designer focused on user-centric design principles'
+        },
+        {
+            name: 'David Kumar',
+            role: 'Marketing Director',
+            image: 'https://ui-avatars.com/api/?name=David+Kumar&size=300&background=0369a1&color=fff&bold=true',
+            bio: 'Digital marketing strategist with proven track record'
+        },
+        {
+            name: 'Lisa Thompson',
+            role: 'Project Manager',
+            image: 'https://ui-avatars.com/api/?name=Lisa+Thompson&size=300&background=075985&color=fff&bold=true',
+            bio: 'Experienced PM ensuring projects deliver on time and budget'
+        }
+    ];
+
+    return (
+        <div>
+            <Navbar />
+
+            {/* Hero Section */}
+            <motion.section
+                className="about-hero"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.8 }}
+            >
+                <div className="container">
+                    <motion.h1
+                        initial={{ y: 30, opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        transition={{ duration: 0.8, delay: 0.2 }}
+                    >
+                        About NexTechHubs
+                    </motion.h1>
+                    <motion.p
+                        initial={{ y: 30, opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        transition={{ duration: 0.8, delay: 0.4 }}
+                    >
+                        Transforming Ideas into Digital Reality Since 2016
+                    </motion.p>
+                </div>
+            </motion.section>
+
+            {/* Story Section */}
+            <section className="about-story">
+                <div className="container">
+                    <div className="story-content">
+                        <motion.div
+                            className="story-text"
+                            initial={{ opacity: 0, x: -50 }}
+                            whileInView={{ opacity: 1, x: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 0.8 }}
+                        >
+                            <h2>Our Story</h2>
+                            <p>
+                                Founded in 2016, NexTechHubs began with a simple mission: to deliver exceptional IT services
+                                that help businesses thrive in the digital age. What started as a small team of passionate
+                                developers has grown into a full-service technology company serving clients worldwide.
+                            </p>
+                            <p>
+                                Today, we specialize in 14 different IT services, from research writing and web development
+                                to SEO and digital marketing. Our diverse team of experts brings together decades of combined
+                                experience to solve complex challenges and deliver innovative solutions.
+                            </p>
+                            <p>
+                                We pride ourselves on our commitment to quality, transparency, and client satisfaction.
+                                Every project we undertake is treated with the same level of care and attention to detail,
+                                regardless of size or complexity.
+                            </p>
+                        </motion.div>
+                        <motion.div
+                            className="story-image"
+                            initial={{ opacity: 0, x: 50 }}
+                            whileInView={{ opacity: 1, x: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 0.8 }}
+                        >
+                            <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=600&h=400&fit=crop" alt="Our Story" />
+                        </motion.div>
+                    </div>
+                </div>
+            </section>
+
+            {/* Stats Section */}
+            <section className="about-stats" ref={ref}>
+                <div className="container">
+                    <div className="stats-grid">
+                        {stats.map((stat, index) => (
+                            <motion.div
+                                key={index}
+                                className="stat-card"
+                                initial={{ scale: 0 }}
+                                animate={inView ? { scale: 1 } : { scale: 0 }}
+                                transition={{ duration: 0.5, delay: index * 0.1 }}
+                            >
+                                <div className="stat-number">
+                                    {inView && (
+                                        <CountUp
+                                            end={stat.number}
+                                            duration={2.5}
+                                            suffix={stat.suffix}
+                                        />
+                                    )}
+                                </div>
+                                <div className="stat-label">{stat.label}</div>
+                            </motion.div>
+                        ))}
+                    </div>
+                </div>
+            </section>
+
+            {/* Values Section */}
+            <section className="about-values">
+                <div className="container">
+                    <motion.div
+                        initial={{ opacity: 0, y: 30 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.6 }}
+                    >
+                        <h2 className="section-title">Our Core Values</h2>
+                        <p className="section-subtitle">The principles that guide everything we do</p>
+                    </motion.div>
+
+                    <div className="values-grid">
+                        {values.map((value, index) => (
+                            <motion.div
+                                key={index}
+                                className="value-card"
+                                initial={{ opacity: 0, y: 50 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true }}
+                                transition={{ duration: 0.5, delay: index * 0.1 }}
+                                whileHover={{ scale: 1.05 }}
+                            >
+                                <div className="value-icon" style={{ color: value.color }}>
+                                    {value.icon}
+                                </div>
+                                <h3>{value.title}</h3>
+                                <p>{value.description}</p>
+                            </motion.div>
+                        ))}
+                    </div>
+                </div>
+            </section>
+
+            {/* Team Section */}
+            <section className="about-team">
+                <div className="container">
+                    <motion.div
+                        initial={{ opacity: 0, y: 30 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.6 }}
+                    >
+                        <h2 className="section-title">Meet Our Team</h2>
+                        <p className="section-subtitle">Talented professionals dedicated to your success</p>
+                    </motion.div>
+
+                    <div className="team-grid">
+                        {team.map((member, index) => (
+                            <motion.div
+                                key={index}
+                                className="team-card"
+                                initial={{ opacity: 0, scale: 0.8 }}
+                                whileInView={{ opacity: 1, scale: 1 }}
+                                viewport={{ once: true }}
+                                transition={{ duration: 0.5, delay: index * 0.1 }}
+                                whileHover={{ y: -10 }}
+                            >
+                                <div className="team-image">
+                                    <img src={member.image} alt={member.name} />
+                                </div>
+                                <div className="team-info">
+                                    <h3>{member.name}</h3>
+                                    <p className="team-role">{member.role}</p>
+                                    <p className="team-bio">{member.bio}</p>
+                                </div>
+                            </motion.div>
+                        ))}
+                    </div>
+                </div>
+            </section>
+
+            {/* Mission & Vision Section */}
+            <section className="mission-vision">
+                <div className="container">
+                    <div className="mv-grid">
+                        <motion.div
+                            className="mv-card mission"
+                            initial={{ opacity: 0, x: -50 }}
+                            whileInView={{ opacity: 1, x: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 0.8 }}
+                        >
+                            <h2>Our Mission</h2>
+                            <p>
+                                To empower businesses and individuals with innovative technology solutions that drive
+                                growth, efficiency, and success in the digital world. We are committed to delivering
+                                exceptional quality, fostering long-term partnerships, and continuously exceeding
+                                client expectations.
+                            </p>
+                        </motion.div>
+                        <motion.div
+                            className="mv-card vision"
+                            initial={{ opacity: 0, x: 50 }}
+                            whileInView={{ opacity: 1, x: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 0.8 }}
+                        >
+                            <h2>Our Vision</h2>
+                            <p>
+                                To become the world's most trusted technology partner, known for our innovation,
+                                integrity, and impact. We envision a future where every business, regardless of size,
+                                has access to world-class technology solutions that enable them to compete and thrive
+                                in the global marketplace.
+                            </p>
+                        </motion.div>
+                    </div>
+                </div>
+            </section>
+
+            <Footer />
+        </div>
+    );
+};
+
+export default About;
