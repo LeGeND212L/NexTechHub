@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { FaHome, FaConciergeBell, FaInfoCircle, FaPhoneAlt, FaSignInAlt } from 'react-icons/fa';
+import logo from '../assets/logo.png';
 import './Navbar.css';
 
 const Navbar = () => {
@@ -33,7 +34,7 @@ const Navbar = () => {
             <div className="container">
                 <div className="navbar-content">
                     <Link to="/" className="logo" onClick={closeMenu}>
-                        <div className="logo-icon">N</div>
+                        <img src={logo} alt="NexTechHubs Logo" className="logo-image" />
                         <h2>NexTechHubs</h2>
                     </Link>
 

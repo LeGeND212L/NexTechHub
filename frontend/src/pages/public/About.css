@@ -1,6 +1,6 @@
 /* About Hero Section */
 .about-hero {
-  background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%);
+  background: linear-gradient(135deg, #000000 0%, #001a33 100%);
   color: white;
   padding: 120px 0;
   text-align: center;
@@ -17,12 +17,12 @@
   bottom: 0;
   background: radial-gradient(
       circle at 30% 50%,
-      rgba(255, 255, 255, 0.1) 0%,
+      rgba(0, 100, 255, 0.2) 0%,
       transparent 50%
     ),
     radial-gradient(
       circle at 70% 80%,
-      rgba(255, 255, 255, 0.1) 0%,
+      rgba(0, 150, 255, 0.15) 0%,
       transparent 50%
     );
 }
@@ -36,17 +36,19 @@
   font-size: 3.5rem;
   margin-bottom: 20px;
   font-weight: 700;
+  text-shadow: 0 0 20px rgba(0, 100, 255, 0.6), 0 0 40px rgba(0, 150, 255, 0.4);
 }
 
 .about-hero p {
   font-size: 1.4rem;
   opacity: 0.95;
+  text-shadow: 0 0 10px rgba(0, 100, 255, 0.3);
 }
 
 /* Story Section */
 .about-story {
   padding: 100px 0;
-  background: white;
+  background: #000000;
 }
 
 .story-content {
@@ -58,28 +60,30 @@
 
 .story-text h2 {
   font-size: 2.5rem;
-  color: #1f2937;
+  color: #ffffff;
   margin-bottom: 30px;
   font-weight: 700;
+  text-shadow: 0 0 15px rgba(0, 100, 255, 0.5);
 }
 
 .story-text p {
   font-size: 1.1rem;
   line-height: 1.8;
-  color: #4b5563;
+  color: rgba(255, 255, 255, 0.85);
   margin-bottom: 20px;
 }
 
 .story-image img {
   width: 100%;
   border-radius: 20px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 20px 60px rgba(0, 100, 255, 0.4);
+  border: 2px solid rgba(0, 100, 255, 0.3);
 }
 
 /* Stats Section */
 .about-stats {
   padding: 80px 0;
-  background: linear-gradient(to bottom, #f8f9ff, #fff);
+  background: linear-gradient(to bottom, #000000, #000000);
 }
 
 .stats-grid {
@@ -91,52 +95,55 @@
 
 .stat-card {
   padding: 40px 30px;
-  background: white;
+  background: rgba(0, 100, 255, 0.2);
   border-radius: 20px;
-  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 15px 40px rgba(0, 100, 255, 0.5);
+  transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+  border: 2px solid rgba(0, 100, 255, 0.6);
+  transform: translateY(-5px);
 }
 
 .stat-card:hover {
   transform: translateY(-10px);
-  box-shadow: 0 15px 40px rgba(102, 126, 234, 0.2);
+  box-shadow: 0 20px 50px rgba(0, 100, 255, 0.6);
+  background: rgba(0, 100, 255, 0.25);
 }
 
 .stat-number {
   font-size: 3.5rem;
   font-weight: 700;
-  background: linear-gradient(135deg, #0ea5e9, #06b6d4);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: #0080ff;
   margin-bottom: 10px;
+  text-shadow: 0 0 25px rgba(0, 128, 255, 0.8);
 }
 
 .stat-label {
   font-size: 1.1rem;
-  color: #6b7280;
+  color: #ffffff;
   font-weight: 500;
 }
 
 /* Values Section */
 .about-values {
   padding: 100px 0;
-  background: #f8f9ff;
+  background: #000000;
 }
 
 .section-title {
   text-align: center;
   font-size: 2.5rem;
-  color: #1f2937;
+  color: #ffffff;
   margin-bottom: 15px;
   font-weight: 700;
+  text-shadow: 0 0 20px rgba(0, 100, 255, 0.6);
 }
 
 .section-subtitle {
   text-align: center;
   font-size: 1.2rem;
-  color: #6b7280;
+  color: rgba(255, 255, 255, 0.85);
   margin-bottom: 60px;
+  text-shadow: 0 0 10px rgba(0, 100, 255, 0.3);
 }
 
 .values-grid {
@@ -146,14 +153,14 @@
 }
 
 .value-card {
-  background: white;
+  background: rgba(0, 80, 200, 0.1);
   padding: 40px 30px;
   border-radius: 20px;
   text-align: center;
-  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 5px 20px rgba(0, 100, 255, 0.25);
   transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
-  border: 2px solid rgba(102, 126, 234, 0.1);
+  border: 2px solid rgba(0, 100, 255, 0.3);
   overflow: hidden;
 }
 
@@ -166,8 +173,8 @@
   bottom: 0;
   background: linear-gradient(
     135deg,
-    rgba(102, 126, 234, 0.05),
-    rgba(118, 75, 162, 0.05)
+    rgba(0, 100, 255, 0.15),
+    rgba(0, 150, 255, 0.1)
   );
   opacity: 0;
   transition: opacity 0.5s ease;
@@ -181,7 +188,7 @@
   left: 50%;
   width: 0;
   height: 4px;
-  background: linear-gradient(90deg, #667eea, #764ba2);
+  background: linear-gradient(90deg, #0066ff, #0080ff);
   transform: translateX(-50%);
   transition: width 0.4s ease;
 }
@@ -196,8 +203,9 @@
 
 .value-card:hover {
   transform: translateY(-15px) scale(1.03);
-  box-shadow: 0 20px 50px rgba(102, 126, 234, 0.25);
-  border-color: rgba(102, 126, 234, 0.3);
+  box-shadow: 0 20px 50px rgba(0, 100, 255, 0.5);
+  border-color: rgba(0, 150, 255, 0.6);
+  background: rgba(0, 100, 255, 0.2);
 }
 
 .value-card > * {
@@ -219,7 +227,7 @@
 
 .value-card h3 {
   font-size: 1.6rem;
-  color: #1f2937;
+  color: #ffffff;
   margin-bottom: 15px;
   font-weight: 600;
 }
@@ -227,13 +235,13 @@
 .value-card p {
   font-size: 1rem;
   line-height: 1.7;
-  color: #6b7280;
+  color: rgba(255, 255, 255, 0.85);
 }
 
 /* Team Section */
 .about-team {
   padding: 100px 0;
-  background: white;
+  background: #000000;
 }
 
 .team-grid {
@@ -243,18 +251,19 @@
 }
 
 .team-card {
-  background: white;
+  background: rgba(0, 50, 150, 0.1);
   border-radius: 20px;
   overflow: hidden;
-  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 5px 20px rgba(0, 100, 255, 0.25);
   transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-  border: 2px solid transparent;
+  border: 2px solid rgba(0, 100, 255, 0.3);
 }
 
 .team-card:hover {
   transform: translateY(-10px);
-  box-shadow: 0 20px 50px rgba(102, 126, 234, 0.2);
-  border-color: rgba(102, 126, 234, 0.3);
+  box-shadow: 0 20px 50px rgba(0, 100, 255, 0.5);
+  border-color: rgba(0, 150, 255, 0.6);
+  background: rgba(0, 80, 200, 0.15);
 }
 
 .team-image {
@@ -281,20 +290,20 @@
 
 .team-info h3 {
   font-size: 1.5rem;
-  color: #1f2937;
+  color: #ffffff;
   margin-bottom: 8px;
   font-weight: 600;
 }
 
 .team-role {
-  color: #667eea;
+  color: #0080ff;
   font-weight: 600;
   margin-bottom: 15px;
   font-size: 1rem;
 }
 
 .team-bio {
-  color: #6b7280;
+  color: rgba(255, 255, 255, 0.85);
   line-height: 1.6;
   font-size: 0.95rem;
 }
@@ -302,7 +311,7 @@
 /* Mission & Vision Section */
 .mission-vision {
   padding: 100px 0;
-  background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+  background: linear-gradient(135deg, #000000 0%, #001a33 100%);
   color: white;
 }
 
@@ -313,18 +322,19 @@
 }
 
 .mv-card {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(0, 100, 255, 0.1);
   backdrop-filter: blur(10px);
   padding: 50px;
   border-radius: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(0, 100, 255, 0.3);
   transition: all 0.4s ease;
 }
 
 .mv-card:hover {
   transform: translateY(-10px);
-  background: rgba(255, 255, 255, 0.15);
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  background: rgba(0, 100, 255, 0.2);
+  box-shadow: 0 20px 60px rgba(0, 100, 255, 0.4);
+  border-color: rgba(0, 150, 255, 0.5);
 }
 
 .mv-card h2 {
@@ -334,11 +344,13 @@
 }
 
 .mv-card.mission h2 {
-  color: #10b981;
+  color: #0080ff;
+  text-shadow: 0 0 15px rgba(0, 128, 255, 0.6);
 }
 
 .mv-card.vision h2 {
-  color: #3b82f6;
+  color: #00a0ff;
+  text-shadow: 0 0 15px rgba(0, 160, 255, 0.6);
 }
 
 .mv-card p {

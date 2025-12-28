@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
 import { FaCode, FaPenFancy, FaChartLine, FaMobileAlt, FaLaptopCode, FaRocket, FaUsers, FaSearch, FaArrowRight } from 'react-icons/fa';
-import { MdDesignServices, MdAnalytics, MdSupportAgent } from 'react-icons/md';
+import { MdAnalytics, MdSupportAgent } from 'react-icons/md';
 import { AiOutlineApi, AiFillDatabase } from 'react-icons/ai';
 import { SiGoogleads } from 'react-icons/si';
 import './Services.css';
@@ -19,7 +19,7 @@ const Services = () => {
             name: 'Research & Academic Writing',
             category: 'Writing',
             icon: <FaPenFancy />,
-            color: '#3b82f6',
+            color: '#082A4E',
             description: 'Professional research papers, dissertations, theses, and academic content with plagiarism-free guarantee.',
             features: ['Original Research', 'Citation Management', 'Multiple Formats', 'Unlimited Revisions'],
             technologies: ['EndNote', 'Zotero', 'Mendeley', 'Turnitin', 'Grammarly'],
@@ -52,21 +52,10 @@ const Services = () => {
             name: 'SEO Services',
             category: 'Marketing',
             icon: <FaChartLine />,
-            color: '#f59e0b',
-            description: 'Comprehensive SEO strategies to improve your search engine rankings and drive organic traffic.',
-            features: ['Keyword Research', 'On-Page SEO', 'Link Building', 'Monthly Reports'],
-            technologies: ['Google Analytics', 'SEMrush', 'Ahrefs', 'Yoast SEO', 'Moz'],
-            popular: true
-        },
-        {
-            id: 5,
-            name: 'UI/UX Design',
-            category: 'Design',
-            icon: <MdDesignServices />,
-            color: '#ec4899',
-            description: 'Beautiful and intuitive user interfaces that provide exceptional user experiences.',
-            features: ['User Research', 'Wireframing', 'Prototyping', 'Design Systems'],
-            technologies: ['Figma', 'Adobe XD', 'Sketch', 'InVision', 'Framer'],
+            color: '#082A4E',
+            description: 'Improve search rankings and drive organic traffic.',
+            features: ['Keyword Research', 'On-Page SEO', 'Link Building', 'Technical SEO'],
+            technologies: ['Google Search Console', 'Ahrefs', 'SEMRush', 'Screaming Frog'],
             popular: false
         },
         {
@@ -85,7 +74,7 @@ const Services = () => {
             name: 'Data Analytics',
             category: 'Analytics',
             icon: <MdAnalytics />,
-            color: '#06b6d4',
+            color: '#082A4E',
             description: 'Transform your data into actionable insights with advanced analytics and visualization.',
             features: ['Data Visualization', 'Predictive Analytics', 'Custom Dashboards', 'Business Intelligence'],
             technologies: ['Power BI', 'Tableau', 'Python', 'SQL', 'Excel'],
@@ -96,7 +85,7 @@ const Services = () => {
             name: 'API Development',
             category: 'Development',
             icon: <AiOutlineApi />,
-            color: '#14b8a6',
+            color: '#082A4E',
             description: 'Robust and scalable RESTful APIs with comprehensive documentation and security.',
             features: ['RESTful APIs', 'API Documentation', 'Authentication', 'Rate Limiting'],
             technologies: ['Node.js', 'Express', 'JWT', 'Swagger', 'Postman'],

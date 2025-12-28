@@ -36,12 +36,13 @@ const Home = () => {
     ];
 
     return (
-        <div>
+        <div className="home-page">
             <Navbar />
 
             {/* Hero Section with Floating Shapes */}
             <section className="hero">
                 <HeroParticles />
+                <div className="bg-glow" aria-hidden="true"></div>
                 <div className="floating-shape shape1"></div>
                 <div className="floating-shape shape2"></div>
                 <div className="floating-shape shape3"></div>

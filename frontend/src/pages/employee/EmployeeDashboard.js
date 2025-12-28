@@ -89,7 +89,7 @@ const EmployeeDashboard = () => {
     const getStatusColor = (status) => {
         switch (status) {
             case 'completed': return '#10b981';
-            case 'in-progress': return '#3b82f6';
+            case 'in-progress': return '#082A4E';
             default: return '#f59e0b';
         }
     };
@@ -151,10 +151,10 @@ const EmployeeDashboard = () => {
 
                 <div
                     className="stat-card clickable"
-                    style={{ '--card-color': '#3b82f6', cursor: 'pointer' }}
+                    style={{ '--card-color': '#082A4E', cursor: 'pointer' }}
                     onClick={() => navigate('/employee/tasks', { state: { filter: 'in-progress' } })}
                 >
-                    <div className="stat-icon" style={{ background: '#3b82f6' }}>
+                    <div className="stat-icon" style={{ background: '#082A4E' }}>
                         <FaChartLine />
                     </div>
                     <div className="stat-content">

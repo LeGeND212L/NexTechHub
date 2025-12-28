@@ -43,7 +43,7 @@ const Contact = () => {
             title: 'Email',
             details: 'info@nextechhubs.com',
             link: 'mailto:info@nextechhubs.com',
-            color: '#3b82f6'
+            color: '#082A4E'
         },
         {
             icon: <FaMapMarkerAlt />,

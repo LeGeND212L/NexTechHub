@@ -40,7 +40,7 @@ const About = () => {
             icon: <FaUsers />,
             title: 'Collaboration',
             description: 'We believe in teamwork and work closely with clients to achieve their goals.',
-            color: '#3b82f6'
+            color: '#082A4E'
         },
         {
             icon: <FaRocket />,
@@ -52,7 +52,7 @@ const About = () => {
             icon: <FaGlobeAmericas />,
             title: 'Global Reach',
             description: 'We serve clients worldwide with round-the-clock support and dedicated service.',
-            color: '#06b6d4'
+            color: '#082A4E'
         }
     ];
 
@@ -60,37 +60,37 @@ const About = () => {
         {
             name: 'John Anderson',
             role: 'CEO & Founder',
-            image: 'https://ui-avatars.com/api/?name=John+Anderson&size=300&background=0ea5e9&color=fff&bold=true',
+            image: 'https://ui-avatars.com/api/?name=John+Anderson&size=300&background=082A4E&color=fff&bold=true',
             bio: '10+ years in IT industry, passionate about delivering excellence'
         },
         {
             name: 'Sarah Mitchell',
             role: 'CTO',
-            image: 'https://ui-avatars.com/api/?name=Sarah+Mitchell&size=300&background=06b6d4&color=fff&bold=true',
+            image: 'https://ui-avatars.com/api/?name=Sarah+Mitchell&size=300&background=082A4E&color=fff&bold=true',
             bio: 'Technology leader with expertise in modern web architectures'
         },
         {
             name: 'Michael Chen',
             role: 'Head of Development',
-            image: 'https://ui-avatars.com/api/?name=Michael+Chen&size=300&background=0284c7&color=fff&bold=true',
+            image: 'https://ui-avatars.com/api/?name=Michael+Chen&size=300&background=082A4E&color=fff&bold=true',
             bio: 'Full-stack expert specializing in MERN and cloud solutions'
         },
         {
             name: 'Emily Rodriguez',
             role: 'Lead Designer',
-            image: 'https://ui-avatars.com/api/?name=Emily+Rodriguez&size=300&background=0891b2&color=fff&bold=true',
+            image: 'https://ui-avatars.com/api/?name=Emily+Rodriguez&size=300&background=082A4E&color=fff&bold=true',
             bio: 'Creative designer focused on user-centric design principles'
         },
         {
             name: 'David Kumar',
             role: 'Marketing Director',
-            image: 'https://ui-avatars.com/api/?name=David+Kumar&size=300&background=0369a1&color=fff&bold=true',
+            image: 'https://ui-avatars.com/api/?name=David+Kumar&size=300&background=082A4E&color=fff&bold=true',
             bio: 'Digital marketing strategist with proven track record'
         },
         {
             name: 'Lisa Thompson',
             role: 'Project Manager',
-            image: 'https://ui-avatars.com/api/?name=Lisa+Thompson&size=300&background=075985&color=fff&bold=true',
+            image: 'https://ui-avatars.com/api/?name=Lisa+Thompson&size=300&background=082A4E&color=fff&bold=true',
             bio: 'Experienced PM ensuring projects deliver on time and budget'
         }
     ];
