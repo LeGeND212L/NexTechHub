@@ -13,9 +13,33 @@ const app = express();
 // Connect to MongoDB
 connectDB();
 
+// CORS Configuration - Allow multiple Vercel deployments
+const allowedOrigins = [
+    'https://nex-tech-hub.vercel.app',
+    'http://localhost:3000',
+    /https:\/\/nex-tech-hub.*\.vercel\.app$/ // Allow all Vercel preview deployments
+];
+
 // Middleware
 app.use(cors({
-    origin: process.env.FRONTEND_URL || 'https://nex-tech-hub.vercel.app',
+    origin: function (origin, callback) {
+        // Allow requests with no origin (like mobile apps or Postman)
+        if (!origin) return callback(null, true);
+        
+        // Check if origin is in allowed list or matches regex pattern
+        const isAllowed = allowedOrigins.some(allowedOrigin => {
+            if (allowedOrigin instanceof RegExp) {
+                return allowedOrigin.test(origin);
+            }
+            return allowedOrigin === origin;
+        });
+        
+        if (isAllowed) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
     credentials: true
 }));
 app.use(express.json());
