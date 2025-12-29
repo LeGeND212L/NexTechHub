@@ -25,7 +25,7 @@ app.use(cors({
     origin: function (origin, callback) {
         // Allow requests with no origin (like mobile apps or Postman)
         if (!origin) return callback(null, true);
-        
+
         // Check if origin is in allowed list or matches regex pattern
         const isAllowed = allowedOrigins.some(allowedOrigin => {
             if (allowedOrigin instanceof RegExp) {
@@ -33,14 +33,20 @@ app.use(cors({
             }
             return allowedOrigin === origin;
         });
-        
+
         if (isAllowed) {
             callback(null, true);
         } else {
             callback(new Error('Not allowed by CORS'));
         }
     },
-    credentials: true
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+    exposedHeaders: ['Content-Range', 'X-Content-Range'],
+    maxAge: 86400, // 24 hours
+    preflightContinue: false,
+    optionsSuccessStatus: 204
 }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
