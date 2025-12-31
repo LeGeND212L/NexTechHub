@@ -20,7 +20,19 @@
 /* Reviews Stats */
 .reviews-stats {
   padding: 60px 0;
-  background: #f8f9ff;
+  background: linear-gradient(160deg, #02060f 0%, #051026 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.reviews-stats::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 20% 20%, rgba(0, 120, 255, 0.15), transparent 40%),
+    radial-gradient(circle at 80% 30%, rgba(0, 180, 255, 0.12), transparent 45%),
+    radial-gradient(circle at 50% 80%, rgba(0, 70, 180, 0.14), transparent 55%);
+  pointer-events: none;
 }
 
 .stats-cards {
@@ -29,29 +41,39 @@
   gap: 30px;
 }
 
-.stat-card {
-  background: white;
+.reviews-stats .stat-card {
+  background: linear-gradient(135deg, rgba(0, 40, 90, 0.92), rgba(0, 90, 180, 0.9));
   padding: 40px 30px;
   border-radius: 20px;
   text-align: center;
-  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 18px 40px rgba(0, 120, 255, 0.25);
   transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-  border: 2px solid rgba(102, 126, 234, 0.1);
+  border: 1px solid rgba(0, 160, 255, 0.35);
+  position: relative;
+  overflow: hidden;
+  color: #e6f1ff;
 }
 
-.stat-card:hover {
+.reviews-stats .stat-card::after {
+  content: "";
+  position: absolute;
+  inset: -60% 20% 60% -20%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.18), transparent 50%);
+  opacity: 0.35;
+  pointer-events: none;
+}
+
+.reviews-stats .stat-card:hover {
   transform: translateY(-10px) scale(1.05);
-  box-shadow: 0 20px 50px rgba(102, 126, 234, 0.25);
-  border-color: rgba(102, 126, 234, 0.3);
+  box-shadow: 0 28px 60px rgba(0, 160, 255, 0.35);
+  border-color: rgba(0, 180, 255, 0.55);
 }
 
-.stat-value {
+.reviews-stats .stat-value {
   font-size: 3rem;
-  font-weight: 700;
-  background: linear-gradient(135deg, #667eea, #764ba2);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  font-weight: 800;
+  color: #5ab1ff;
+  text-shadow: 0 0 25px rgba(90, 177, 255, 0.75);
   margin-bottom: 10px;
 }
 
@@ -72,10 +94,10 @@
   font-size: 1.2rem;
 }
 
-.stat-label {
-  color: #6b7280;
+.reviews-stats .stat-label {
+  color: #d6e2ff;
   font-size: 1rem;
-  font-weight: 500;
+  font-weight: 600;
 }
 
 /* Reviews Filter */
