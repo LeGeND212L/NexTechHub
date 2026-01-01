@@ -20,6 +20,7 @@ import {
     FaSignOutAlt
 } from 'react-icons/fa';
 import './TaskManagement.css';
+import { getSocket } from '../../utils/socket';
 
 const TaskManagement = () => {
     const navigate = useNavigate();
@@ -41,6 +42,36 @@ const TaskManagement = () => {
 
     useEffect(() => {
         fetchData();
+
+        const socket = getSocket();
+
+        const onTaskCreated = ({ task }) => {
+            if (!task?._id) return;
+            setTasks((prev) => {
+                const exists = prev.some((t) => t._id === task._id);
+                return exists ? prev : [task, ...prev];
+            });
+        };
+
+        const onTaskUpdated = ({ task }) => {
+            if (!task?._id) return;
+            setTasks((prev) => prev.map((t) => (t._id === task._id ? task : t)));
+        };
+
+        const onTaskDeleted = ({ taskId }) => {
+            if (!taskId) return;
+            setTasks((prev) => prev.filter((t) => t._id !== taskId));
+        };
+
+        socket.on('task:created', onTaskCreated);
+        socket.on('task:updated', onTaskUpdated);
+        socket.on('task:deleted', onTaskDeleted);
+
+        return () => {
+            socket.off('task:created', onTaskCreated);
+            socket.off('task:updated', onTaskUpdated);
+            socket.off('task:deleted', onTaskDeleted);
+        };
     }, []);
 
     const handleLogout = () => {
@@ -69,6 +100,18 @@ const TaskManagement = () => {
             toast.error('Failed to fetch data');
             setLoading(false);
         }
+    };
+
+    const getFileUrl = (file) => {
+        const rawPath = file?.path || '';
+        if (!rawPath) return '#';
+        const normalized = rawPath.replace(/\\/g, '/');
+
+        if (normalized.startsWith('/uploads/')) return normalized;
+        if (normalized.startsWith('uploads/')) return `/${normalized}`;
+
+        // Fallback for any other stored path formats
+        return `/uploads/${normalized.replace(/^\/+/, '')}`;
     };
 
     const handleOpenModal = (type, task = null) => {
@@ -265,13 +308,38 @@ const TaskManagement = () => {
                                     <FaCalendar />
                                     <span>{new Date(task.deadline).toLocaleDateString()}</span>
                                 </div>
-                                {task.file && (
+                                {task.files?.length > 0 && (
                                     <div className="info-item">
                                         <FaFile />
-                                        <span>Has attachment</span>
+                                        <span>Uploads: {task.files.length}</span>
                                     </div>
                                 )}
                             </div>
+
+                            {task.files?.length > 0 && (
+                                <div className="task-files">
+                                    <div className="task-files-title">
+                                        <FaFile /> Uploaded Files
+                                    </div>
+                                    <div className="task-files-list">
+                                        {task.files
+                                            .slice()
+                                            .reverse()
+                                            .map((f, idx) => (
+                                                <a
+                                                    key={`${task._id}-file-${idx}`}
+                                                    href={getFileUrl(f)}
+                                                    target="_blank"
+                                                    rel="noreferrer"
+                                                    className="task-file-link"
+                                                    title={f.originalName || f.filename}
+                                                >
+                                                    {f.originalName || f.filename}
+                                                </a>
+                                            ))}
+                                    </div>
+                                </div>
+                            )}
                         </div>
                     ))
                 ) : (

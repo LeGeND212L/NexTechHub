@@ -44,17 +44,18 @@ const EmployeeProfile = () => {
                 headers: { Authorization: `Bearer ${token}` }
             };
 
-            const currentUserId = user._id || user.userId;
-            console.log('Fetching profile for user ID:', currentUserId);
+            console.log('Fetching employee profile...');
 
             const [employeeRes, paymentsRes] = await Promise.all([
-                axios.get(`/api/admin/employees/${currentUserId}`, config),
+                axios.get('/api/employees/profile', config),
                 axios.get('/api/payments', config)
             ]);
 
+            console.log('Employee data:', employeeRes.data);
             setEmployeeData(employeeRes.data.data);
 
             // Filter payments for current user
+            const currentUserId = employeeRes.data.data._id;
             const myPayments = paymentsRes.data.data?.filter(
                 payment => {
                     const paymentEmployeeId = payment.employee?._id || payment.employee;
@@ -66,7 +67,8 @@ const EmployeeProfile = () => {
             setLoading(false);
         } catch (error) {
             console.error('Error fetching profile data:', error);
-            toast.error('Failed to fetch profile data');
+            console.error('Error response:', error.response?.data);
+            toast.error(error.response?.data?.message || 'Failed to fetch profile data');
             setLoading(false);
         }
     };

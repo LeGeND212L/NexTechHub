@@ -71,7 +71,7 @@ router.post('/login', [
         if (!user) {
             return res.status(401).json({
                 success: false,
-                message: 'Invalid credentials'
+                message: 'Invalid email or password'
             });
         }
 
@@ -89,7 +89,7 @@ router.post('/login', [
         if (!isMatch) {
             return res.status(401).json({
                 success: false,
-                message: 'Invalid credentials'
+                message: 'Invalid email or password'
             });
         }
 

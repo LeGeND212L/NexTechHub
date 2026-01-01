@@ -256,24 +256,25 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.6);
+  background: rgba(0, 0, 0, 0.8);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 1000;
   animation: fadeIn 0.3s ease;
-  backdrop-filter: blur(4px);
+  backdrop-filter: blur(8px);
 }
 
 .modal-content {
-  background: white;
+  background: linear-gradient(135deg, #0a0e1a 0%, #1a1f35 100%);
   border-radius: 20px;
   width: 90%;
   max-width: 600px;
   max-height: 90vh;
   overflow-y: auto;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 20px 60px rgba(0, 180, 255, 0.3);
   animation: slideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid rgba(0, 180, 255, 0.3);
 }
 
 @keyframes slideUp {
@@ -292,22 +293,22 @@
   justify-content: space-between;
   align-items: center;
   padding: 28px 32px;
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid rgba(0, 180, 255, 0.2);
 }
 
 .modal-header h2 {
   font-size: 24px;
   font-weight: 400;
-  color: #1a202c;
+  color: #ffffff;
 }
 
 .modal-close {
   width: 36px;
   height: 36px;
   border-radius: 8px;
-  border: none;
-  background: #f1f5f9;
-  color: #64748b;
+  border: 1px solid rgba(0, 180, 255, 0.3);
+  background: rgba(0, 180, 255, 0.1);
+  color: #00b4ff;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -317,8 +318,8 @@
 }
 
 .modal-close:hover {
-  background: #e2e8f0;
-  color: #1a202c;
+  background: rgba(0, 180, 255, 0.2);
+  color: #ffffff;
   transform: rotate(90deg);
 }
 
@@ -348,13 +349,13 @@
   margin-bottom: 10px;
   font-weight: 400;
   font-size: 16px;
-  color: #000000;
+  color: #ffffff;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 
 .form-group label svg {
-  color: #000000;
+  color: #00b4ff;
   font-size: 18px;
 }
 

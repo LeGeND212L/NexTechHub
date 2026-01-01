@@ -2,10 +2,38 @@ const express = require('express');
 const router = express.Router();
 const { protect, authorize } = require('../middleware/auth');
 const Task = require('../models/Task');
+const User = require('../models/User');
 const upload = require('../middleware/upload');
 
 // All routes are protected
 router.use(protect);
+
+// @route   GET /api/employees/profile
+// @desc    Get logged in employee profile
+// @access  Private/Employee
+router.get('/profile', async (req, res) => {
+    try {
+        const employee = await User.findById(req.user._id).select('-password');
+
+        if (!employee) {
+            return res.status(404).json({
+                success: false,
+                message: 'Employee not found'
+            });
+        }
+
+        res.json({
+            success: true,
+            data: employee
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: 'Failed to fetch profile',
+            error: error.message
+        });
+    }
+});
 
 // @route   GET /api/employees/tasks
 // @desc    Get all tasks for logged in employee
@@ -102,10 +130,22 @@ router.put('/tasks/:id/status', async (req, res) => {
 
         await task.save();
 
+        const populatedTask = await Task.findById(task._id)
+            .populate('project', 'title client service')
+            .populate('assignedBy', 'name email')
+            .populate('assignedTo', 'name email designation')
+            .populate('comments.user', 'name email');
+
+        const io = req.app.get('io');
+        if (io && populatedTask) {
+            io.to('admins').emit('task:updated', { task: populatedTask });
+            io.to(`user:${task.assignedTo.toString()}`).emit('task:updated', { task: populatedTask });
+        }
+
         res.json({
             success: true,
             message: 'Task status updated successfully',
-            data: task
+            data: populatedTask || task
         });
     } catch (error) {
         res.status(500).json({
@@ -153,10 +193,22 @@ router.post('/tasks/:id/upload', upload.single('taskFile'), async (req, res) => 
 
         await task.save();
 
+        const populatedTask = await Task.findById(task._id)
+            .populate('project', 'title client service')
+            .populate('assignedBy', 'name email')
+            .populate('assignedTo', 'name email designation')
+            .populate('comments.user', 'name email');
+
+        const io = req.app.get('io');
+        if (io && populatedTask) {
+            io.to('admins').emit('task:updated', { task: populatedTask });
+            io.to(`user:${task.assignedTo.toString()}`).emit('task:updated', { task: populatedTask });
+        }
+
         res.json({
             success: true,
             message: 'File uploaded successfully',
-            data: task
+            data: populatedTask || task
         });
     } catch (error) {
         res.status(500).json({

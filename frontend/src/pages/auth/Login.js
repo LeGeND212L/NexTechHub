@@ -10,6 +10,7 @@ const Login = () => {
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('');
     const { login } = useAuth();
     const navigate = useNavigate();
 
@@ -23,6 +24,7 @@ const Login = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
+        setErrorMessage('');
 
         const result = await login(email, password);
 
@@ -30,7 +32,7 @@ const Login = () => {
             toast.success('Login successful!');
             navigate(result.data.role === 'admin' ? '/admin/dashboard' : '/employee/dashboard');
         } else {
-            toast.error(result.message || 'Login failed');
+            setErrorMessage(result.message || 'Invalid email or password');
         }
 
         setLoading(false);
@@ -54,6 +56,12 @@ const Login = () => {
                         <p>Login to access your dashboard</p>
                     </div>
 
+                    {errorMessage && (
+                        <div className="login-error" role="alert">
+                            {errorMessage}
+                        </div>
+                    )}
+
                     <form onSubmit={handleSubmit} className="login-form">
                         <div className="form-group">
                             <label htmlFor="email">
@@ -63,7 +71,7 @@ const Login = () => {
                                 type="email"
                                 id="email"
                                 value={email}
-                                onChange={(e) => setEmail(e.target.value)}
+                                onChange={(e) => { setEmail(e.target.value); if (errorMessage) setErrorMessage(''); }}
                                 required
                                 placeholder="Enter your email"
                                 className="form-input"
@@ -79,7 +87,7 @@ const Login = () => {
                                     type={showPassword ? 'text' : 'password'}
                                     id="password"
                                     value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
+                                    onChange={(e) => { setPassword(e.target.value); if (errorMessage) setErrorMessage(''); }}
                                     required
                                     placeholder="Enter your password"
                                     className="form-input"

@@ -110,6 +110,19 @@ const PaymentManagement = () => {
             return;
         }
 
+        const isLocked = payments.some((p) => {
+            const sameEmployee = (p.employee?._id || p.employee) === formData.employee;
+            const sameMonth = String(p.month) === String(formData.month);
+            const sameYear = String(p.year) === String(formData.year);
+            const isPaid = (p.status || 'paid') === 'paid';
+            return sameEmployee && sameMonth && sameYear && isPaid;
+        });
+
+        if (isLocked) {
+            toast.error('This month is locked for this employee (salary already recorded)');
+            return;
+        }
+
         try {
             const token = localStorage.getItem('token');
             const config = {

@@ -1,5 +1,6 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
 import api from '../utils/api';
+import { getSocket, disconnectSocket } from '../utils/socket';
 
 const AuthContext = createContext();
 
@@ -48,6 +49,9 @@ export const AuthProvider = ({ children }) => {
                 localStorage.setItem('token', token);
                 localStorage.setItem('user', JSON.stringify(userData));
                 setUser(userData);
+
+                // Start real-time connection
+                getSocket();
                 return { success: true, data: userData };
             }
         } catch (error) {
@@ -62,6 +66,9 @@ export const AuthProvider = ({ children }) => {
         localStorage.removeItem('token');
         localStorage.removeItem('user');
         setUser(null);
+
+        // Stop real-time connection
+        disconnectSocket();
     };
 
     const updateProfile = async (userData) => {

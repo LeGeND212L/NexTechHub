@@ -102,6 +102,14 @@ router.post('/', authorize('admin'), async (req, res) => {
             .populate('assignedBy', 'name email')
             .populate('project', 'title service');
 
+        const io = req.app.get('io');
+        if (io && populatedTask) {
+            io.to('admins').emit('task:created', { task: populatedTask });
+            if (task.assignedTo) {
+                io.to(`user:${task.assignedTo.toString()}`).emit('task:created', { task: populatedTask });
+            }
+        }
+
         res.status(201).json({
             success: true,
             message: 'Task created successfully',
@@ -135,6 +143,14 @@ router.put('/:id', authorize('admin'), async (req, res) => {
                 success: false,
                 message: 'Task not found'
             });
+        }
+
+        const io = req.app.get('io');
+        if (io) {
+            io.to('admins').emit('task:updated', { task });
+            if (task.assignedTo?._id) {
+                io.to(`user:${task.assignedTo._id.toString()}`).emit('task:updated', { task });
+            }
         }
 
         res.json({
@@ -181,6 +197,12 @@ router.put('/:id/status', protect, async (req, res) => {
             .populate('assignedBy', 'name email')
             .populate('project', 'title service');
 
+        const io = req.app.get('io');
+        if (io && populatedTask) {
+            io.to('admins').emit('task:updated', { task: populatedTask });
+            io.to(`user:${task.assignedTo.toString()}`).emit('task:updated', { task: populatedTask });
+        }
+
         res.json({
             success: true,
             message: 'Task status updated successfully',
@@ -207,6 +229,14 @@ router.delete('/:id', authorize('admin'), async (req, res) => {
                 success: false,
                 message: 'Task not found'
             });
+        }
+
+        const io = req.app.get('io');
+        if (io) {
+            io.to('admins').emit('task:deleted', { taskId: task._id.toString() });
+            if (task.assignedTo) {
+                io.to(`user:${task.assignedTo.toString()}`).emit('task:deleted', { taskId: task._id.toString() });
+            }
         }
 
         res.json({

@@ -283,7 +283,7 @@
   display: block;
   margin-bottom: 10px;
   font-weight: 400;
-  color: #000000;
+  color: #ffffff;
   font-size: 16px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -292,6 +292,7 @@
 .form-group label svg {
   margin-right: 8px;
   font-size: 18px;
+  color: #00b4ff;
 }
 
 .form-group input,
@@ -396,6 +397,93 @@
 
 .form-group select[multiple] {
   height: auto;
+}
+
+/* Modal Styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease;
+  backdrop-filter: blur(8px);
+}
+
+.modal-content {
+  background: linear-gradient(135deg, #0a0e1a 0%, #1a1f35 100%);
+  border-radius: 20px;
+  width: 90%;
+  max-width: 700px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0, 180, 255, 0.3);
+  animation: slideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid rgba(0, 180, 255, 0.3);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 28px 32px;
+  border-bottom: 1px solid rgba(0, 180, 255, 0.2);
+}
+
+.modal-header h2 {
+  font-size: 24px;
+  font-weight: 400;
+  color: #ffffff;
+}
+
+.modal-close {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  border: 1px solid rgba(0, 180, 255, 0.3);
+  background: rgba(0, 180, 255, 0.1);
+  color: #00b4ff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  font-size: 18px;
+}
+
+.modal-close:hover {
+  background: rgba(0, 180, 255, 0.2);
+  color: #ffffff;
+  transform: rotate(90deg);
+}
+
+.modal-content form {
+  padding: 28px 32px;
 }
 
 @media (max-width: 968px) {

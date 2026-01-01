@@ -55,33 +55,27 @@ const EmployeeDashboard = () => {
                 headers: { Authorization: `Bearer ${token}` }
             };
 
-            const res = await axios.get('/api/tasks', config);
-            const allTasks = res.data.data || [];
+            // Use the employee-specific dashboard endpoint
+            const res = await axios.get('/api/employees/dashboard', config);
+            const dashboardData = res.data.data;
 
-            console.log('Current user:', user);
-            console.log('All tasks:', allTasks);
-
-            // Filter tasks assigned to current user
-            const myTasks = allTasks.filter(task => {
-                const assignedToId = task.assignedTo?._id || task.assignedTo;
-                const currentUserId = user?._id || user?.userId;
-                console.log('Comparing:', assignedToId, 'with', currentUserId);
-                return assignedToId && assignedToId.toString() === currentUserId?.toString();
-            });
-
-            console.log('My tasks:', myTasks);
+            console.log('Dashboard data:', dashboardData);
 
             setStats({
-                totalTasks: myTasks.length,
-                pendingTasks: myTasks.filter(t => t.status === 'pending').length,
-                inProgressTasks: myTasks.filter(t => t.status === 'in-progress').length,
-                completedTasks: myTasks.filter(t => t.status === 'completed').length
+                totalTasks: dashboardData.statistics.total,
+                pendingTasks: dashboardData.statistics.pending,
+                inProgressTasks: dashboardData.statistics.inProgress,
+                completedTasks: dashboardData.statistics.completed,
+                overdueTasks: dashboardData.statistics.overdue
             });
 
-            setRecentTasks(myTasks.slice(0, 5));
+            // Show upcoming tasks
+            setRecentTasks(dashboardData.upcomingTasks || []);
             setLoading(false);
         } catch (error) {
             console.error('Error fetching dashboard data:', error);
+            console.error('Error response:', error.response?.data);
+            toast.error(error.response?.data?.message || 'Failed to fetch dashboard data');
             setLoading(false);
         }
     };

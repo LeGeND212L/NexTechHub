@@ -5,6 +5,28 @@ const Payment = require('../models/Payment');
 const User = require('../models/User');
 const generatePayslip = require('../utils/generatePayslip');
 
+const MONTHS = [
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December'
+];
+
+const normalizeMonth = (value) => {
+    if (!value) return value;
+    const asString = String(value).trim();
+    const match = MONTHS.find((m) => m.toLowerCase() === asString.toLowerCase());
+    return match || asString;
+};
+
 // All routes are protected
 router.use(protect);
 
@@ -94,57 +116,117 @@ router.get('/:id', async (req, res) => {
 // @access  Private/Admin
 router.post('/', authorize('admin'), async (req, res) => {
     try {
+        console.log('=== Payment Creation Request ===');
+        console.log('Request body:', JSON.stringify(req.body, null, 2));
+
         const { employee, amount, month, year, bonus, deductions, paymentMethod, transactionId, notes } = req.body;
+        const normalizedMonth = normalizeMonth(month);
+        const normalizedYear = Number(year);
+
+        // Validation
+        if (!employee) {
+            console.error('Validation failed: employee is required');
+            return res.status(400).json({
+                success: false,
+                message: 'Employee is required'
+            });
+        }
+
+        if (!normalizedMonth || !year) {
+            console.error('Validation failed: month and year are required');
+            return res.status(400).json({
+                success: false,
+                message: 'Month and year are required'
+            });
+        }
+
+        if (!MONTHS.includes(normalizedMonth)) {
+            return res.status(400).json({
+                success: false,
+                message: 'Invalid month'
+            });
+        }
+
+        if (!Number.isInteger(normalizedYear) || normalizedYear < 2000 || normalizedYear > 2100) {
+            return res.status(400).json({
+                success: false,
+                message: 'Invalid year'
+            });
+        }
 
         // Verify employee exists
+        console.log('Looking up employee:', employee);
         const employeeData = await User.findById(employee);
         if (!employeeData) {
+            console.error('Employee not found:', employee);
             return res.status(404).json({
                 success: false,
                 message: 'Employee not found'
             });
         }
+        console.log('Employee found:', employeeData.name);
 
         // Check if payment already exists for this employee, month, and year
-        const existingPayment = await Payment.findOne({ employee, month, year });
+        const existingPayment = await Payment.findOne({ employee, month: normalizedMonth, year: normalizedYear });
         if (existingPayment) {
+            console.error('Duplicate payment found for:', { employee, month, year });
             return res.status(400).json({
                 success: false,
-                message: 'Payment for this employee in this month already exists'
+                message: 'This month is locked for this employee (salary already recorded)'
             });
         }
 
-        const payment = await Payment.create({
+        const resolvedAmount = amount !== undefined && amount !== null && String(amount).trim() !== ''
+            ? Number(amount)
+            : Number(employeeData.salary);
+
+        if (!Number.isFinite(resolvedAmount) || resolvedAmount <= 0) {
+            return res.status(400).json({
+                success: false,
+                message: 'Amount must be a valid positive number'
+            });
+        }
+
+        const paymentData = {
             employee,
-            amount: amount || employeeData.salary,
-            month,
-            year,
-            bonus: bonus || 0,
-            deductions: deductions || 0,
-            paymentMethod,
+            amount: resolvedAmount,
+            month: normalizedMonth,
+            year: normalizedYear,
+            bonus: Number(bonus) || 0,
+            deductions: Number(deductions) || 0,
+            paymentMethod: paymentMethod || 'bank-transfer',
             transactionId,
             notes,
             processedBy: req.user._id,
             status: 'paid'
-        });
+        };
 
-        // Generate payslip
-        try {
-            const payslipPath = await generatePayslip({
-                ...payment.toObject(),
-                employee: employeeData
-            });
+        console.log('Creating payment with data:', JSON.stringify(paymentData, null, 2));
 
-            payment.payslipGenerated = true;
-            payment.payslipPath = payslipPath;
-            await payment.save();
-        } catch (error) {
-            console.error('Payslip generation failed:', error);
-        }
+        const payment = await Payment.create(paymentData);
+        console.log('Payment created successfully:', payment._id);
 
+        // Populate the payment with employee data
         const populatedPayment = await Payment.findById(payment._id)
-            .populate('employee', 'name email designation')
+            .populate('employee', 'name email designation salary')
             .populate('processedBy', 'name email');
+
+        // Generate payslip asynchronously (don't block payment creation)
+        setImmediate(async () => {
+            try {
+                const payslipPath = await generatePayslip({
+                    ...payment.toObject(),
+                    employee: employeeData.toObject()
+                });
+
+                payment.payslipGenerated = true;
+                payment.payslipPath = payslipPath;
+                await payment.save();
+                console.log('Payslip generated successfully:', payslipPath);
+            } catch (error) {
+                console.error('Payslip generation failed (non-blocking):', error.message);
+            }
+        });
 
         res.status(201).json({
             success: true,
@@ -152,6 +234,16 @@ router.post('/', authorize('admin'), async (req, res) => {
             data: populatedPayment
         });
     } catch (error) {
+        if (error && (error.code === 11000 || error.name === 'MongoServerError')) {
+            return res.status(400).json({
+                success: false,
+                message: 'This month is locked for this employee (salary already recorded)'
+            });
+        }
+        console.error('=== Payment creation error ===');
+        console.error('Error message:', error.message);
+        console.error('Error stack:', error.stack);
+        console.error('Error details:', error);
         res.status(500).json({
             success: false,
             message: 'Failed to create payment',
@@ -165,13 +257,7 @@ router.post('/', authorize('admin'), async (req, res) => {
 // @access  Private/Admin
 router.put('/:id', authorize('admin'), async (req, res) => {
     try {
-        const payment = await Payment.findByIdAndUpdate(
-            req.params.id,
-            req.body,
-            { new: true, runValidators: true }
-        )
-            .populate('employee', 'name email designation')
-            .populate('processedBy', 'name email');
+        const payment = await Payment.findById(req.params.id);
 
         if (!payment) {
             return res.status(404).json({
@@ -180,12 +266,72 @@ router.put('/:id', authorize('admin'), async (req, res) => {
             });
         }
 
+        // Locked month: once paid, don't allow changing the identity of the salary record
+        if (payment.status === 'paid') {
+            const forbiddenKeys = ['employee', 'month', 'year'];
+            const attempted = forbiddenKeys.find((k) => req.body[k] !== undefined);
+            if (attempted) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'This salary month is locked and cannot be changed'
+                });
+            }
+        }
+
+        const updates = { ...req.body };
+        if (updates.month !== undefined) updates.month = normalizeMonth(updates.month);
+        if (updates.year !== undefined) updates.year = Number(updates.year);
+
+        // If any of the unique keys change, prevent duplicates
+        const nextEmployee = updates.employee !== undefined ? updates.employee : payment.employee;
+        const nextMonth = updates.month !== undefined ? updates.month : payment.month;
+        const nextYear = updates.year !== undefined ? updates.year : payment.year;
+
+        if (updates.month !== undefined && !MONTHS.includes(nextMonth)) {
+            return res.status(400).json({
+                success: false,
+                message: 'Invalid month'
+            });
+        }
+        if (updates.year !== undefined && (!Number.isInteger(nextYear) || nextYear < 2000 || nextYear > 2100)) {
+            return res.status(400).json({
+                success: false,
+                message: 'Invalid year'
+            });
+        }
+
+        const duplicate = await Payment.findOne({
+            _id: { $ne: payment._id },
+            employee: nextEmployee,
+            month: nextMonth,
+            year: nextYear
+        });
+        if (duplicate) {
+            return res.status(400).json({
+                success: false,
+                message: 'This month is locked for this employee (salary already recorded)'
+            });
+        }
+
+        Object.assign(payment, updates);
+        await payment.save();
+
+        const populated = await Payment.findById(payment._id)
+            .populate('employee', 'name email designation')
+            .populate('processedBy', 'name email');
+
         res.json({
             success: true,
             message: 'Payment updated successfully',
-            data: payment
+            data: populated
         });
     } catch (error) {
+        if (error && (error.code === 11000 || error.name === 'MongoServerError')) {
+            return res.status(400).json({
+                success: false,
+                message: 'This month is locked for this employee (salary already recorded)'
+            });
+        }
         res.status(500).json({
             success: false,
             message: 'Failed to update payment',
@@ -199,7 +345,7 @@ router.put('/:id', authorize('admin'), async (req, res) => {
 // @access  Private/Admin
 router.delete('/:id', authorize('admin'), async (req, res) => {
     try {
-        const payment = await Payment.findByIdAndDelete(req.params.id);
+        const payment = await Payment.findById(req.params.id);
 
         if (!payment) {
             return res.status(404).json({
@@ -207,6 +353,15 @@ router.delete('/:id', authorize('admin'), async (req, res) => {
                 message: 'Payment not found'
             });
         }
+
+        if (payment.status === 'paid') {
+            return res.status(400).json({
+                success: false,
+                message: 'Paid salary records are locked and cannot be deleted'
+            });
+        }
+
+        await payment.deleteOne();
 
         res.json({
             success: true,

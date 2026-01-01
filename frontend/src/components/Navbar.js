@@ -56,25 +56,16 @@ const Navbar = () => {
                     <div className="header-top-content">
                         <div className="header-left">
                             <a href="mailto:info@nextechhubs.com" className="header-link">
-                                <span className="header-icon">📧</span>
-                                <span className="header-text">
-                                    <span className="header-label">Email</span>
-                                    <span className="header-value">info@nextechhubs.com</span>
-                                </span>
+                                <span className="header-icon">✉</span>
+                                <span className="header-value">info@nextechhubs.com</span>
                             </a>
                             <a href="tel:+923001234567" className="header-link">
-                                <span className="header-icon">📞</span>
-                                <span className="header-text">
-                                    <span className="header-label">Call Us</span>
-                                    <span className="header-value">+92 300 1234567</span>
-                                </span>
+                                <span className="header-icon">☎</span>
+                                <span className="header-value">+92 300 1234567</span>
                             </a>
                         </div>
                         <div className="header-right">
-                            <div className="header-tagline">
-                                <span className="tagline-icon">⚡</span>
-                                <span>Your Trusted IT Solutions Partner</span>
-                            </div>
+                            <span className="header-tagline">Your Trusted IT Solutions Partner</span>
                         </div>
                     </div>
                 </div>

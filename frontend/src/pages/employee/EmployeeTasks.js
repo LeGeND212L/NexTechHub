@@ -13,9 +13,10 @@ import {
     FaSignOutAlt
 } from 'react-icons/fa';
 import './EmployeeTasks.css';
+import { getSocket } from '../../utils/socket';
 
 const EmployeeTasks = () => {
-    const { user, logout } = useAuth();
+    const { logout } = useAuth();
     const navigate = useNavigate();
     const location = useLocation();
     const [tasks, setTasks] = useState([]);
@@ -26,6 +27,31 @@ const EmployeeTasks = () => {
 
     useEffect(() => {
         fetchTasks();
+
+        const socket = getSocket();
+
+        const onTaskCreated = ({ task }) => {
+            if (!task?._id) return;
+            setTasks((prev) => {
+                const exists = prev.some((t) => t._id === task._id);
+                return exists ? prev : [task, ...prev];
+            });
+        };
+
+        const onTaskUpdated = ({ task }) => {
+            if (!task?._id) return;
+            setTasks((prev) => prev.map((t) => (t._id === task._id ? task : t)));
+        };
+
+        const onTaskDeleted = ({ taskId }) => {
+            if (!taskId) return;
+            setTasks((prev) => prev.filter((t) => t._id !== taskId));
+        };
+
+        socket.on('task:created', onTaskCreated);
+        socket.on('task:updated', onTaskUpdated);
+        socket.on('task:deleted', onTaskDeleted);
+
         // Scroll to specific task if provided
         if (location.state?.taskId) {
             setTimeout(() => {
@@ -35,6 +61,12 @@ const EmployeeTasks = () => {
                 }
             }, 500);
         }
+
+        return () => {
+            socket.off('task:created', onTaskCreated);
+            socket.off('task:updated', onTaskUpdated);
+            socket.off('task:deleted', onTaskDeleted);
+        };
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
@@ -52,26 +84,19 @@ const EmployeeTasks = () => {
             const config = {
                 headers: { Authorization: `Bearer ${token}` }
             };
-            const res = await axios.get('/api/tasks', config);
-            const allTasks = res.data.data || [];
 
-            console.log('Employee - Current user:', user);
-            console.log('Employee - All tasks:', allTasks);
+            // Use the employee-specific tasks endpoint
+            const res = await axios.get('/api/employees/tasks', config);
+            const myTasks = res.data.data || [];
 
-            // Filter tasks assigned to current user
-            const currentUserId = user?._id || user?.userId;
-            const myTasks = allTasks.filter(task => {
-                const assignedToId = task.assignedTo?._id || task.assignedTo;
-                return assignedToId && assignedToId.toString() === currentUserId?.toString();
-            });
-
-            console.log('Employee - My tasks:', myTasks);
+            console.log('Employee tasks:', myTasks);
 
             setTasks(myTasks);
             setLoading(false);
         } catch (error) {
             console.error('Error fetching tasks:', error);
-            toast.error('Failed to fetch tasks');
+            console.error('Error response:', error.response?.data);
+            toast.error(error.response?.data?.message || 'Failed to fetch tasks');
             setLoading(false);
         }
     };
@@ -82,7 +107,9 @@ const EmployeeTasks = () => {
             const config = {
                 headers: { Authorization: `Bearer ${token}` }
             };
-            await axios.put(`/api/tasks/${taskId}/status`, { status: newStatus }, config);
+
+            // Use the employee-specific status update endpoint
+            await axios.put(`/api/employees/tasks/${taskId}/status`, { status: newStatus }, config);
 
             // Update state immediately without refetching
             setTasks(prevTasks =>
@@ -94,7 +121,8 @@ const EmployeeTasks = () => {
             toast.success('Task status updated successfully!');
         } catch (error) {
             console.error('Error updating task:', error);
-            toast.error('Failed to update task status');
+            console.error('Error response:', error.response?.data);
+            toast.error(error.response?.data?.message || 'Failed to update task status');
         }
     };
 
@@ -105,7 +133,7 @@ const EmployeeTasks = () => {
         }
 
         const formData = new FormData();
-        formData.append('file', file);
+        formData.append('taskFile', file);
 
         try {
             const token = localStorage.getItem('token');
@@ -115,14 +143,14 @@ const EmployeeTasks = () => {
                     'Content-Type': 'multipart/form-data'
                 }
             };
-            await axios.put(`/api/tasks/${taskId}`, formData, config);
+            await axios.post(`/api/employees/tasks/${taskId}/upload`, formData, config);
             toast.success('File uploaded successfully!');
             setFile(null);
             setSelectedTask(null);
             fetchTasks();
         } catch (error) {
             console.error('Error uploading file:', error);
-            toast.error('Failed to upload file');
+            toast.error(error.response?.data?.message || 'Failed to upload file');
         }
     };
 
@@ -221,10 +249,10 @@ const EmployeeTasks = () => {
                                     <FaCalendar />
                                     <span>Due: {new Date(task.deadline).toLocaleDateString()}</span>
                                 </div>
-                                {task.file && (
+                                {task.files?.length > 0 && (
                                     <div className="info-item">
                                         <FaFile />
-                                        <span>File attached</span>
+                                        <span>Uploads: {task.files.length}</span>
                                     </div>
                                 )}
                             </div>
