@@ -118,57 +118,55 @@ const Contact = () => {
                             <p>Fill out the form below and we'll get back to you within 24 hours.</p>
 
                             <form onSubmit={handleSubmit}>
-                                <div className="form-row">
-                                    <div className="form-group">
-                                        <label htmlFor="name">Full Name *</label>
-                                        <input
-                                            type="text"
-                                            id="name"
-                                            name="name"
-                                            value={formData.name}
-                                            onChange={handleChange}
-                                            required
-                                            placeholder="John Doe"
-                                        />
-                                    </div>
-                                    <div className="form-group">
-                                        <label htmlFor="email">Email Address *</label>
-                                        <input
-                                            type="email"
-                                            id="email"
-                                            name="email"
-                                            value={formData.email}
-                                            onChange={handleChange}
-                                            required
-                                            placeholder="john@example.com"
-                                        />
-                                    </div>
+                                <div className="form-group">
+                                    <label htmlFor="name">Full Name *</label>
+                                    <input
+                                        type="text"
+                                        id="name"
+                                        name="name"
+                                        value={formData.name}
+                                        onChange={handleChange}
+                                        required
+                                        placeholder="John Doe"
+                                    />
                                 </div>
 
-                                <div className="form-row">
-                                    <div className="form-group">
-                                        <label htmlFor="phone">Phone Number</label>
-                                        <input
-                                            type="tel"
-                                            id="phone"
-                                            name="phone"
-                                            value={formData.phone}
-                                            onChange={handleChange}
-                                            placeholder="+1 (555) 123-4567"
-                                        />
-                                    </div>
-                                    <div className="form-group">
-                                        <label htmlFor="subject">Subject *</label>
-                                        <input
-                                            type="text"
-                                            id="subject"
-                                            name="subject"
-                                            value={formData.subject}
-                                            onChange={handleChange}
-                                            required
-                                            placeholder="Project Inquiry"
-                                        />
-                                    </div>
+                                <div className="form-group">
+                                    <label htmlFor="email">Email Address *</label>
+                                    <input
+                                        type="email"
+                                        id="email"
+                                        name="email"
+                                        value={formData.email}
+                                        onChange={handleChange}
+                                        required
+                                        placeholder="john@example.com"
+                                    />
+                                </div>
+
+                                <div className="form-group">
+                                    <label htmlFor="phone">Phone Number</label>
+                                    <input
+                                        type="tel"
+                                        id="phone"
+                                        name="phone"
+                                        value={formData.phone}
+                                        onChange={handleChange}
+                                        placeholder="+1 (555) 123-4567"
+                                    />
+                                </div>
+
+                                <div className="form-group">
+                                    <label htmlFor="subject">Subject *</label>
+                                    <input
+                                        type="text"
+                                        id="subject"
+                                        name="subject"
+                                        value={formData.subject}
+                                        onChange={handleChange}
+                                        required
+                                        placeholder="Project Inquiry"
+                                    />
                                 </div>
 
                                 <div className="form-group">

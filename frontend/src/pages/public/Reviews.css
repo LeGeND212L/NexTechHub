@@ -9,7 +9,7 @@
 .reviews-hero h1 {
   font-size: 3.5rem;
   margin-bottom: 20px;
-  font-weight: 700;
+  font-weight: 400;
 }
 
 .reviews-hero p {
@@ -29,7 +29,11 @@
   content: "";
   position: absolute;
   inset: 0;
-  background: radial-gradient(circle at 20% 20%, rgba(0, 120, 255, 0.15), transparent 40%),
+  background: radial-gradient(
+      circle at 20% 20%,
+      rgba(0, 120, 255, 0.15),
+      transparent 40%
+    ),
     radial-gradient(circle at 80% 30%, rgba(0, 180, 255, 0.12), transparent 45%),
     radial-gradient(circle at 50% 80%, rgba(0, 70, 180, 0.14), transparent 55%);
   pointer-events: none;
@@ -42,7 +46,11 @@
 }
 
 .reviews-stats .stat-card {
-  background: linear-gradient(135deg, rgba(0, 40, 90, 0.92), rgba(0, 90, 180, 0.9));
+  background: linear-gradient(
+    135deg,
+    rgba(0, 40, 90, 0.92),
+    rgba(0, 90, 180, 0.9)
+  );
   padding: 40px 30px;
   border-radius: 20px;
   text-align: center;
@@ -58,7 +66,11 @@
   content: "";
   position: absolute;
   inset: -60% 20% 60% -20%;
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.18), transparent 50%);
+  background: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.18),
+    transparent 50%
+  );
   opacity: 0.35;
   pointer-events: none;
 }
@@ -71,7 +83,7 @@
 
 .reviews-stats .stat-value {
   font-size: 3rem;
-  font-weight: 800;
+  font-weight: 400;
   color: #5ab1ff;
   text-shadow: 0 0 25px rgba(90, 177, 255, 0.75);
   margin-bottom: 10px;
@@ -97,7 +109,7 @@
 .reviews-stats .stat-label {
   color: #d6e2ff;
   font-size: 1rem;
-  font-weight: 600;
+  font-weight: 400;
 }
 
 /* Reviews Filter */
@@ -112,7 +124,7 @@
   align-items: center;
   gap: 10px;
   font-size: 1.3rem;
-  font-weight: 600;
+  font-weight: 400;
   color: #1f2937;
   margin-bottom: 20px;
 }
@@ -130,7 +142,7 @@
 }
 
 .filter-group label {
-  font-weight: 600;
+  font-weight: 400;
   color: #374151;
   font-size: 1rem;
 }
@@ -240,14 +252,14 @@
   font-size: 1.2rem;
   color: #1f2937;
   margin-bottom: 5px;
-  font-weight: 600;
+  font-weight: 400;
 }
 
 .reviewer-role {
   color: #667eea;
   font-size: 0.9rem;
   margin-bottom: 3px;
-  font-weight: 500;
+  font-weight: 400;
 }
 
 .review-date {
@@ -268,7 +280,7 @@
   color: white;
   border-radius: 20px;
   font-size: 0.85rem;
-  font-weight: 600;
+  font-weight: 400;
   margin-bottom: 15px;
 }
 

@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
 import { FaCode, FaPenFancy, FaChartLine, FaMobileAlt, FaLaptopCode, FaRocket, FaUsers, FaSearch, FaArrowRight } from 'react-icons/fa';
@@ -12,10 +12,13 @@ import './Services.css';
 const Services = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('All');
+    const location = useLocation();
+    const serviceRefs = useRef({});
 
     const allServices = [
         {
             id: 1,
+            slug: 'research-writing',
             name: 'Research & Academic Writing',
             category: 'Writing',
             icon: <FaPenFancy />,
@@ -27,6 +30,7 @@ const Services = () => {
         },
         {
             id: 2,
+            slug: 'web-development',
             name: 'Web Development',
             category: 'Development',
             icon: <FaCode />,
@@ -38,6 +42,7 @@ const Services = () => {
         },
         {
             id: 3,
+            slug: 'web-app-development',
             name: 'Mobile App Development',
             category: 'Development',
             icon: <FaMobileAlt />,
@@ -49,6 +54,7 @@ const Services = () => {
         },
         {
             id: 4,
+            slug: 'seo',
             name: 'SEO Services',
             category: 'Marketing',
             icon: <FaChartLine />,
@@ -59,7 +65,20 @@ const Services = () => {
             popular: false
         },
         {
+            id: 5,
+            slug: 'medical-writing',
+            name: 'Medical Writing',
+            category: 'Writing',
+            icon: <FaPenFancy />,
+            color: '#f093fb',
+            description: 'Professional medical and healthcare documentation with precision and compliance.',
+            features: ['Clinical Documentation', 'Regulatory Writing', 'Patient Education', 'Research Papers'],
+            technologies: ['EndNote', 'PubMed', 'MedDRA', 'ICH Guidelines', 'Grammarly'],
+            popular: false
+        },
+        {
             id: 6,
+            slug: 'social-media-marketing',
             name: 'Digital Marketing',
             category: 'Marketing',
             icon: <FaRocket />,
@@ -71,6 +90,7 @@ const Services = () => {
         },
         {
             id: 7,
+            slug: 'power-bi',
             name: 'Data Analytics',
             category: 'Analytics',
             icon: <MdAnalytics />,
@@ -82,6 +102,7 @@ const Services = () => {
         },
         {
             id: 8,
+            slug: 'python',
             name: 'API Development',
             category: 'Development',
             icon: <AiOutlineApi />,
@@ -93,6 +114,7 @@ const Services = () => {
         },
         {
             id: 9,
+            slug: 'networking',
             name: 'Database Management',
             category: 'Development',
             icon: <AiFillDatabase />,
@@ -104,6 +126,7 @@ const Services = () => {
         },
         {
             id: 10,
+            slug: 'devops',
             name: 'Tech Support & Maintenance',
             category: 'Support',
             icon: <MdSupportAgent />,
@@ -115,6 +138,7 @@ const Services = () => {
         },
         {
             id: 11,
+            slug: 'financial-analysis',
             name: 'Google Ads Management',
             category: 'Marketing',
             icon: <SiGoogleads />,
@@ -126,6 +150,7 @@ const Services = () => {
         },
         {
             id: 12,
+            slug: 'all-coding-projects',
             name: 'E-commerce Solutions',
             category: 'Development',
             icon: <FaLaptopCode />,
@@ -137,6 +162,7 @@ const Services = () => {
         },
         {
             id: 13,
+            slug: 'business-writing',
             name: 'Content Writing',
             category: 'Writing',
             icon: <FaPenFancy />,
@@ -148,6 +174,7 @@ const Services = () => {
         },
         {
             id: 14,
+            slug: 'ui-ux',
             name: 'Team Training',
             category: 'Support',
             icon: <FaUsers />,
@@ -167,6 +194,21 @@ const Services = () => {
         const matchesCategory = selectedCategory === 'All' || service.category === selectedCategory;
         return matchesSearch && matchesCategory;
     });
+
+    // Scroll to specific service when URL has service query parameter
+    useEffect(() => {
+        const params = new URLSearchParams(location.search);
+        const serviceSlug = params.get('service');
+
+        if (serviceSlug && serviceRefs.current[serviceSlug]) {
+            setTimeout(() => {
+                serviceRefs.current[serviceSlug].scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'center'
+                });
+            }, 500);
+        }
+    }, [location]);
 
     return (
         <div>
@@ -233,7 +275,9 @@ const Services = () => {
                         {filteredServices.map((service, index) => (
                             <motion.div
                                 key={service.id}
+                                ref={(el) => (serviceRefs.current[service.slug] = el)}
                                 className="service-detail-card"
+                                id={`service-${service.slug}`}
                                 initial={{ opacity: 0, y: 50 }}
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true }}

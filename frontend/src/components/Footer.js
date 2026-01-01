@@ -1,14 +1,38 @@
 import React from 'react';
+import { FaCcVisa, FaCcMastercard, FaPaypal, FaUniversity } from 'react-icons/fa';
 import './Footer.css';
 
 const Footer = () => {
     return (
         <footer className="footer">
             <div className="container">
+                {/* Payment Methods Section */}
+                <div className="payment-section">
+                    <h4 className="payment-title">🛡️ We Accept</h4>
+                    <div className="payment-methods">
+                        <div className="payment-item">
+                            <FaCcVisa className="payment-icon visa" />
+                            <span>Visa</span>
+                        </div>
+                        <div className="payment-item">
+                            <FaCcMastercard className="payment-icon mastercard" />
+                            <span>Mastercard</span>
+                        </div>
+                        <div className="payment-item">
+                            <FaPaypal className="payment-icon paypal" />
+                            <span>PayPal</span>
+                        </div>
+                        <div className="payment-item">
+                            <FaUniversity className="payment-icon bank" />
+                            <span>Bank Transfer</span>
+                        </div>
+                    </div>
+                </div>
+
                 <div className="footer-content">
                     <div className="footer-section">
                         <h3>NexTechHubs</h3>
-                        <p>Professional IT services provider delivering excellence in technology solutions.</p>
+                        <p>Delivering excellence in technology solutions worldwide.</p>
                     </div>
 
                     <div className="footer-section">

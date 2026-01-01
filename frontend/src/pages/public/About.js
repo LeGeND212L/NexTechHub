@@ -2,21 +2,10 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
-import CountUp from 'react-countup';
-import { useInView } from 'react-intersection-observer';
 import { FaLightbulb, FaUsers, FaRocket, FaHeart, FaAward, FaGlobeAmericas } from 'react-icons/fa';
 import './About.css';
 
 const About = () => {
-    const [ref, inView] = useInView({ triggerOnce: true, threshold: 0.1 });
-
-    const stats = [
-        { number: 500, label: 'Projects Completed', suffix: '+' },
-        { number: 350, label: 'Happy Clients', suffix: '+' },
-        { number: 50, label: 'Team Members', suffix: '+' },
-        { number: 8, label: 'Years Experience', suffix: '+' }
-    ];
-
     const values = [
         {
             icon: <FaLightbulb />,
@@ -53,45 +42,6 @@ const About = () => {
             title: 'Global Reach',
             description: 'We serve clients worldwide with round-the-clock support and dedicated service.',
             color: '#082A4E'
-        }
-    ];
-
-    const team = [
-        {
-            name: 'John Anderson',
-            role: 'CEO & Founder',
-            image: 'https://ui-avatars.com/api/?name=John+Anderson&size=300&background=082A4E&color=fff&bold=true',
-            bio: '10+ years in IT industry, passionate about delivering excellence'
-        },
-        {
-            name: 'Sarah Mitchell',
-            role: 'CTO',
-            image: 'https://ui-avatars.com/api/?name=Sarah+Mitchell&size=300&background=082A4E&color=fff&bold=true',
-            bio: 'Technology leader with expertise in modern web architectures'
-        },
-        {
-            name: 'Michael Chen',
-            role: 'Head of Development',
-            image: 'https://ui-avatars.com/api/?name=Michael+Chen&size=300&background=082A4E&color=fff&bold=true',
-            bio: 'Full-stack expert specializing in MERN and cloud solutions'
-        },
-        {
-            name: 'Emily Rodriguez',
-            role: 'Lead Designer',
-            image: 'https://ui-avatars.com/api/?name=Emily+Rodriguez&size=300&background=082A4E&color=fff&bold=true',
-            bio: 'Creative designer focused on user-centric design principles'
-        },
-        {
-            name: 'David Kumar',
-            role: 'Marketing Director',
-            image: 'https://ui-avatars.com/api/?name=David+Kumar&size=300&background=082A4E&color=fff&bold=true',
-            bio: 'Digital marketing strategist with proven track record'
-        },
-        {
-            name: 'Lisa Thompson',
-            role: 'Project Manager',
-            image: 'https://ui-avatars.com/api/?name=Lisa+Thompson&size=300&background=082A4E&color=fff&bold=true',
-            bio: 'Experienced PM ensuring projects deliver on time and budget'
         }
     ];
 
@@ -166,32 +116,7 @@ const About = () => {
             </section>
 
             {/* Stats Section */}
-            <section className="about-stats" ref={ref}>
-                <div className="container">
-                    <div className="stats-grid">
-                        {stats.map((stat, index) => (
-                            <motion.div
-                                key={index}
-                                className="stat-card"
-                                initial={{ scale: 0 }}
-                                animate={inView ? { scale: 1 } : { scale: 0 }}
-                                transition={{ duration: 0.5, delay: index * 0.1 }}
-                            >
-                                <div className="stat-number">
-                                    {inView && (
-                                        <CountUp
-                                            end={stat.number}
-                                            duration={2.5}
-                                            suffix={stat.suffix}
-                                        />
-                                    )}
-                                </div>
-                                <div className="stat-label">{stat.label}</div>
-                            </motion.div>
-                        ))}
-                    </div>
-                </div>
-            </section>
+            {/* REMOVED - Stats section removed */}
 
             {/* Values Section */}
             <section className="about-values">
@@ -229,42 +154,7 @@ const About = () => {
             </section>
 
             {/* Team Section */}
-            <section className="about-team">
-                <div className="container">
-                    <motion.div
-                        initial={{ opacity: 0, y: 30 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 0.6 }}
-                    >
-                        <h2 className="section-title">Meet Our Team</h2>
-                        <p className="section-subtitle">Talented professionals dedicated to your success</p>
-                    </motion.div>
-
-                    <div className="team-grid">
-                        {team.map((member, index) => (
-                            <motion.div
-                                key={index}
-                                className="team-card"
-                                initial={{ opacity: 0, scale: 0.8 }}
-                                whileInView={{ opacity: 1, scale: 1 }}
-                                viewport={{ once: true }}
-                                transition={{ duration: 0.5, delay: index * 0.1 }}
-                                whileHover={{ y: -10 }}
-                            >
-                                <div className="team-image">
-                                    <img src={member.image} alt={member.name} />
-                                </div>
-                                <div className="team-info">
-                                    <h3>{member.name}</h3>
-                                    <p className="team-role">{member.role}</p>
-                                    <p className="team-bio">{member.bio}</p>
-                                </div>
-                            </motion.div>
-                        ))}
-                    </div>
-                </div>
-            </section>
+            {/* REMOVED - Meet Our Team section has been removed */}
 
             {/* Mission & Vision Section */}
             <section className="mission-vision">

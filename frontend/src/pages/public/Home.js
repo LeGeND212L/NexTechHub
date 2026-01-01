@@ -1,38 +1,26 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { useInView } from 'react-intersection-observer';
-import CountUp from 'react-countup';
 import Navbar from '../../components/Navbar';
 import HeroParticles from '../../components/HeroParticles';
 import Footer from '../../components/Footer';
-import { FaCode, FaPenFancy, FaChartLine, FaMobileAlt, FaLaptopCode, FaRocket, FaUsers } from 'react-icons/fa';
 import './Home.css';
 
 const Home = () => {
-    const [ref, inView] = useInView({ triggerOnce: true, threshold: 0.1 });
-
     const services = [
-        { name: 'Research Writing', icon: <FaPenFancy />, color: '#667eea', description: 'Academic & Professional Research' },
-        { name: 'Medical Writing', icon: <FaPenFancy />, color: '#f093fb', description: 'Healthcare Documentation' },
-        { name: 'Business Writing', icon: <FaChartLine />, color: '#4facfe', description: 'Business Plans & Reports' },
-        { name: 'SEO', icon: <FaRocket />, color: '#43e97b', description: 'Search Engine Optimization' },
-        { name: 'Web Development', icon: <FaLaptopCode />, color: '#fa709a', description: 'Responsive Websites' },
-        { name: 'Web App Development', icon: <FaMobileAlt />, color: '#fee140', description: 'Custom Web Applications' },
-        { name: 'Python', icon: <FaCode />, color: '#30cfd0', description: 'Python Development' },
-        { name: 'Power BI', icon: <FaChartLine />, color: '#a8edea', description: 'Data Visualization' },
-        { name: 'DevOps', icon: <FaRocket />, color: '#ff6b6b', description: 'CI/CD & Cloud Solutions' },
-        { name: 'Financial Analysis', icon: <FaChartLine />, color: '#feca57', description: 'Financial Modeling' },
-        { name: 'Social Media Marketing', icon: <FaUsers />, color: '#ff9ff3', description: 'Digital Marketing' },
-        { name: 'UI/UX', icon: <FaMobileAlt />, color: '#54a0ff', description: 'User Interface Design' },
-        { name: 'Networking', icon: <FaRocket />, color: '#00d2d3', description: 'Network Solutions' },
-        { name: 'All Coding Projects', icon: <FaCode />, color: '#5f27cd', description: 'Custom Development' }
-    ];
-
-    const stats = [
-        { number: 500, label: 'Projects Completed', suffix: '+' },
-        { number: 350, label: 'Happy Clients', suffix: '+' },
-        { number: 50, label: 'Expert Team', suffix: '+' },
-        { number: 98, label: 'Success Rate', suffix: '%' }
+        { name: 'Research & Academic Writing', image: 'https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=400&h=300&fit=crop&q=80', color: '#082A4E', description: 'Professional Research Papers & Dissertations', slug: 'research-writing' },
+        { name: 'Web Development', image: 'https://images.unsplash.com/photo-1547658719-da2b51169166?w=400&h=300&fit=crop&q=80', color: '#10b981', description: 'Custom Websites & Web Apps', slug: 'web-development' },
+        { name: 'Mobile App Development', image: 'https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=400&h=300&fit=crop&q=80', color: '#8b5cf6', description: 'iOS & Android Apps', slug: 'web-app-development' },
+        { name: 'SEO Services', image: 'https://images.unsplash.com/photo-1562577309-4932fdd64cd1?w=400&h=300&fit=crop&q=80', color: '#082A4E', description: 'Search Engine Optimization', slug: 'seo' },
+        { name: 'Medical Writing', image: 'https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=400&h=300&fit=crop&q=80', color: '#f093fb', description: 'Healthcare Documentation', slug: 'medical-writing' },
+        { name: 'Digital Marketing', image: 'https://images.unsplash.com/photo-1611926653458-09294b3142bf?w=400&h=300&fit=crop&q=80', color: '#ef4444', description: 'Social Media & PPC Campaigns', slug: 'social-media-marketing' },
+        { name: 'Data Analytics', image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400&h=300&fit=crop&q=80', color: '#082A4E', description: 'Business Intelligence & Visualization', slug: 'power-bi' },
+        { name: 'API Development', image: 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=400&h=300&fit=crop&q=80', color: '#082A4E', description: 'Robust RESTful APIs', slug: 'python' },
+        { name: 'Database Management', image: 'https://images.unsplash.com/photo-1555949963-aa79dcee981c?w=400&h=300&fit=crop&q=80', color: '#6366f1', description: 'Database Design & Optimization', slug: 'networking' },
+        { name: 'Tech Support & Maintenance', image: 'https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=400&h=300&fit=crop&q=80', color: '#84cc16', description: '24/7 Technical Support', slug: 'devops' },
+        { name: 'Google Ads Management', image: 'https://images.unsplash.com/photo-1533750349088-cd871a92f312?w=400&h=300&fit=crop&q=80', color: '#f97316', description: 'PPC Campaign Management', slug: 'financial-analysis' },
+        { name: 'E-commerce Solutions', image: 'https://images.unsplash.com/photo-1556740738-b6a63e27c4df?w=400&h=300&fit=crop&q=80', color: '#a855f7', description: 'Shopping Platforms & Integration', slug: 'all-coding-projects' },
+        { name: 'Content Writing', image: 'https://images.unsplash.com/photo-1552664730-d307ca884978?w=400&h=300&fit=crop&q=80', color: '#22c55e', description: 'Blog & Website Content', slug: 'business-writing' },
+        { name: 'UI/UX Design', image: 'https://images.unsplash.com/photo-1561070791-2526d30994b5?w=400&h=300&fit=crop&q=80', color: '#54a0ff', description: 'User Interface Design', slug: 'ui-ux' }
     ];
 
     return (
@@ -53,34 +41,9 @@ const Home = () => {
                         <p>Your Trusted Partner for Professional IT Services</p>
                         <p>We deliver excellence in Research Writing, Web Development, SEO, and more</p>
                         <div className="hero-buttons">
-                            <a href="/services" className="btn btn-primary">Explore Services</a>
+                            <a href="/services" className="btn btn-primary">Get Started</a>
                             <a href="/contact" className="btn btn-secondary">Contact Us</a>
                         </div>
-                    </div>
-                </div>
-            </section>
-
-            {/* Stats Section with CountUp Animation */}
-            <section className="stats-section" ref={ref}>
-                <div className="container">
-                    <div className="stats-grid">
-                        {stats.map((stat, index) => (
-                            <div
-                                key={index}
-                                className="stat-card"
-                            >
-                                <div className="stat-number">
-                                    {inView && (
-                                        <CountUp
-                                            end={stat.number}
-                                            duration={2.5}
-                                            suffix={stat.suffix}
-                                        />
-                                    )}
-                                </div>
-                                <div className="stat-label">{stat.label}</div>
-                            </div>
-                        ))}
                     </div>
                 </div>
             </section>
@@ -95,19 +58,24 @@ const Home = () => {
 
                     <div className="services-grid">
                         {services.map((service, index) => (
-                            <motion.div
+                            <a
                                 key={index}
-                                className="service-card"
-                                style={{ borderTop: `4px solid ${service.color}` }}
-                                whileHover={{ scale: 1.05 }}
-                                transition={{ duration: 0.3 }}
+                                href={`/services?service=${service.slug}`}
+                                className="service-card-link"
                             >
-                                <div className="service-icon" style={{ color: service.color }}>
-                                    {service.icon}
-                                </div>
-                                <h3>{service.name}</h3>
-                                <p>{service.description}</p>
-                            </motion.div>
+                                <motion.div
+                                    className="service-card"
+                                    style={{ borderTop: `4px solid ${service.color}` }}
+                                    whileHover={{ scale: 1.05 }}
+                                    transition={{ duration: 0.3 }}
+                                >
+                                    <div className="service-image">
+                                        <img src={service.image} alt={service.name} className="service-img" />
+                                    </div>
+                                    <h3>{service.name}</h3>
+                                    <p>{service.description}</p>
+                                </motion.div>
+                            </a>
                         ))}
                     </div>
 
@@ -227,28 +195,29 @@ const Home = () => {
 
                     <div className="why-us-grid">
                         <div className="why-us-card">
-                            <h3>✔ 100% Plagiarism-Free</h3>
-                            <p>Original content guaranteed with quality assurance</p>
+                            <div className="why-us-icon">💰</div>
+                            <h3>Cost Efficient</h3>
+                            <p>Premium quality at competitive rates</p>
                         </div>
                         <div className="why-us-card">
-                            <h3>✔ On-Time Delivery</h3>
-                            <p>We respect deadlines and deliver punctually</p>
+                            <div className="why-us-icon">⏱️</div>
+                            <h3>Minimal Timelines</h3>
+                            <p>Fast turnaround without compromising quality</p>
                         </div>
                         <div className="why-us-card">
-                            <h3>✔ Expert Team</h3>
-                            <p>Experienced professionals in every domain</p>
+                            <div className="why-us-icon">✅</div>
+                            <h3>Quality Standards</h3>
+                            <p>100% plagiarism-free & thoroughly tested</p>
                         </div>
                         <div className="why-us-card">
-                            <h3>✔ Confidential & Secure</h3>
-                            <p>Your data and projects are safe with us</p>
+                            <div className="why-us-icon">⚙️</div>
+                            <h3>Project Management</h3>
+                            <p>Professional approach to every project</p>
                         </div>
                         <div className="why-us-card">
-                            <h3>✔ Revision Support</h3>
-                            <p>Free revisions until you're satisfied</p>
-                        </div>
-                        <div className="why-us-card">
-                            <h3>✔ Affordable Pricing</h3>
-                            <p>Quality services at competitive rates</p>
+                            <div className="why-us-icon">🎯</div>
+                            <h3>Lifetime Support</h3>
+                            <p>Dedicated support after project completion</p>
                         </div>
                     </div>
                 </div>

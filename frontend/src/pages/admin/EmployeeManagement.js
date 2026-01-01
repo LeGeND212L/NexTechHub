@@ -399,19 +399,16 @@ const EmployeeManagement = () => {
 
                             <div className="form-group">
                                 <label><FaDollarSign /> Monthly Salary (PKR)</label>
-                                <div className="salary-input-wrapper">
-                                    <span className="currency-prefix">PKR</span>
-                                    <input
-                                        type="number"
-                                        name="salary"
-                                        value={formData.salary}
-                                        onChange={handleChange}
-                                        required
-                                        placeholder="Enter monthly salary in Pakistani Rupees"
-                                        min="0"
-                                        step="1000"
-                                    />
-                                </div>
+                                <input
+                                    type="number"
+                                    name="salary"
+                                    value={formData.salary}
+                                    onChange={handleChange}
+                                    required
+                                    placeholder="Enter monthly salary in Pakistani Rupees"
+                                    min="0"
+                                    step="1000"
+                                />
                             </div>
 
                             <div className="form-actions">
