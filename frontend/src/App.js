@@ -22,6 +22,7 @@ import EmployeeManagement from './pages/admin/EmployeeManagement';
 import ProjectManagement from './pages/admin/ProjectManagement';
 import TaskManagement from './pages/admin/TaskManagement';
 import PaymentManagement from './pages/admin/PaymentManagement';
+import MessageManagement from './pages/admin/MessageManagement';
 
 // Employee Pages
 import EmployeeDashboard from './pages/employee/EmployeeDashboard';
@@ -100,6 +101,14 @@ function App() {
                             element={
                                 <AdminRoute>
                                     <PaymentManagement />
+                                </AdminRoute>
+                            }
+                        />
+                        <Route
+                            path="/admin/messages"
+                            element={
+                                <AdminRoute>
+                                    <MessageManagement />
                                 </AdminRoute>
                             }
                         />

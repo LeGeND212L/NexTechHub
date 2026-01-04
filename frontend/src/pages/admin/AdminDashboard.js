@@ -13,14 +13,14 @@ import {
     FaArrowUp,
     FaArrowDown,
     FaSignOutAlt,
-    FaExclamationTriangle
+    FaInbox
 } from 'react-icons/fa';
 import './AdminDashboard.css';
 
 const AdminDashboard = () => {
     const navigate = useNavigate();
     const { logout } = useAuth();
-    const [showLogoutDialog, setShowLogoutDialog] = useState(false);
+    const [showLogoutModal, setShowLogoutModal] = useState(false);
     const [stats, setStats] = useState({
         totalEmployees: 0,
         activeProjects: 0,
@@ -38,17 +38,13 @@ const AdminDashboard = () => {
     }, []);
 
     const handleLogout = () => {
-        setShowLogoutDialog(true);
+        setShowLogoutModal(true);
     };
 
     const confirmLogout = () => {
         logout();
         navigate('/login');
         toast.success('Logged out successfully');
-    };
-
-    const cancelLogout = () => {
-        setShowLogoutDialog(false);
     };
 
     const fetchDashboardData = async () => {
@@ -212,6 +208,12 @@ const AdminDashboard = () => {
                             </div>
                             <span>Process Payment</span>
                         </Link>
+                        <Link to="/admin/messages" className="action-btn">
+                            <div className="action-icon" style={{ background: '#3b82f6' }}>
+                                <FaInbox />
+                            </div>
+                            <span>View Messages</span>
+                        </Link>
                     </div>
                 </div>
 
@@ -244,22 +246,20 @@ const AdminDashboard = () => {
                 </div>
             </div>
 
-            {/* Logout Confirmation Dialog */}
-            {showLogoutDialog && (
-                <div className="logout-modal-overlay" onClick={cancelLogout}>
+            {/* Logout Confirmation Modal */}
+            {showLogoutModal && (
+                <div className="modal-overlay" onClick={() => setShowLogoutModal(false)}>
                     <div className="logout-modal-content" onClick={(e) => e.stopPropagation()}>
-                        <div className="logout-modal-icon">
-                            <FaExclamationTriangle />
+                        <div className="logout-modal-header">
+                            <FaSignOutAlt />
+                            <h2>Confirm Logout</h2>
                         </div>
-                        <h3 className="logout-modal-title">Confirm Logout</h3>
-                        <p className="logout-modal-message">
-                            Are you sure you want to logout from the admin panel?
-                        </p>
+                        <p className="logout-modal-message">Are you sure you want to logout?</p>
                         <div className="logout-modal-actions">
-                            <button className="logout-btn-cancel" onClick={cancelLogout}>
+                            <button className="btn btn-secondary" onClick={() => setShowLogoutModal(false)}>
                                 Cancel
                             </button>
-                            <button className="logout-btn-confirm" onClick={confirmLogout}>
+                            <button className="btn btn-danger" onClick={confirmLogout}>
                                 <FaSignOutAlt /> Logout
                             </button>
                         </div>

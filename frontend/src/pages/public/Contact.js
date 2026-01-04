@@ -1,33 +1,216 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
+import api from '../../utils/api';
+import { toast } from 'react-toastify';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
-import { FaPhone, FaEnvelope, FaMapMarkerAlt, FaClock, FaFacebook, FaTwitter, FaLinkedin, FaInstagram } from 'react-icons/fa';
+import { FaPhone, FaEnvelope, FaMapMarkerAlt, FaClock, FaFacebook, FaTwitter, FaLinkedin, FaInstagram, FaChevronDown } from 'react-icons/fa';
 import './Contact.css';
+
+// Country codes database with validation rules
+const COUNTRY_CODES = [
+    { name: 'Pakistan', code: '+92', flag: '🇵🇰', digitLength: 10, pattern: /^\d{10}$/ },
+    { name: 'United States', code: '+1', flag: '🇺🇸', digitLength: 10, pattern: /^\d{10}$/ },
+    { name: 'United Kingdom', code: '+44', flag: '🇬🇧', digitLength: 10, pattern: /^\d{10}$/ },
+    { name: 'Canada', code: '+1', flag: '🇨🇦', digitLength: 10, pattern: /^\d{10}$/ },
+    { name: 'Australia', code: '+61', flag: '🇦🇺', digitLength: 9, pattern: /^\d{9}$/ },
+    { name: 'Germany', code: '+49', flag: '🇩🇪', digitLength: 11, pattern: /^\d{11}$/ },
+    { name: 'France', code: '+33', flag: '🇫🇷', digitLength: 9, pattern: /^\d{9}$/ },
+    { name: 'India', code: '+91', flag: '🇮🇳', digitLength: 10, pattern: /^\d{10}$/ },
+    { name: 'Japan', code: '+81', flag: '🇯🇵', digitLength: 10, pattern: /^\d{10}$/ },
+    { name: 'China', code: '+86', flag: '🇨🇳', digitLength: 11, pattern: /^\d{11}$/ },
+    { name: 'Dubai/UAE', code: '+971', flag: '🇦🇪', digitLength: 9, pattern: /^\d{9}$/ },
+    { name: 'Saudi Arabia', code: '+966', flag: '🇸🇦', digitLength: 9, pattern: /^\d{9}$/ },
+];
 
 const Contact = () => {
     const [formData, setFormData] = useState({
         name: '',
         email: '',
+        countryCode: COUNTRY_CODES[0], // Default to Pakistan
         phone: '',
         subject: '',
         message: ''
     });
+    const [errors, setErrors] = useState({});
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [showCountryDropdown, setShowCountryDropdown] = useState(false);
+    const [showSuccessModal, setShowSuccessModal] = useState(false);
+
+    const validateForm = () => {
+        const newErrors = {};
+
+        // Name validation
+        if (!formData.name.trim()) {
+            newErrors.name = 'Name is required';
+        } else if (formData.name.trim().length < 2) {
+            newErrors.name = 'Name must be at least 2 characters';
+        } else if (formData.name.trim().length > 100) {
+            newErrors.name = 'Name cannot exceed 100 characters';
+        } else if (!/^[a-zA-Z\s'-]+$/.test(formData.name)) {
+            newErrors.name = 'Name can only contain letters, spaces, hyphens, and apostrophes';
+        }
+
+        // Email validation - stronger regex
+        if (!formData.email.trim()) {
+            newErrors.email = 'Email is required';
+        } else {
+            const emailRegex = /^[a-zA-Z0-9._%-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+            if (!emailRegex.test(formData.email.trim())) {
+                newErrors.email = 'Please enter a valid email address (e.g., user@example.com)';
+            }
+        }
+
+        // Phone validation (optional but validated if provided)
+        if (formData.phone.trim()) {
+            const phoneDigits = formData.phone.trim().replace(/\D/g, '');
+
+            // Check if phone matches the selected country's digit length
+            if (phoneDigits.length !== formData.countryCode.digitLength) {
+                newErrors.phone = `Please enter exactly ${formData.countryCode.digitLength} digits for ${formData.countryCode.name}`;
+            }
+            // Check if all characters are digits or allowed formatting characters
+            else if (!/^[0-9\s\-()]+$/.test(formData.phone)) {
+                newErrors.phone = 'Phone can only contain numbers, spaces, hyphens, and parentheses';
+            }
+        }
+
+        // Subject validation
+        if (!formData.subject.trim()) {
+            newErrors.subject = 'Subject is required';
+        } else if (formData.subject.trim().length < 3) {
+            newErrors.subject = 'Subject must be at least 3 characters';
+        } else if (formData.subject.trim().length > 200) {
+            newErrors.subject = 'Subject cannot exceed 200 characters';
+        }
+
+        // Message validation
+        if (!formData.message.trim()) {
+            newErrors.message = 'Message is required';
+        } else if (formData.message.trim().length < 10) {
+            newErrors.message = 'Message must be at least 10 characters';
+        } else if (formData.message.trim().length > 2000) {
+            newErrors.message = 'Message cannot exceed 2000 characters';
+        }
+
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    };
 
     const handleChange = (e) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
+        const { name, value } = e.target;
+        let formattedValue = value;
+
+        // Format phone input - only allow digits and formatting characters
+        if (name === 'phone') {
+            // Remove non-digit characters to get clean number
+            const digitsOnly = value.replace(/\D/g, '');
+            // Limit to the selected country's digit length
+            const limitedDigits = digitsOnly.slice(0, formData.countryCode.digitLength);
+
+            // Format intelligently based on digit length
+            if (formData.countryCode.digitLength === 10) {
+                // Format as: XXX-XXXX-XXXX
+                if (limitedDigits.length <= 3) {
+                    formattedValue = limitedDigits;
+                } else if (limitedDigits.length <= 6) {
+                    formattedValue = limitedDigits.slice(0, 3) + '-' + limitedDigits.slice(3);
+                } else {
+                    formattedValue = limitedDigits.slice(0, 3) + '-' + limitedDigits.slice(3, 6) + '-' + limitedDigits.slice(6);
+                }
+            } else if (formData.countryCode.digitLength === 9) {
+                // Format as: XXX-XXXX-XXX
+                if (limitedDigits.length <= 3) {
+                    formattedValue = limitedDigits;
+                } else if (limitedDigits.length <= 6) {
+                    formattedValue = limitedDigits.slice(0, 3) + '-' + limitedDigits.slice(3);
+                } else {
+                    formattedValue = limitedDigits.slice(0, 3) + '-' + limitedDigits.slice(3, 6) + '-' + limitedDigits.slice(6);
+                }
+            } else if (formData.countryCode.digitLength === 11) {
+                // Format as: XXX-XXXX-XXXX-X
+                if (limitedDigits.length <= 3) {
+                    formattedValue = limitedDigits;
+                } else if (limitedDigits.length <= 6) {
+                    formattedValue = limitedDigits.slice(0, 3) + '-' + limitedDigits.slice(3);
+                } else if (limitedDigits.length <= 9) {
+                    formattedValue = limitedDigits.slice(0, 3) + '-' + limitedDigits.slice(3, 6) + '-' + limitedDigits.slice(6);
+                } else {
+                    formattedValue = limitedDigits.slice(0, 3) + '-' + limitedDigits.slice(3, 6) + '-' + limitedDigits.slice(6, 9) + '-' + limitedDigits.slice(9);
+                }
+            } else {
+                formattedValue = limitedDigits;
+            }
+        }
+
+        setFormData({ ...formData, [name]: formattedValue });
+
+        // Clear error for this field when user starts typing
+        if (errors[name]) {
+            setErrors({ ...errors, [name]: '' });
+        }
+    };
+
+    const handleCountrySelect = (country) => {
+        setFormData({ ...formData, countryCode: country, phone: '' });
+        setShowCountryDropdown(false);
+        if (errors.phone) {
+            setErrors({ ...errors, phone: '' });
+        }
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        // Validate form
+        if (!validateForm()) {
+            toast.error('Please fix the errors in the form');
+            return;
+        }
+
         setIsSubmitting(true);
-        // Simulate form submission
-        setTimeout(() => {
-            alert('Thank you for contacting us! We will get back to you soon.');
-            setFormData({ name: '', email: '', phone: '', subject: '', message: '' });
+
+        try {
+            // Format phone number with country code prefix
+            const formattedPhone = formData.phone.trim()
+                ? formData.countryCode.code + formData.phone.replace(/\D/g, '')
+                : null;
+
+            const response = await api.post('/contacts', {
+                name: formData.name.trim(),
+                email: formData.email.trim().toLowerCase(),
+                phone: formattedPhone,
+                countryCode: formData.countryCode.code,
+                subject: formData.subject.trim(),
+                message: formData.message.trim()
+            });
+
+            if (response.data.success) {
+                setShowSuccessModal(true);
+                setFormData({
+                    name: '',
+                    email: '',
+                    countryCode: COUNTRY_CODES[0],
+                    phone: '',
+                    subject: '',
+                    message: ''
+                });
+                setErrors({});
+            }
+
+        } catch (error) {
+            console.error('Contact form error:', error);
+
+            if (error.response?.data?.message) {
+                toast.error(error.response.data.message);
+            } else if (error.response?.status === 429) {
+                toast.error('Too many requests. Please wait a few minutes before trying again.');
+            } else {
+                toast.error('Failed to send message. Please try again later.');
+            }
+        } finally {
             setIsSubmitting(false);
-        }, 1500);
+        }
     };
 
     const contactInfo = [
@@ -126,9 +309,11 @@ const Contact = () => {
                                         name="name"
                                         value={formData.name}
                                         onChange={handleChange}
-                                        required
                                         placeholder="John Doe"
+                                        className={errors.name ? 'error' : ''}
+                                        maxLength="100"
                                     />
+                                    {errors.name && <span className="error-message">{errors.name}</span>}
                                 </div>
 
                                 <div className="form-group">
@@ -139,21 +324,69 @@ const Contact = () => {
                                         name="email"
                                         value={formData.email}
                                         onChange={handleChange}
-                                        required
                                         placeholder="john@example.com"
+                                        className={errors.email ? 'error' : ''}
                                     />
+                                    {errors.email && <span className="error-message">{errors.email}</span>}
                                 </div>
 
                                 <div className="form-group">
-                                    <label htmlFor="phone">Phone Number</label>
-                                    <input
-                                        type="tel"
-                                        id="phone"
-                                        name="phone"
-                                        value={formData.phone}
-                                        onChange={handleChange}
-                                        placeholder="+1 (555) 123-4567"
-                                    />
+                                    <label>Phone Number</label>
+                                    <div className="phone-input-group">
+                                        {/* Country Code Dropdown */}
+                                        <div className="country-select-container">
+                                            <button
+                                                type="button"
+                                                className="country-select-button"
+                                                onClick={() => setShowCountryDropdown(!showCountryDropdown)}
+                                                title="Select country"
+                                            >
+                                                <span className="country-flag">{formData.countryCode.flag}</span>
+                                                <span className="country-code">{formData.countryCode.code}</span>
+                                                <FaChevronDown className={`dropdown-icon ${showCountryDropdown ? 'open' : ''}`} />
+                                            </button>
+
+                                            {/* Dropdown Menu */}
+                                            {showCountryDropdown && (
+                                                <motion.div
+                                                    className="country-dropdown-menu"
+                                                    initial={{ opacity: 0, y: -10 }}
+                                                    animate={{ opacity: 1, y: 0 }}
+                                                    exit={{ opacity: 0, y: -10 }}
+                                                    transition={{ duration: 0.2 }}
+                                                >
+                                                    {COUNTRY_CODES.map((country, index) => (
+                                                        <button
+                                                            key={index}
+                                                            type="button"
+                                                            className={`country-option ${formData.countryCode.code === country.code && formData.countryCode.name === country.name ? 'active' : ''}`}
+                                                            onClick={() => handleCountrySelect(country)}
+                                                        >
+                                                            <span className="option-flag">{country.flag}</span>
+                                                            <span className="option-name">{country.name}</span>
+                                                            <span className="option-code">{country.code}</span>
+                                                        </button>
+                                                    ))}
+                                                </motion.div>
+                                            )}
+                                        </div>
+
+                                        {/* Phone Input */}
+                                        <input
+                                            type="tel"
+                                            id="phone"
+                                            name="phone"
+                                            value={formData.phone}
+                                            onChange={handleChange}
+                                            placeholder="300-123-4567"
+                                            className={`phone-input ${errors.phone ? 'error' : ''}`}
+                                            title={`Enter phone number for ${formData.countryCode.name}`}
+                                        />
+                                    </div>
+                                    <small className="form-helper">
+                                        Enter {formData.countryCode.digitLength} digits for {formData.countryCode.name}. Country code {formData.countryCode.code} will be added automatically.
+                                    </small>
+                                    {errors.phone && <span className="error-message">{errors.phone}</span>}
                                 </div>
 
                                 <div className="form-group">
@@ -164,9 +397,11 @@ const Contact = () => {
                                         name="subject"
                                         value={formData.subject}
                                         onChange={handleChange}
-                                        required
                                         placeholder="Project Inquiry"
+                                        className={errors.subject ? 'error' : ''}
+                                        maxLength="200"
                                     />
+                                    {errors.subject && <span className="error-message">{errors.subject}</span>}
                                 </div>
 
                                 <div className="form-group">
@@ -176,10 +411,13 @@ const Contact = () => {
                                         name="message"
                                         value={formData.message}
                                         onChange={handleChange}
-                                        required
                                         rows="6"
                                         placeholder="Tell us about your project..."
+                                        className={errors.message ? 'error' : ''}
+                                        maxLength="2000"
                                     ></textarea>
+                                    <div className="char-count">{formData.message.length}/2000</div>
+                                    {errors.message && <span className="error-message">{errors.message}</span>}
                                 </div>
 
                                 <button
@@ -232,6 +470,84 @@ const Contact = () => {
                     </div>
                 </div>
             </section>
+
+            {/* Success Modal */}
+            {showSuccessModal && (
+                <motion.div
+                    className="success-modal-overlay"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    onClick={() => setShowSuccessModal(false)}
+                >
+                    <motion.div
+                        className="success-modal-content"
+                        initial={{ scale: 0.5, opacity: 0, y: -50 }}
+                        animate={{ scale: 1, opacity: 1, y: 0 }}
+                        exit={{ scale: 0.5, opacity: 0, y: 50 }}
+                        transition={{ type: "spring", duration: 0.5 }}
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <motion.div
+                            className="success-icon-wrapper"
+                            initial={{ scale: 0 }}
+                            animate={{ scale: 1 }}
+                            transition={{ delay: 0.1, type: "spring", stiffness: 200, damping: 10 }}
+                        >
+                            <motion.div
+                                className="success-circle"
+                                initial={{ scale: 0, opacity: 0 }}
+                                animate={{ scale: 1, opacity: 1 }}
+                                transition={{ delay: 0.2, duration: 0.4, ease: "easeOut" }}
+                            >
+                                <motion.svg
+                                    className="success-tick"
+                                    viewBox="0 0 24 24"
+                                    initial={{ pathLength: 0, opacity: 0 }}
+                                    animate={{ pathLength: 1, opacity: 1 }}
+                                    transition={{ delay: 0.5, duration: 0.6, ease: "easeInOut" }}
+                                >
+                                    <motion.path
+                                        d="M5 13l4 4L19 7"
+                                        fill="none"
+                                        stroke="#ffffff"
+                                        strokeWidth="2.5"
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                    />
+                                </motion.svg>
+                            </motion.div>
+                        </motion.div>
+                        <motion.h2
+                            className="success-modal-title"
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.7, duration: 0.4 }}
+                        >
+                            Message Sent Successfully!
+                        </motion.h2>
+                        <motion.p
+                            className="success-modal-message"
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.85, duration: 0.4 }}
+                        >
+                            Thank you for contacting us! We have received your message and will get back to you within 24 hours.
+                        </motion.p>
+                        <motion.button
+                            className="success-modal-button"
+                            onClick={() => setShowSuccessModal(false)}
+                            initial={{ opacity: 0, scale: 0.8 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            transition={{ delay: 1, duration: 0.3 }}
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                        >
+                            Got it!
+                        </motion.button>
+                    </motion.div>
+                </motion.div>
+            )}
 
             <Footer />
         </div>

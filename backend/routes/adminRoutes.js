@@ -229,4 +229,32 @@ router.put('/employees/:id/toggle-status', async (req, res) => {
     }
 });
 
+// @route   GET /api/admin/employees/check-departments
+// @desc    Check which employees are missing departments
+// @access  Private/Admin
+router.get('/employees-check-departments', async (req, res) => {
+    try {
+        const allEmployees = await User.find({ role: 'employee' });
+        const missingDepartment = allEmployees.filter(emp => !emp.department || emp.department.trim() === '');
+
+        res.json({
+            success: true,
+            total: allEmployees.length,
+            missingDepartment: missingDepartment.length,
+            employees: missingDepartment.map(emp => ({
+                _id: emp._id,
+                name: emp.name,
+                email: emp.email,
+                designation: emp.designation
+            }))
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: 'Failed to check departments',
+            error: error.message
+        });
+    }
+});
+
 module.exports = router;

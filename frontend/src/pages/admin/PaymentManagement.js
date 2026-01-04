@@ -25,6 +25,7 @@ const PaymentManagement = () => {
     const [employees, setEmployees] = useState([]);
     const [loading, setLoading] = useState(true);
     const [showModal, setShowModal] = useState(false);
+    const [showLogoutModal, setShowLogoutModal] = useState(false);
     const [formData, setFormData] = useState({
         employee: '',
         amount: '',
@@ -37,11 +38,14 @@ const PaymentManagement = () => {
     }, []);
 
     const handleLogout = () => {
-        if (window.confirm('Are you sure you want to logout?')) {
-            logout();
-            navigate('/login');
-            toast.success('Logged out successfully');
-        }
+        setShowLogoutModal(true);
+    };
+
+    const confirmLogout = () => {
+        logout();
+        navigate('/login');
+        toast.success('Logged out successfully');
+        setShowLogoutModal(false);
     };
 
     const fetchData = async () => {
@@ -98,18 +102,41 @@ const PaymentManagement = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        // Validation
+        // === VALIDATION 1: Check all required fields are filled ===
         if (!formData.employee || !formData.amount || !formData.month || !formData.year) {
-            toast.error('Please fill in all required fields');
+            toast.error('❌ Please fill in all required fields');
             return;
         }
 
+        // === VALIDATION 2: Validate payment amount ===
         const amount = Number(formData.amount);
         if (isNaN(amount) || amount <= 0) {
-            toast.error('Please enter a valid payment amount');
+            toast.error('❌ Please enter a valid payment amount (must be greater than 0)');
             return;
         }
 
+        if (amount > 500000) {
+            toast.error('❌ Payment amount cannot exceed 500,000 PKR');
+            return;
+        }
+
+        // === VALIDATION 3: Prevent future year payments ===
+        const currentYear = new Date().getFullYear();
+        const year = Number(formData.year);
+        if (year > currentYear) {
+            toast.error('❌ Cannot record payment for future years');
+            return;
+        }
+
+        // === VALIDATION 4: Prevent payments for current future months ===
+        const currentMonth = new Date().getMonth(); // 0-11
+        const monthIndex = months.indexOf(formData.month);
+        if (year === currentYear && monthIndex > currentMonth) {
+            toast.error('❌ Cannot record payment for future months in the current year');
+            return;
+        }
+
+        // === VALIDATION 5: Check if same month salary already recorded (DUPLICATE MONTH) ===
         const isLocked = payments.some((p) => {
             const sameEmployee = (p.employee?._id || p.employee) === formData.employee;
             const sameMonth = String(p.month) === String(formData.month);
@@ -119,7 +146,27 @@ const PaymentManagement = () => {
         });
 
         if (isLocked) {
-            toast.error('This month is locked for this employee (salary already recorded)');
+            toast.error('🔒 This month is locked for this employee (salary already recorded)');
+            return;
+        }
+
+        // === VALIDATION 6: Prevent multiple payments in same month (pending) ===
+        const hasPendingPayment = payments.some((p) => {
+            const sameEmployee = (p.employee?._id || p.employee) === formData.employee;
+            const sameMonth = String(p.month) === String(formData.month);
+            const sameYear = String(p.year) === String(formData.year);
+            return sameEmployee && sameMonth && sameYear;
+        });
+
+        if (hasPendingPayment) {
+            toast.error('⚠️ A payment for this employee in this month already exists');
+            return;
+        }
+
+        // === VALIDATION 7: Check if employee still exists (not deleted) ===
+        const selectedEmployee = employees.find(emp => emp._id === formData.employee);
+        if (!selectedEmployee) {
+            toast.error('❌ Selected employee no longer exists');
             return;
         }
 
@@ -220,7 +267,6 @@ const PaymentManagement = () => {
                     <thead>
                         <tr>
                             <th>Employee</th>
-                            <th>Department</th>
                             <th>Amount</th>
                             <th>Period</th>
                             <th>Date</th>
@@ -243,7 +289,6 @@ const PaymentManagement = () => {
                                             </div>
                                         </div>
                                     </td>
-                                    <td>{payment.employee?.department || 'N/A'}</td>
                                     <td className="amount">PKR {Number(payment.amount).toLocaleString()}</td>
                                     <td>{payment.month} {payment.year}</td>
                                     <td>{new Date(payment.paymentDate).toLocaleDateString()}</td>
@@ -265,7 +310,7 @@ const PaymentManagement = () => {
                             ))
                         ) : (
                             <tr>
-                                <td colSpan="7" className="no-data">
+                                <td colSpan="6" className="no-data">
                                     <FaHistory />
                                     <p>No payment records found</p>
                                 </td>
@@ -317,7 +362,7 @@ const PaymentManagement = () => {
 
                             <div className="form-row">
                                 <div className="form-group">
-                                    <label><FaCalendar /> Month</label>
+                                    <label><FaCalendar /> Month *</label>
                                     <select
                                         name="month"
                                         value={formData.month}
@@ -325,16 +370,21 @@ const PaymentManagement = () => {
                                         required
                                     >
                                         <option value="">Select Month</option>
-                                        {months.map(month => (
-                                            <option key={month} value={month}>
-                                                {month}
-                                            </option>
-                                        ))}
+                                        {months.map((month, idx) => {
+                                            const currentMonth = new Date().getMonth();
+                                            const currentYear = new Date().getFullYear();
+                                            const isDisabled = Number(formData.year) === currentYear && idx > currentMonth;
+                                            return (
+                                                <option key={month} value={month} disabled={isDisabled}>
+                                                    {month} {isDisabled ? '(Future)' : ''}
+                                                </option>
+                                            );
+                                        })}
                                     </select>
                                 </div>
 
                                 <div className="form-group">
-                                    <label><FaCalendar /> Year</label>
+                                    <label><FaCalendar /> Year *</label>
                                     <input
                                         type="number"
                                         name="year"
@@ -342,7 +392,7 @@ const PaymentManagement = () => {
                                         onChange={handleChange}
                                         required
                                         min="2020"
-                                        max="2050"
+                                        max={new Date().getFullYear()}
                                     />
                                 </div>
                             </div>
@@ -356,6 +406,26 @@ const PaymentManagement = () => {
                                 </button>
                             </div>
                         </form>
+                    </div>
+                </div>
+            )}
+
+            {showLogoutModal && (
+                <div className="modal-overlay" onClick={() => setShowLogoutModal(false)}>
+                    <div className="logout-modal-content" onClick={(e) => e.stopPropagation()}>
+                        <div className="logout-modal-header">
+                            <FaSignOutAlt />
+                            <h2>Confirm Logout</h2>
+                        </div>
+                        <p className="logout-modal-message">Are you sure you want to logout?</p>
+                        <div className="logout-modal-actions">
+                            <button className="btn btn-secondary" onClick={() => setShowLogoutModal(false)}>
+                                Cancel
+                            </button>
+                            <button className="btn btn-danger" onClick={confirmLogout}>
+                                <FaSignOutAlt /> Logout
+                            </button>
+                        </div>
                     </div>
                 </div>
             )}

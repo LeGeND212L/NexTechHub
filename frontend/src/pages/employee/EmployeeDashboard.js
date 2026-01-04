@@ -19,7 +19,7 @@ import './EmployeeDashboard.css';
 const EmployeeDashboard = () => {
     const { user, logout } = useAuth();
     const navigate = useNavigate();
-    const [showLogoutDialog, setShowLogoutDialog] = useState(false);
+    const [showLogoutModal, setShowLogoutModal] = useState(false);
     const [stats, setStats] = useState({
         totalTasks: 0,
         pendingTasks: 0,
@@ -35,17 +35,13 @@ const EmployeeDashboard = () => {
     }, []);
 
     const handleLogout = () => {
-        setShowLogoutDialog(true);
+        setShowLogoutModal(true);
     };
 
     const confirmLogout = () => {
         logout();
         navigate('/login');
         toast.success('Logged out successfully');
-    };
-
-    const cancelLogout = () => {
-        setShowLogoutDialog(false);
     };
 
     const fetchDashboardData = async () => {
@@ -218,22 +214,20 @@ const EmployeeDashboard = () => {
                 </div>
             </div>
 
-            {/* Logout Confirmation Dialog */}
-            {showLogoutDialog && (
-                <div className="logout-modal-overlay" onClick={cancelLogout}>
+            {/* Logout Confirmation Modal */}
+            {showLogoutModal && (
+                <div className="modal-overlay" onClick={() => setShowLogoutModal(false)}>
                     <div className="logout-modal-content" onClick={(e) => e.stopPropagation()}>
-                        <div className="logout-modal-icon">
-                            <FaExclamationTriangle />
+                        <div className="logout-modal-header">
+                            <FaSignOutAlt />
+                            <h2>Confirm Logout</h2>
                         </div>
-                        <h3 className="logout-modal-title">Confirm Logout</h3>
-                        <p className="logout-modal-message">
-                            Are you sure you want to logout from the employee portal?
-                        </p>
+                        <p className="logout-modal-message">Are you sure you want to logout?</p>
                         <div className="logout-modal-actions">
-                            <button className="logout-btn-cancel" onClick={cancelLogout}>
+                            <button className="btn btn-secondary" onClick={() => setShowLogoutModal(false)}>
                                 Cancel
                             </button>
-                            <button className="logout-btn-confirm" onClick={confirmLogout}>
+                            <button className="btn btn-danger" onClick={confirmLogout}>
                                 <FaSignOutAlt /> Logout
                             </button>
                         </div>

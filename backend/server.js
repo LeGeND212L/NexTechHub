@@ -138,6 +138,7 @@ app.use('/api/tasks', require('./routes/taskRoutes'));
 app.use('/api/payments', require('./routes/paymentRoutes'));
 app.use('/api/reviews', require('./routes/reviewRoutes'));
 app.use('/api/services', require('./routes/serviceRoutes'));
+app.use('/api/contacts', require('./routes/contactRoutes'));
 
 // Error handling middleware
 app.use((err, req, res, next) => {

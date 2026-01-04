@@ -26,6 +26,7 @@ const ProjectManagement = () => {
     const [employees, setEmployees] = useState([]);
     const [loading, setLoading] = useState(true);
     const [showModal, setShowModal] = useState(false);
+    const [showLogoutModal, setShowLogoutModal] = useState(false);
     const [modalType, setModalType] = useState('add');
     const [currentProject, setCurrentProject] = useState(null);
     const [formData, setFormData] = useState({
@@ -42,11 +43,14 @@ const ProjectManagement = () => {
     }, []);
 
     const handleLogout = () => {
-        if (window.confirm('Are you sure you want to logout?')) {
-            logout();
-            navigate('/login');
-            toast.success('Logged out successfully');
-        }
+        setShowLogoutModal(true);
+    };
+
+    const confirmLogout = () => {
+        logout();
+        navigate('/login');
+        toast.success('Logged out successfully');
+        setShowLogoutModal(false);
     };
 
     const fetchData = async () => {
@@ -363,20 +367,7 @@ const ProjectManagement = () => {
                                 </div>
                             </div>
 
-                            <div className="form-row">
-                                <div className="form-group">
-                                    <label>Deadline</label>
-                                    <input
-                                        type="date"
-                                        name="deadline"
-                                        value={formData.deadline}
-                                        onChange={handleChange}
-                                        required
-                                    />
-                                </div>
-                            </div>
-
-                            <div className="form-row">
+                            <div className="form-row status-deadline-row">
                                 <div className="form-group">
                                     <label>Status</label>
                                     <select
@@ -394,20 +385,36 @@ const ProjectManagement = () => {
                                 </div>
 
                                 <div className="form-group">
-                                    <label>Assign Team Members (Hold Ctrl/Cmd for multiple)</label>
-                                    <select
-                                        multiple
-                                        value={formData.assignedTo}
-                                        onChange={handleEmployeeSelect}
+                                    <label>Deadline</label>
+                                    <input
+                                        type="date"
+                                        name="deadline"
+                                        value={formData.deadline}
+                                        onChange={handleChange}
                                         required
-                                        size="4"
-                                    >
-                                        {employees.map(emp => (
-                                            <option key={emp._id} value={emp._id}>
-                                                {emp.name} - {emp.department}
-                                            </option>
-                                        ))}
-                                    </select>
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="form-row assign-row">
+                                <div className="form-group assign-group">
+                                    <label>Assign Team Members (Hold Ctrl/Cmd for multiple)</label>
+                                    <div className="assign-select-wrapper">
+                                        <select
+                                            multiple
+                                            value={formData.assignedTo}
+                                            onChange={handleEmployeeSelect}
+                                            required
+                                            size={Math.min(8, Math.max(5, employees.length || 0))}
+                                            className="assign-select"
+                                        >
+                                            {employees.map(emp => (
+                                                <option key={emp._id} value={emp._id}>
+                                                    {emp.name} - {emp.department}
+                                                </option>
+                                            ))}
+                                        </select>
+                                    </div>
                                 </div>
                             </div>
 
@@ -420,6 +427,26 @@ const ProjectManagement = () => {
                                 </button>
                             </div>
                         </form>
+                    </div>
+                </div>
+            )}
+
+            {showLogoutModal && (
+                <div className="modal-overlay" onClick={() => setShowLogoutModal(false)}>
+                    <div className="logout-modal-content" onClick={(e) => e.stopPropagation()}>
+                        <div className="logout-modal-header">
+                            <FaSignOutAlt />
+                            <h2>Confirm Logout</h2>
+                        </div>
+                        <p className="logout-modal-message">Are you sure you want to logout?</p>
+                        <div className="logout-modal-actions">
+                            <button className="btn btn-secondary" onClick={() => setShowLogoutModal(false)}>
+                                Cancel
+                            </button>
+                            <button className="btn btn-danger" onClick={confirmLogout}>
+                                <FaSignOutAlt /> Logout
+                            </button>
+                        </div>
                     </div>
                 </div>
             )}

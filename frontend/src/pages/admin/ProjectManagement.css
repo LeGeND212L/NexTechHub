@@ -275,6 +275,10 @@
   margin-bottom: 20px;
 }
 
+.status-deadline-row {
+  align-items: start;
+}
+
 .form-row .form-group {
   margin-bottom: 0;
 }
@@ -399,6 +403,65 @@
   height: auto;
 }
 
+.assign-row {
+  grid-template-columns: 1fr 1fr;
+  justify-items: start;
+}
+
+.assign-group {
+  width: 100%;
+}
+
+.assign-select-wrapper {
+  width: 208%;
+  max-width: 208%;
+  min-width: 200%;
+  min-height: 180px;
+  max-height: 260px;
+  overflow: auto;
+  border: 3px solid #00b4ff;
+  border-radius: 10px;
+  background: #e0f0ff;
+  box-shadow: 0 0 0 4px rgba(0, 212, 255, 0.15);
+}
+
+.assign-select {
+  width: 100%;
+  min-width: 100%;
+  max-width: 100%;
+  height: 100%;
+  min-height: 180px;
+  max-height: 260px;
+  border: none;
+  background: transparent;
+  color: #000000;
+  padding: 8px 10px;
+  box-sizing: border-box;
+  font-size: 16px;
+  font-family: inherit;
+  font-weight: 400;
+  overflow: auto;
+  white-space: nowrap;
+}
+
+.assign-select:focus {
+  outline: none;
+  box-shadow: inset 0 0 0 2px rgba(0, 180, 255, 0.6),
+    0 0 0 4px rgba(0, 212, 255, 0.25);
+}
+
+.assign-select option {
+  padding: 10px 12px;
+  background: #e0f0ff;
+  color: #000000;
+  white-space: nowrap;
+}
+
+.assign-group select {
+  background-image: none;
+  padding-right: 12px;
+}
+
 /* Modal Styles */
 .modal-overlay {
   position: fixed;
@@ -418,8 +481,8 @@
 .modal-content {
   background: linear-gradient(135deg, #0a0e1a 0%, #1a1f35 100%);
   border-radius: 20px;
-  width: 90%;
-  max-width: 700px;
+  width: 95%;
+  max-width: 860px;
   max-height: 90vh;
   overflow-y: auto;
   box-shadow: 0 20px 60px rgba(0, 180, 255, 0.3);
@@ -500,4 +563,69 @@
   .projects-grid {
     grid-template-columns: 1fr;
   }
+}
+
+/* Logout Confirmation Modal */
+.logout-modal-content {
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+  border-radius: 20px;
+  width: 90%;
+  max-width: 450px;
+  padding: 32px;
+  box-shadow: 0 20px 60px rgba(239, 68, 68, 0.4);
+  animation: slideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  text-align: center;
+}
+
+.logout-modal-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.logout-modal-header svg {
+  font-size: 48px;
+  color: #ef4444;
+}
+
+.logout-modal-header h2 {
+  font-size: 24px;
+  font-weight: 500;
+  color: #ffffff !important;
+  margin: 0;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.logout-modal-message {
+  color: rgba(255, 255, 255, 0.95) !important;
+  font-size: 16px;
+  line-height: 1.6;
+  margin-bottom: 28px;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.logout-modal-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+.logout-modal-actions .btn {
+  flex: 1;
+  max-width: 150px;
+}
+
+.btn-danger {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  color: white;
+  border: none;
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+
+.btn-danger:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(239, 68, 68, 0.4);
 }

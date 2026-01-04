@@ -56,14 +56,28 @@ router.get('/', async (req, res) => {
         }
 
         const payments = await Payment.find(query)
-            .populate('employee', 'name email designation salary')
+            .populate('employee', 'name email designation salary department')
             .populate('processedBy', 'name email')
             .sort({ paymentDate: -1 });
 
+        // Process payments to ensure department is always present
+        const enrichedPayments = payments.map(payment => {
+            const paymentObj = payment.toObject();
+            if (paymentObj.employee) {
+                // If department is missing, null, undefined, or empty, use designation as fallback
+                const dept = paymentObj.employee.department;
+                if (!dept || (typeof dept === 'string' && dept.trim() === '')) {
+                    paymentObj.employee.department = paymentObj.employee.designation || 'Not Assigned';
+                    console.log(`Fallback applied for employee ${paymentObj.employee.name}: ${paymentObj.employee.department}`);
+                }
+            }
+            return paymentObj;
+        });
+
         res.json({
             success: true,
-            count: payments.length,
-            data: payments
+            count: enrichedPayments.length,
+            data: enrichedPayments
         });
     } catch (error) {
         res.status(500).json({
@@ -80,7 +94,7 @@ router.get('/', async (req, res) => {
 router.get('/:id', async (req, res) => {
     try {
         const payment = await Payment.findById(req.params.id)
-            .populate('employee', 'name email designation salary')
+            .populate('employee', 'name email designation salary department')
             .populate('processedBy', 'name email');
 
         if (!payment) {
@@ -98,9 +112,18 @@ router.get('/:id', async (req, res) => {
             });
         }
 
+        // Ensure department is always present (fallback to designation if missing)
+        const paymentObj = payment.toObject();
+        if (paymentObj.employee) {
+            const dept = paymentObj.employee.department;
+            if (!dept || (typeof dept === 'string' && dept.trim() === '')) {
+                paymentObj.employee.department = paymentObj.employee.designation || 'Not Assigned';
+            }
+        }
+
         res.json({
             success: true,
-            data: payment
+            data: paymentObj
         });
     } catch (error) {
         res.status(500).json({
@@ -122,8 +145,11 @@ router.post('/', authorize('admin'), async (req, res) => {
         const { employee, amount, month, year, bonus, deductions, paymentMethod, transactionId, notes } = req.body;
         const normalizedMonth = normalizeMonth(month);
         const normalizedYear = Number(year);
+        const currentDate = new Date();
+        const currentYear = currentDate.getFullYear();
+        const currentMonth = currentDate.getMonth(); // 0-11
 
-        // Validation
+        // === VALIDATION 1: Check employee is provided ===
         if (!employee) {
             console.error('Validation failed: employee is required');
             return res.status(400).json({
@@ -132,6 +158,7 @@ router.post('/', authorize('admin'), async (req, res) => {
             });
         }
 
+        // === VALIDATION 2: Check month and year are provided ===
         if (!normalizedMonth || !year) {
             console.error('Validation failed: month and year are required');
             return res.status(400).json({
@@ -140,6 +167,7 @@ router.post('/', authorize('admin'), async (req, res) => {
             });
         }
 
+        // === VALIDATION 3: Validate month format ===
         if (!MONTHS.includes(normalizedMonth)) {
             return res.status(400).json({
                 success: false,
@@ -147,14 +175,24 @@ router.post('/', authorize('admin'), async (req, res) => {
             });
         }
 
-        if (!Number.isInteger(normalizedYear) || normalizedYear < 2000 || normalizedYear > 2100) {
+        // === VALIDATION 4: Validate year format and prevent future years ===
+        if (!Number.isInteger(normalizedYear) || normalizedYear < 2000 || normalizedYear > currentYear) {
             return res.status(400).json({
                 success: false,
-                message: 'Invalid year'
+                message: 'Invalid year. Cannot record payment for future years.'
             });
         }
 
-        // Verify employee exists
+        // === VALIDATION 5: Prevent future month in current year ===
+        const monthIndex = MONTHS.indexOf(normalizedMonth);
+        if (normalizedYear === currentYear && monthIndex > currentMonth) {
+            return res.status(400).json({
+                success: false,
+                message: 'Cannot record payment for future months in the current year'
+            });
+        }
+
+        // === VALIDATION 6: Verify employee exists ===
         console.log('Looking up employee:', employee);
         const employeeData = await User.findById(employee);
         if (!employeeData) {
@@ -164,9 +202,13 @@ router.post('/', authorize('admin'), async (req, res) => {
                 message: 'Employee not found'
             });
         }
-        console.log('Employee found:', employeeData.name);
+        console.log('Employee found:', {
+            name: employeeData.name,
+            department: employeeData.department,
+            designation: employeeData.designation
+        });
 
-        // Check if payment already exists for this employee, month, and year
+        // === VALIDATION 7: Check if payment already exists for this employee, month, and year (SAME MONTH DUPLICATE) ===
         const existingPayment = await Payment.findOne({ employee, month: normalizedMonth, year: normalizedYear });
         if (existingPayment) {
             console.error('Duplicate payment found for:', { employee, month, year });
@@ -176,6 +218,7 @@ router.post('/', authorize('admin'), async (req, res) => {
             });
         }
 
+        // === VALIDATION 8: Resolve amount and validate it ===
         const resolvedAmount = amount !== undefined && amount !== null && String(amount).trim() !== ''
             ? Number(amount)
             : Number(employeeData.salary);
@@ -184,6 +227,32 @@ router.post('/', authorize('admin'), async (req, res) => {
             return res.status(400).json({
                 success: false,
                 message: 'Amount must be a valid positive number'
+            });
+        }
+
+        // === VALIDATION 9: Check amount doesn't exceed reasonable limit ===
+        if (resolvedAmount > 500000) {
+            return res.status(400).json({
+                success: false,
+                message: 'Payment amount cannot exceed 500,000 PKR'
+            });
+        }
+
+        // === VALIDATION 10: Validate bonus and deductions ===
+        const resolvedBonus = Number(bonus) || 0;
+        const resolvedDeductions = Number(deductions) || 0;
+
+        if (resolvedBonus < 0 || resolvedDeductions < 0) {
+            return res.status(400).json({
+                success: false,
+                message: 'Bonus and deductions cannot be negative'
+            });
+        }
+
+        if (resolvedBonus + resolvedDeductions > resolvedAmount * 2) {
+            return res.status(400).json({
+                success: false,
+                message: 'Bonus + deductions cannot exceed 2x the base salary'
             });
         }
 
@@ -208,7 +277,7 @@ router.post('/', authorize('admin'), async (req, res) => {
 
         // Populate the payment with employee data
         const populatedPayment = await Payment.findById(payment._id)
-            .populate('employee', 'name email designation salary')
+            .populate('employee', 'name email designation salary department')
             .populate('processedBy', 'name email');
 
         // Generate payslip asynchronously (don't block payment creation)
@@ -317,7 +386,7 @@ router.put('/:id', authorize('admin'), async (req, res) => {
         await payment.save();
 
         const populated = await Payment.findById(payment._id)
-            .populate('employee', 'name email designation')
+            .populate('employee', 'name email designation salary department')
             .populate('processedBy', 'name email');
 
         res.json({

@@ -24,6 +24,7 @@ const EmployeeTasks = () => {
     const [filter, setFilter] = useState(location.state?.filter || 'all');
     const [selectedTask, setSelectedTask] = useState(null);
     const [file, setFile] = useState(null);
+    const [showLogoutModal, setShowLogoutModal] = useState(false);
 
     useEffect(() => {
         fetchTasks();
@@ -71,11 +72,14 @@ const EmployeeTasks = () => {
     }, []);
 
     const handleLogout = () => {
-        if (window.confirm('Are you sure you want to logout?')) {
-            logout();
-            navigate('/login');
-            toast.success('Logged out successfully');
-        }
+        setShowLogoutModal(true);
+    };
+
+    const confirmLogout = () => {
+        logout();
+        navigate('/login');
+        toast.success('Logged out successfully');
+        setShowLogoutModal(false);
     };
 
     const fetchTasks = async () => {
@@ -308,6 +312,26 @@ const EmployeeTasks = () => {
                     </div>
                 )}
             </div>
+
+            {showLogoutModal && (
+                <div className="modal-overlay" onClick={() => setShowLogoutModal(false)}>
+                    <div className="logout-modal-content" onClick={(e) => e.stopPropagation()}>
+                        <div className="logout-modal-header">
+                            <FaSignOutAlt />
+                            <h2>Confirm Logout</h2>
+                        </div>
+                        <p className="logout-modal-message">Are you sure you want to logout?</p>
+                        <div className="logout-modal-actions">
+                            <button className="btn btn-secondary" onClick={() => setShowLogoutModal(false)}>
+                                Cancel
+                            </button>
+                            <button className="btn btn-danger" onClick={confirmLogout}>
+                                <FaSignOutAlt /> Logout
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
