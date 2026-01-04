@@ -22,11 +22,12 @@ connectDB();
 
 // CORS Configuration - Allow multiple Vercel deployments
 const allowedOrigins = [
+    'https://nex-tech-e7pwupc3h-danishs-projects-3d11e95b.vercel.app',
     'https://nex-tech-hub.vercel.app',
     'http://localhost:3000',
     'http://localhost:3001',
     'http://localhost:5000',
-    /https:\/\/nex-tech-hub.*\.vercel\.app$/ // Allow all Vercel preview deployments
+    /https:\/\/nex-tech-.*\.vercel\.app$/ // Allow all Vercel preview deployments
 ];
 
 // Middleware

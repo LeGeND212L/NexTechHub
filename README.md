@@ -33,6 +33,7 @@
 <td width="50%">
 
 #### 👨‍💼 **Admin Dashboard**
+
 - 📊 Comprehensive analytics & reporting
 - 👥 Employee lifecycle management
 - 💼 Project & task assignment
@@ -44,6 +45,7 @@
 <td width="50%">
 
 #### 👤 **Employee Portal**
+
 - 🔒 Secure authentication (JWT)
 - 📋 Personal task dashboard
 - 📤 File upload & management
@@ -57,20 +59,21 @@
 
 ### 🎨 **Advanced Features**
 
-| Feature | Description | Status |
-|---------|-------------|--------|
-| 💳 **Payment Management** | Automated payslip generation with PDF export | ✅ Active |
-| ⭐ **Review System** | Star-based client feedback (no login required) | ✅ Active |
-| 📧 **Contact System** | International phone support with country selector | ✅ Active |
-| 📨 **Message Dashboard** | Admin inbox for client inquiries | ✅ Active |
-| 🔔 **Real-time Notifications** | Socket.IO powered instant updates | ✅ Active |
-| 📱 **PWA Support** | Offline-first progressive web app | 🚧 Planned |
+| Feature                        | Description                                       | Status     |
+| ------------------------------ | ------------------------------------------------- | ---------- |
+| 💳 **Payment Management**      | Automated payslip generation with PDF export      | ✅ Active  |
+| ⭐ **Review System**           | Star-based client feedback (no login required)    | ✅ Active  |
+| 📧 **Contact System**          | International phone support with country selector | ✅ Active  |
+| 📨 **Message Dashboard**       | Admin inbox for client inquiries                  | ✅ Active  |
+| 🔔 **Real-time Notifications** | Socket.IO powered instant updates                 | ✅ Active  |
+| 📱 **PWA Support**             | Offline-first progressive web app                 | 🚧 Planned |
 
 ---
 
 ## 🛠️ **Technology Stack**
 
 ### **Frontend**
+
 ```
 ⚛️  React 18.x          - Modern UI library with hooks
 🎨  CSS3                - Custom styling with gradients & animations
@@ -81,6 +84,7 @@
 ```
 
 ### **Backend**
+
 ```
 🚀  Node.js 16+         - JavaScript runtime
 ⚡  Express.js 4.x      - Web application framework
@@ -92,6 +96,7 @@
 ```
 
 ### **Database**
+
 ```
 🍃  MongoDB 6.0+        - NoSQL document database
 📦  Mongoose 8.x        - Elegant MongoDB ODM
@@ -100,6 +105,7 @@
 ```
 
 ### **DevOps & Tools**
+
 ```
 🐳  Docker Ready        - Containerization support
 ☁️   Vercel/Render      - Deployment ready
@@ -113,6 +119,7 @@
 ## 📦 **Installation**
 
 ### **Prerequisites**
+
 ```bash
 Node.js >= 16.x
 MongoDB >= 6.0
@@ -122,12 +129,14 @@ npm >= 8.x or yarn >= 1.22
 ### **Quick Start**
 
 #### 1️⃣ **Clone the Repository**
+
 ```bash
 git clone https://github.com/LeGeND212L/NexTechHub.git
 cd NexTechHub
 ```
 
 #### 2️⃣ **Backend Setup**
+
 ```bash
 cd backend
 npm install
@@ -146,6 +155,7 @@ npm run dev
 ```
 
 #### 3️⃣ **Frontend Setup**
+
 ```bash
 cd frontend
 npm install
@@ -160,6 +170,7 @@ npm start
 ```
 
 #### 4️⃣ **Create Admin User**
+
 ```bash
 cd backend
 node scripts/createAdmin.js
@@ -207,12 +218,12 @@ NexTechHub/
 
 <div align="center">
 
-| 📝 **Writing Services** | 💻 **Development** | 📊 **Analytics** | 🎨 **Design** |
-|:-----------------------:|:------------------:|:----------------:|:-------------:|
-| Research Writing | Web Development | Power BI | UI/UX Design |
-| Medical Writing | App Development | Data Analysis | Graphic Design |
-| Business Writing | Python Projects | Financial Analysis | Brand Identity |
-| SEO Content | DevOps | Business Intelligence | Social Media |
+| 📝 **Writing Services** | 💻 **Development** |   📊 **Analytics**    | 🎨 **Design**  |
+| :---------------------: | :----------------: | :-------------------: | :------------: |
+|    Research Writing     |  Web Development   |       Power BI        |  UI/UX Design  |
+|     Medical Writing     |  App Development   |     Data Analysis     | Graphic Design |
+|    Business Writing     |  Python Projects   |  Financial Analysis   | Brand Identity |
+|       SEO Content       |       DevOps       | Business Intelligence |  Social Media  |
 
 </div>
 
@@ -221,6 +232,7 @@ NexTechHub/
 ## 👥 **User Roles & Permissions**
 
 ### 🔴 **Admin**
+
 - ✅ Full system access
 - ✅ Employee CRUD operations
 - ✅ Project & task management
@@ -229,6 +241,7 @@ NexTechHub/
 - ✅ System configuration
 
 ### 🟢 **Employee**
+
 - ✅ View assigned tasks
 - ✅ Update task status
 - ✅ Upload deliverables
@@ -237,6 +250,7 @@ NexTechHub/
 - ❌ Cannot access admin features
 
 ### 🔵 **Client** (Public)
+
 - ✅ Submit contact inquiries
 - ✅ Leave reviews
 - ✅ Browse services
@@ -247,6 +261,7 @@ NexTechHub/
 ## 📡 **API Documentation**
 
 ### **Authentication**
+
 ```http
 POST   /api/auth/login      # User login
 POST   /api/auth/register   # Employee registration (Admin only)
@@ -254,6 +269,7 @@ GET    /api/auth/me         # Get current user
 ```
 
 ### **Admin Routes**
+
 ```http
 GET    /api/admin/dashboard             # Dashboard stats
 GET    /api/admin/employees             # List all employees
@@ -263,6 +279,7 @@ DELETE /api/admin/employees/:id         # Delete employee
 ```
 
 ### **Projects & Tasks**
+
 ```http
 GET    /api/projects                    # List projects
 POST   /api/projects                    # Create project
@@ -274,6 +291,7 @@ PUT    /api/tasks/:id/status            # Update task status
 ```
 
 ### **Payments**
+
 ```http
 GET    /api/payments                    # List payments
 POST   /api/payments                    # Create payment
@@ -281,6 +299,7 @@ GET    /api/payments/:id/payslip        # Generate payslip PDF
 ```
 
 ### **Public Routes**
+
 ```http
 POST   /api/contacts                    # Submit contact form
 GET    /api/reviews                     # Get reviews
@@ -293,6 +312,7 @@ GET    /api/services                    # List services
 ## 🔐 **Environment Variables**
 
 ### **Backend (.env)**
+
 ```env
 NODE_ENV=production
 PORT=5000
@@ -303,6 +323,7 @@ FRONTEND_URL=https://yourdomain.com
 ```
 
 ### **Frontend (.env)**
+
 ```env
 REACT_APP_API_URL=https://api.yourdomain.com/api
 REACT_APP_SOCKET_URL=https://api.yourdomain.com
@@ -313,6 +334,7 @@ REACT_APP_SOCKET_URL=https://api.yourdomain.com
 ## 🚀 **Deployment**
 
 ### **Backend (Render/Railway)**
+
 ```bash
 # Build command
 npm install
@@ -325,6 +347,7 @@ Add all .env variables in the dashboard
 ```
 
 ### **Frontend (Vercel/Netlify)**
+
 ```bash
 # Build command
 npm run build
