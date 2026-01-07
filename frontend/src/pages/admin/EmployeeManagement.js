@@ -217,7 +217,6 @@ const EmployeeManagement = () => {
                     </button>
                     <div className="header-title">
                         <h1><FaUsers /> Employee Management</h1>
-                        <p>Manage your team members and their roles</p>
                     </div>
                 </div>
                 <div className="header-actions">

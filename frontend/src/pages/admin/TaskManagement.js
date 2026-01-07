@@ -262,7 +262,6 @@ const TaskManagement = () => {
                     </button>
                     <div>
                         <h1><FaTasks /> Task Management</h1>
-                        <p>Assign and track tasks for your team</p>
                     </div>
                 </div>
                 <div className="header-actions">

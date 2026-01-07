@@ -249,7 +249,6 @@ const PaymentManagement = () => {
                     </button>
                     <div>
                         <h1><FaDollarSign /> Payment Management</h1>
-                        <p>Manage employee salaries and payment history</p>
                     </div>
                 </div>
                 <div className="header-actions">

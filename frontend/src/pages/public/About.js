@@ -10,37 +10,31 @@ const About = () => {
         {
             icon: <FaLightbulb />,
             title: 'Innovation',
-            description: 'We constantly explore new technologies and methodologies to deliver cutting-edge solutions.',
             color: '#f59e0b'
         },
         {
             icon: <FaHeart />,
             title: 'Passion',
-            description: 'We love what we do and it shows in the quality of our work and client relationships.',
             color: '#ef4444'
         },
         {
             icon: <FaAward />,
             title: 'Excellence',
-            description: 'We strive for perfection in every project, ensuring the highest standards of quality.',
             color: '#8b5cf6'
         },
         {
             icon: <FaUsers />,
             title: 'Collaboration',
-            description: 'We believe in teamwork and work closely with clients to achieve their goals.',
             color: '#082A4E'
         },
         {
             icon: <FaRocket />,
             title: 'Growth',
-            description: 'We are committed to continuous learning and helping our clients grow their business.',
             color: '#10b981'
         },
         {
             icon: <FaGlobeAmericas />,
             title: 'Global Reach',
-            description: 'We serve clients worldwide with round-the-clock support and dedicated service.',
             color: '#082A4E'
         }
     ];

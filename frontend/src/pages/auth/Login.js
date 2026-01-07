@@ -107,14 +107,7 @@ const Login = () => {
                             className="btn-login"
                             disabled={loading}
                         >
-                            {loading ? (
-                                <>
-                                    <span className="spinner"></span>
-                                    Logging in...
-                                </>
-                            ) : (
-                                'Login to Dashboard'
-                            )}
+                            {loading ? 'Logging in...' : 'Login'}
                         </button>
                     </form>
 
@@ -126,10 +119,10 @@ const Login = () => {
                 <div className="login-info">
                     <h3>Employee & Admin Portal</h3>
                     <ul>
-                        <li>✓ Secure Access</li>
-                        <li>✓ Real-time Task Tracking</li>
-                        <li>✓ Project Management</li>
-                        <li>✓ Salary & Payment Records</li>
+                        <li>Secure Access</li>
+                        <li>Real-time Task Tracking</li>
+                        <li>Project Management</li>
+                        <li>Salary & Payment Records</li>
                     </ul>
                 </div>
             </div>

@@ -1,12 +1,16 @@
-import React from 'react';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 import Navbar from '../../components/Navbar';
 import HeroParticles from '../../components/HeroParticles';
+import Interactive3DObject from '../../components/Interactive3DObject';
 import Footer from '../../components/Footer';
 import './Home.css';
 
 const Home = () => {
-    const services = [
+    const navigate = useNavigate();
+
+    const services = useMemo(() => ([
         { name: 'Research & Academic Writing', image: 'https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=400&h=300&fit=crop&q=80', color: '#082A4E', description: 'Professional Research Papers & Dissertations', slug: 'research-writing' },
         { name: 'Web Development', image: 'https://images.unsplash.com/photo-1547658719-da2b51169166?w=400&h=300&fit=crop&q=80', color: '#10b981', description: 'Custom Websites & Web Apps', slug: 'web-development' },
         { name: 'Mobile App Development', image: 'https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=400&h=300&fit=crop&q=80', color: '#8b5cf6', description: 'iOS & Android Apps', slug: 'web-app-development' },
@@ -21,13 +25,51 @@ const Home = () => {
         { name: 'E-commerce Solutions', image: 'https://images.unsplash.com/photo-1556740738-b6a63e27c4df?w=400&h=300&fit=crop&q=80', color: '#a855f7', description: 'Shopping Platforms & Integration', slug: 'all-coding-projects' },
         { name: 'Content Writing', image: 'https://images.unsplash.com/photo-1552664730-d307ca884978?w=400&h=300&fit=crop&q=80', color: '#22c55e', description: 'Blog & Website Content', slug: 'business-writing' },
         { name: 'UI/UX Design', image: 'https://images.unsplash.com/photo-1561070791-2526d30994b5?w=400&h=300&fit=crop&q=80', color: '#54a0ff', description: 'User Interface Design', slug: 'ui-ux' }
-    ];
+    ]), []);
+
+    const [selectedService, setSelectedService] = useState(null);
+    const [selectedServiceIndex, setSelectedServiceIndex] = useState(null);
+    const detailRef = useRef(null);
+    const serviceRefs = useRef([]);
+
+    const handleSelectService = useCallback((service, index) => {
+        setSelectedService(service);
+        setSelectedServiceIndex(index);
+        // Smooth scroll to detail section after state update
+        setTimeout(() => {
+            if (detailRef.current) {
+                const yOffset = -100; // offset for fixed navbar
+                const element = detailRef.current;
+                const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
+                window.scrollTo({ top: y, behavior: 'smooth' });
+            }
+        }, 100);
+    }, []);
+
+    const handleCloseDetail = useCallback(() => {
+        // Scroll back to the selected service card
+        if (selectedServiceIndex !== null && serviceRefs.current[selectedServiceIndex]) {
+            const yOffset = -120; // offset for fixed navbar
+            const element = serviceRefs.current[selectedServiceIndex];
+            const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
+            window.scrollTo({ top: y, behavior: 'smooth' });
+        }
+        // Close detail after scroll
+        setTimeout(() => {
+            setSelectedService(null);
+            setSelectedServiceIndex(null);
+        }, 100);
+    }, [selectedServiceIndex]);
+
+    const handleGetStarted = useCallback(() => {
+        navigate('/contact');
+    }, [navigate]);
 
     return (
         <div className="home-page">
             <Navbar />
 
-            {/* Hero Section with Floating Shapes */}
+            {/* Hero Section with 3D Object */}
             <section className="hero">
                 <HeroParticles />
                 <div className="bg-glow" aria-hidden="true"></div>
@@ -36,13 +78,21 @@ const Home = () => {
                 <div className="floating-shape shape3"></div>
 
                 <div className="container">
-                    <div className="hero-content">
-                        <h1>Welcome to NexTechHubs</h1>
-                        <p>Your Trusted Partner for Professional IT Services</p>
-                        <p>We deliver excellence in Research Writing, Web Development, SEO, and more</p>
-                        <div className="hero-buttons">
-                            <a href="/services" className="btn btn-primary">Get Started</a>
-                            <a href="/contact" className="btn btn-secondary">Contact Us</a>
+                    <div className="hero-split-layout">
+                        {/* Left Side - Text Content */}
+                        <div className="hero-content-left">
+                            <h1>Welcome to NexTechHubs</h1>
+                            <p>Your Trusted Partner for Professional IT Services</p>
+                            <p>We deliver excellence in Research Writing, Web Development, SEO, and more</p>
+                            <div className="hero-buttons">
+                                <a href="/services" className="btn btn-primary">Get Started</a>
+                                <a href="/contact" className="btn btn-secondary">Contact Us</a>
+                            </div>
+                        </div>
+
+                        {/* Right Side - 3D Interactive Object */}
+                        <div className="hero-3d-object">
+                            <Interactive3DObject />
                         </div>
                     </div>
                 </div>
@@ -58,10 +108,13 @@ const Home = () => {
 
                     <div className="services-grid">
                         {services.map((service, index) => (
-                            <a
+                            <button
                                 key={index}
-                                href={`/services?service=${service.slug}`}
+                                ref={(el) => (serviceRefs.current[index] = el)}
+                                type="button"
+                                onClick={() => handleSelectService(service, index)}
                                 className="service-card-link"
+                                aria-label={`View details for ${service.name}`}
                             >
                                 <motion.div
                                     className="service-card"
@@ -75,13 +128,48 @@ const Home = () => {
                                     <h3>{service.name}</h3>
                                     <p>{service.description}</p>
                                 </motion.div>
-                            </a>
+                            </button>
                         ))}
                     </div>
 
-                    <div className="text-center">
-                        <a href="/services" className="btn btn-primary">View All Services</a>
-                    </div>
+                    {/* Service Detail Section (inline - renders right here when service selected) */}
+                    {selectedService && (
+                        <motion.div
+                            ref={detailRef}
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: 'auto' }}
+                            exit={{ opacity: 0, height: 0 }}
+                            transition={{ duration: 0.4 }}
+                            className="service-detail-inline"
+                        >
+                            <div className="service-detail-content">
+                                <h3 className="service-detail-title">{selectedService.name}</h3>
+                                <p className="service-detail-description">{selectedService.description}</p>
+                                <ul className="service-detail-features">
+                                    <li>✓ Tailored solutions aligned to your business goals</li>
+                                    <li>✓ Transparent timelines and milestone-based delivery</li>
+                                    <li>✓ Scalable architecture and future-proof design</li>
+                                    <li>✓ Dedicated support and maintenance</li>
+                                </ul>
+                                <div className="service-detail-actions">
+                                    <button
+                                        type="button"
+                                        className="btn btn-primary"
+                                        onClick={handleGetStarted}
+                                    >
+                                        Get Started
+                                    </button>
+                                    <button
+                                        type="button"
+                                        className="btn btn-secondary"
+                                        onClick={handleCloseDetail}
+                                    >
+                                        Close
+                                    </button>
+                                </div>
+                            </div>
+                        </motion.div>
+                    )}
                 </div>
             </section>
 
@@ -96,90 +184,42 @@ const Home = () => {
                     <div className="tech-categories">
                         <div className="tech-category">
                             <h3>Frontend Development</h3>
-                            <div className="tech-grid">
-                                <div className="tech-item">
-                                    <div className="tech-icon">⚛️</div>
-                                    <span>React</span>
-                                </div>
-                                <div className="tech-item">
-                                    <div className="tech-icon">📱</div>
-                                    <span>React Native</span>
-                                </div>
-                                <div className="tech-item">
-                                    <div className="tech-icon">🎨</div>
-                                    <span>Tailwind CSS</span>
-                                </div>
-                                <div className="tech-item">
-                                    <div className="tech-icon">🅰️</div>
-                                    <span>Next.js</span>
-                                </div>
-                            </div>
+                            <ul className="tech-list" style={{ listStyle: 'disc', paddingLeft: '1.25rem' }}>
+                                <li className="tech-list-item"><span className="tech-icon">⚛️</span> <span>React</span></li>
+                                <li className="tech-list-item"><span className="tech-icon">📱</span> <span>React Native</span></li>
+                                <li className="tech-list-item"><span className="tech-icon">🎨</span> <span>Tailwind CSS</span></li>
+                                <li className="tech-list-item"><span className="tech-icon">🅰️</span> <span>Next.js</span></li>
+                            </ul>
                         </div>
 
                         <div className="tech-category">
                             <h3>Backend Development</h3>
-                            <div className="tech-grid">
-                                <div className="tech-item">
-                                    <div className="tech-icon">🟢</div>
-                                    <span>Node.js</span>
-                                </div>
-                                <div className="tech-item">
-                                    <div className="tech-icon">🚂</div>
-                                    <span>Express</span>
-                                </div>
-                                <div className="tech-item">
-                                    <div className="tech-icon">🐍</div>
-                                    <span>Python</span>
-                                </div>
-                                <div className="tech-item">
-                                    <div className="tech-icon">🔷</div>
-                                    <span>MongoDB</span>
-                                </div>
-                            </div>
+                            <ul className="tech-list" style={{ listStyle: 'disc', paddingLeft: '1.25rem' }}>
+                                <li className="tech-list-item"><span className="tech-icon">🟢</span> <span>Node.js</span></li>
+                                <li className="tech-list-item"><span className="tech-icon">🚂</span> <span>Express</span></li>
+                                <li className="tech-list-item"><span className="tech-icon">🐍</span> <span>Python</span></li>
+                                <li className="tech-list-item"><span className="tech-icon">🔷</span> <span>MongoDB</span></li>
+                            </ul>
                         </div>
 
                         <div className="tech-category">
                             <h3>Tools & Platforms</h3>
-                            <div className="tech-grid">
-                                <div className="tech-item">
-                                    <div className="tech-icon">☁️</div>
-                                    <span>AWS</span>
-                                </div>
-                                <div className="tech-item">
-                                    <div className="tech-icon">🐳</div>
-                                    <span>Docker</span>
-                                </div>
-                                <div className="tech-item">
-                                    <div className="tech-icon">🔧</div>
-                                    <span>Kubernetes</span>
-                                </div>
-                                <div className="tech-item">
-                                    <div className="tech-icon">📊</div>
-                                    <span>Power BI</span>
-                                </div>
-                            </div>
+                            <ul className="tech-list" style={{ listStyle: 'disc', paddingLeft: '1.25rem' }}>
+                                <li className="tech-list-item"><span className="tech-icon">☁️</span> <span>AWS</span></li>
+                                <li className="tech-list-item"><span className="tech-icon">🐳</span> <span>Docker</span></li>
+                                <li className="tech-list-item"><span className="tech-icon">🔧</span> <span>Kubernetes</span></li>
+                                <li className="tech-list-item"><span className="tech-icon">📊</span> <span>Power BI</span></li>
+                            </ul>
                         </div>
 
                         <div className="tech-category">
                             <h3>Design & Marketing</h3>
-                            <div className="tech-grid">
-                                <div className="tech-item">
-                                    <div className="tech-icon">🎨</div>
-                                    <span>Figma</span>
-                                </div>
-                                <div className="tech-item">
-                                    <div className="tech-icon">📈</div>
-                                    <span>Google Analytics</span>
-                                </div>
-                                <div className="tech-item">
-                                    <div className="tech-icon">🔍</div>
-                                    <span>SEMrush</span>
-                                </div>
-                                <div className="tech-item">
-                                    <div className="tech-icon">✉️</div>
-                                    <span>Mailchimp</span>
-                                </div>
-                            </div>
+                            <ul className="tech-list" style={{ listStyle: 'disc', paddingLeft: '1.25rem' }}>
+                                <li className="tech-list-item"><span className="tech-icon">🎨</span> <span>Figma</span></li>
+                                <li className="tech-list-item"><span className="tech-icon">📈</span> <span>Google Analytics</span></li>
+                                <li className="tech-list-item"><span className="tech-icon">🔍</span> <span>SEMrush</span></li>
+                                <li className="tech-list-item"><span className="tech-icon">✉️</span> <span>Mailchimp</span></li>
+                            </ul>
                         </div>
                     </div>
                 </div>
@@ -197,27 +237,26 @@ const Home = () => {
                         <div className="why-us-card">
                             <div className="why-us-icon">💰</div>
                             <h3>Cost Efficient</h3>
-                            <p>Premium quality at competitive rates</p>
                         </div>
                         <div className="why-us-card">
                             <div className="why-us-icon">⏱️</div>
                             <h3>Minimal Timelines</h3>
-                            <p>Fast turnaround without compromising quality</p>
+
                         </div>
                         <div className="why-us-card">
                             <div className="why-us-icon">✅</div>
                             <h3>Quality Standards</h3>
-                            <p>100% plagiarism-free & thoroughly tested</p>
+
                         </div>
                         <div className="why-us-card">
                             <div className="why-us-icon">⚙️</div>
                             <h3>Project Management</h3>
-                            <p>Professional approach to every project</p>
+
                         </div>
                         <div className="why-us-card">
                             <div className="why-us-icon">🎯</div>
                             <h3>Lifetime Support</h3>
-                            <p>Dedicated support after project completion</p>
+
                         </div>
                     </div>
                 </div>

@@ -31,11 +31,6 @@ const Footer = () => {
 
                 <div className="footer-content">
                     <div className="footer-section">
-                        <h3>NexTechHubs</h3>
-                        <p>Delivering excellence in technology solutions worldwide.</p>
-                    </div>
-
-                    <div className="footer-section">
                         <h4>Services</h4>
                         <ul>
                             <li>Research Writing</li>

@@ -226,7 +226,6 @@ const ProjectManagement = () => {
                     </button>
                     <div>
                         <h1><FaProjectDiagram /> Project Management</h1>
-                        <p>Manage projects and assign team members</p>
                     </div>
                 </div>
                 <div className="header-actions">
