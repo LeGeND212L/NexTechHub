@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { FaHome, FaInfoCircle, FaPhoneAlt } from 'react-icons/fa';
-import logo from '../assets/logo.png';
+import logo from '../assets/logo_img.png';
 import './Navbar.css';
 
 const Navbar = () => {
@@ -32,22 +32,24 @@ const Navbar = () => {
 
     return (
         <>
-            {/* Professional Contact & Info Header */}
+            {/* Professional Contact Header */}
             <div className="header-top">
                 <div className="container">
                     <div className="header-top-content">
-                        <div className="header-left">
-                            <a href="mailto:info@nextechhubs.com" className="header-link">
-                                <span className="header-icon">✉</span>
-                                <span className="header-value">info@nextechhubs.com</span>
+                        <div className="header-info">
+                            <a href="mailto:info@nextechhubs.com" className="header-item">
+                                <svg className="header-icon" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"></path>
+                                    <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"></path>
+                                </svg>
+                                info@nextechhubs.com
                             </a>
-                            <a href="tel:+923001234567" className="header-link">
-                                <span className="header-icon">☎</span>
-                                <span className="header-value">+92 300 1234567</span>
+                            <a href="tel:+923001234567" className="header-item">
+                                <svg className="header-icon" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"></path>
+                                </svg>
+                                +92 300 1234567
                             </a>
-                        </div>
-                        <div className="header-right">
-                            <span className="header-tagline">Your Trusted IT Solutions Partner</span>
                         </div>
                     </div>
                 </div>
@@ -98,7 +100,7 @@ const Navbar = () => {
                             <aside className={`mobile-menu ${open ? 'show' : ''}`} role="dialog" aria-modal="true" aria-hidden={!open}>
                                 <div className="drawer-header">
                                     <Link to="/" className="drawer-logo" onClick={closeMenu}>
-                                        <div className="logo-icon">N</div>
+                                        <img src={logo} alt="NexTechHubs Logo" className="drawer-logo-image" />
                                         <span className="drawer-title">NexTechHubs</span>
                                     </Link>
                                     <button className="drawer-close" onClick={closeMenu} aria-label="Close menu">✕</button>

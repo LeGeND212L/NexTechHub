@@ -236,12 +236,30 @@
     gap: 40px;
   }
 
+  .aim-content {
+    text-align: center;
+  }
+
   .aim-content h2 {
     font-size: 2.5rem;
   }
 
+  .aim-content h2::after {
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
   .aim-highlight {
     font-size: 1.2rem;
+  }
+
+  .aim-features {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .aim-image {
+    order: -1;
   }
 }
 
@@ -588,6 +606,52 @@
     padding: 0 10px;
   }
 
+  .about-aim {
+    padding: 60px 20px;
+  }
+
+  .aim-grid {
+    gap: 30px;
+  }
+
+  .aim-content h2 {
+    font-size: 2rem;
+    margin-bottom: 15px;
+  }
+
+  .aim-highlight {
+    font-size: 1.1rem;
+    margin-bottom: 25px;
+  }
+
+  .aim-features {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    margin-top: 25px;
+  }
+
+  .aim-feature {
+    padding: 15px;
+  }
+
+  .feature-icon {
+    font-size: 1.5rem;
+    width: 40px;
+    height: 40px;
+  }
+
+  .feature-text h4 {
+    font-size: 1rem;
+  }
+
+  .feature-text p {
+    font-size: 0.88rem;
+  }
+
+  .image-wrapper {
+    border-radius: 15px;
+  }
+
   .story-section {
     padding: 60px 20px;
   }
@@ -665,6 +729,50 @@
 
   .about-hero p {
     font-size: 1rem;
+  }
+
+  .about-aim {
+    padding: 50px 15px;
+  }
+
+  .aim-content h2 {
+    font-size: 1.75rem;
+  }
+
+  .aim-highlight {
+    font-size: 1rem;
+    margin-bottom: 20px;
+  }
+
+  .aim-features {
+    gap: 10px;
+  }
+
+  .aim-feature {
+    padding: 12px;
+    flex-direction: column;
+    text-align: center;
+    align-items: center;
+  }
+
+  .feature-icon {
+    font-size: 1.4rem;
+    width: 50px;
+    height: 50px;
+    margin-bottom: 8px;
+  }
+
+  .feature-text h4 {
+    font-size: 0.95rem;
+  }
+
+  .feature-text p {
+    font-size: 0.85rem;
+  }
+
+  .image-wrapper {
+    border-radius: 12px;
+    border-width: 2px;
   }
 
   .story-text h2 {
