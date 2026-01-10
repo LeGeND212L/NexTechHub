@@ -437,9 +437,11 @@
 }
 
 .modal-close:hover {
-  background: rgba(0, 180, 255, 0.2);
-  color: #ffffff;
+  background: rgba(0, 180, 255, 0.3);
+  color: #ffffff !important;
+  border-color: rgba(0, 180, 255, 0.6);
   transform: rotate(90deg);
+  box-shadow: 0 4px 16px rgba(0, 180, 255, 0.25);
 }
 
 .modal-content form {

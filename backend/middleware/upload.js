@@ -23,6 +23,8 @@ const storage = multer.diskStorage({
             uploadPath += 'projects/';
         } else if (file.fieldname === 'payslip') {
             uploadPath += 'payslips/';
+        } else if (file.fieldname === 'contactFile') {
+            uploadPath += 'contacts/';
         } else {
             uploadPath += 'documents/';
         }

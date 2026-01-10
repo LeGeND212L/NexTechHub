@@ -2,7 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
-import { FaLightbulb, FaUsers, FaRocket, FaHeart, FaAward, FaGlobeAmericas } from 'react-icons/fa';
+import { FaLightbulb, FaUsers, FaRocket, FaHeart, FaAward, FaGlobeAmericas, FaLinkedin, FaGithub, FaTwitter, FaHandshake, FaShieldAlt } from 'react-icons/fa';
 import './About.css';
 
 const About = () => {
@@ -36,6 +36,59 @@ const About = () => {
             icon: <FaGlobeAmericas />,
             title: 'Global Reach',
             color: '#082A4E'
+        },
+        {
+            icon: <FaHandshake />,
+            title: 'Integrity',
+            color: '#3b82f6'
+        },
+        {
+            icon: <FaShieldAlt />,
+            title: 'Trust',
+            color: '#06b6d4'
+        }
+    ];
+
+    const teamMembers = [
+        {
+            name: 'John Anderson',
+            role: 'CEO & Founder',
+            image: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400&h=400&fit=crop',
+            social: {
+                linkedin: '#',
+                twitter: '#',
+                github: '#'
+            }
+        },
+        {
+            name: 'Sarah Mitchell',
+            role: 'CTO',
+            image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&h=400&fit=crop',
+            social: {
+                linkedin: '#',
+                twitter: '#',
+                github: '#'
+            }
+        },
+        {
+            name: 'Michael Chen',
+            role: 'Lead Developer',
+            image: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=400&h=400&fit=crop',
+            social: {
+                linkedin: '#',
+                twitter: '#',
+                github: '#'
+            }
+        },
+        {
+            name: 'Emily Roberts',
+            role: 'Design Director',
+            image: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400&h=400&fit=crop',
+            social: {
+                linkedin: '#',
+                twitter: '#',
+                github: '#'
+            }
         }
     ];
 
@@ -68,87 +121,123 @@ const About = () => {
                 </div>
             </motion.section>
 
-            {/* Story Section */}
-            <section className="about-story">
+            {/* Our Aim Section */}
+            <section className="about-aim">
                 <div className="container">
-                    <div className="story-content">
+                    <div className="aim-grid">
                         <motion.div
-                            className="story-text"
+                            className="aim-content"
                             initial={{ opacity: 0, x: -50 }}
                             whileInView={{ opacity: 1, x: 0 }}
                             viewport={{ once: true }}
                             transition={{ duration: 0.8 }}
                         >
-                            <h2>Our Story</h2>
-                            <p>
-                                Founded in 2016, NexTechHubs began with a simple mission: to deliver exceptional IT services
-                                that help businesses thrive in the digital age. What started as a small team of passionate
-                                developers has grown into a full-service technology company serving clients worldwide.
+                            <h2>Our Aim</h2>
+                            <p className="aim-highlight">
+                                Empowering businesses through innovative technology solutions
                             </p>
-                            <p>
-                                Today, we specialize in 14 different IT services, from research writing and web development
-                                to SEO and digital marketing. Our diverse team of experts brings together decades of combined
-                                experience to solve complex challenges and deliver innovative solutions.
-                            </p>
-                            <p>
-                                We pride ourselves on our commitment to quality, transparency, and client satisfaction.
-                                Every project we undertake is treated with the same level of care and attention to detail,
-                                regardless of size or complexity.
-                            </p>
+                            <div className="aim-features">
+                                <motion.div
+                                    className="aim-feature"
+                                    initial={{ opacity: 0, y: 20 }}
+                                    whileInView={{ opacity: 1, y: 0 }}
+                                    viewport={{ once: true }}
+                                    transition={{ duration: 0.5, delay: 0.1 }}
+                                >
+                                    <div className="feature-icon">
+                                        <FaRocket />
+                                    </div>
+                                    <div className="feature-text">
+                                        <h4>Innovation First</h4>
+                                    </div>
+                                </motion.div>
+                                <motion.div
+                                    className="aim-feature"
+                                    initial={{ opacity: 0, y: 20 }}
+                                    whileInView={{ opacity: 1, y: 0 }}
+                                    viewport={{ once: true }}
+                                    transition={{ duration: 0.5, delay: 0.2 }}
+                                >
+                                    <div className="feature-icon">
+                                        <FaAward />
+                                    </div>
+                                    <div className="feature-text">
+                                        <h4>Quality Assured</h4>
+                                    </div>
+                                </motion.div>
+                                <motion.div
+                                    className="aim-feature"
+                                    initial={{ opacity: 0, y: 20 }}
+                                    whileInView={{ opacity: 1, y: 0 }}
+                                    viewport={{ once: true }}
+                                    transition={{ duration: 0.5, delay: 0.3 }}
+                                >
+                                    <div className="feature-icon">
+                                        <FaUsers />
+                                    </div>
+                                    <div className="feature-text">
+                                        <h4>Client-Centric</h4>
+                                    </div>
+                                </motion.div>
+                                <motion.div
+                                    className="aim-feature"
+                                    initial={{ opacity: 0, y: 20 }}
+                                    whileInView={{ opacity: 1, y: 0 }}
+                                    viewport={{ once: true }}
+                                    transition={{ duration: 0.5, delay: 0.4 }}
+                                >
+                                    <div className="feature-icon">
+                                        <FaGlobeAmericas />
+                                    </div>
+                                    <div className="feature-text">
+                                        <h4>Global Impact</h4>
+                                    </div>
+                                </motion.div>
+                                <motion.div
+                                    className="aim-feature"
+                                    initial={{ opacity: 0, y: 20 }}
+                                    whileInView={{ opacity: 1, y: 0 }}
+                                    viewport={{ once: true }}
+                                    transition={{ duration: 0.5, delay: 0.5 }}
+                                >
+                                    <div className="feature-icon">
+                                        <FaLightbulb />
+                                    </div>
+                                    <div className="feature-text">
+                                        <h4>Creative Solutions</h4>
+                                    </div>
+                                </motion.div>
+                                <motion.div
+                                    className="aim-feature"
+                                    initial={{ opacity: 0, y: 20 }}
+                                    whileInView={{ opacity: 1, y: 0 }}
+                                    viewport={{ once: true }}
+                                    transition={{ duration: 0.5, delay: 0.6 }}
+                                >
+                                    <div className="feature-icon">
+                                        <FaHeart />
+                                    </div>
+                                    <div className="feature-text">
+                                        <h4>Passionate Team</h4>
+                                    </div>
+                                </motion.div>
+                            </div>
                         </motion.div>
                         <motion.div
-                            className="story-image"
+                            className="aim-image"
                             initial={{ opacity: 0, x: 50 }}
                             whileInView={{ opacity: 1, x: 0 }}
                             viewport={{ once: true }}
                             transition={{ duration: 0.8 }}
                         >
-                            <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=600&h=400&fit=crop" alt="Our Story" />
+                            <div className="image-wrapper">
+                                <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=800&h=600&fit=crop" alt="Our Aim" />
+                                <div className="image-overlay"></div>
+                            </div>
                         </motion.div>
                     </div>
                 </div>
             </section>
-
-            {/* Stats Section */}
-            {/* REMOVED - Stats section removed */}
-
-            {/* Values Section */}
-            <section className="about-values">
-                <div className="container">
-                    <motion.div
-                        initial={{ opacity: 0, y: 30 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 0.6 }}
-                    >
-                        <h2 className="section-title">Our Core Values</h2>
-                        <p className="section-subtitle">The principles that guide everything we do</p>
-                    </motion.div>
-
-                    <div className="values-grid">
-                        {values.map((value, index) => (
-                            <motion.div
-                                key={index}
-                                className="value-card"
-                                initial={{ opacity: 0, y: 50 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                viewport={{ once: true }}
-                                transition={{ duration: 0.5, delay: index * 0.1 }}
-                                whileHover={{ scale: 1.05 }}
-                            >
-                                <div className="value-icon" style={{ color: value.color }}>
-                                    {value.icon}
-                                </div>
-                                <h3>{value.title}</h3>
-                                <p>{value.description}</p>
-                            </motion.div>
-                        ))}
-                    </div>
-                </div>
-            </section>
-
-            {/* Team Section */}
-            {/* REMOVED - Meet Our Team section has been removed */}
 
             {/* Mission & Vision Section */}
             <section className="mission-vision">
@@ -184,6 +273,88 @@ const About = () => {
                                 in the global marketplace.
                             </p>
                         </motion.div>
+                    </div>
+                </div>
+            </section>
+
+            {/* Values Section */}
+            <section className="about-values">
+                <div className="container">
+                    <motion.div
+                        initial={{ opacity: 0, y: 30 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.6 }}
+                    >
+                        <h2 className="section-title">Our Core Values</h2>
+                        <p className="section-subtitle">The principles that guide everything we do</p>
+                    </motion.div>
+
+                    <div className="values-grid">
+                        {values.map((value, index) => (
+                            <motion.div
+                                key={index}
+                                className="value-card"
+                                initial={{ opacity: 0, y: 50 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true }}
+                                transition={{ duration: 0.5, delay: index * 0.1 }}
+                                whileHover={{ scale: 1.05 }}
+                            >
+                                <div className="value-icon" style={{ color: value.color }}>
+                                    {value.icon}
+                                </div>
+                                <h3>{value.title}</h3>
+                            </motion.div>
+                        ))}
+                    </div>
+                </div>
+            </section>
+
+            {/* Team Section */}
+            <section className="about-team">
+                <div className="container">
+                    <motion.div
+                        initial={{ opacity: 0, y: 30 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.6 }}
+                    >
+                        <h2 className="section-title">Meet Our Team</h2>
+                        <p className="section-subtitle">The talented people behind our success</p>
+                    </motion.div>
+
+                    <div className="team-grid">
+                        {teamMembers.map((member, index) => (
+                            <motion.div
+                                key={index}
+                                className="team-card"
+                                initial={{ opacity: 0, y: 50 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true }}
+                                transition={{ duration: 0.5, delay: index * 0.1 }}
+                                whileHover={{ y: -10 }}
+                            >
+                                <div className="team-image">
+                                    <img src={member.image} alt={member.name} />
+                                </div>
+                                <div className="team-info">
+                                    <h3>{member.name}</h3>
+                                    <p>{member.role}</p>
+                                    <div className="team-social">
+                                        <a href={member.social.linkedin} target="_blank" rel="noopener noreferrer">
+                                            <FaLinkedin />
+                                        </a>
+                                        <a href={member.social.twitter} target="_blank" rel="noopener noreferrer">
+                                            <FaTwitter />
+                                        </a>
+                                        <a href={member.social.github} target="_blank" rel="noopener noreferrer">
+                                            <FaGithub />
+                                        </a>
+                                    </div>
+                                </div>
+                            </motion.div>
+                        ))}
                     </div>
                 </div>
             </section>

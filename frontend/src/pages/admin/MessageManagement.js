@@ -15,7 +15,9 @@ import {
     FaClock,
     FaUser,
     FaSignOutAlt,
-    FaStickyNote
+    FaStickyNote,
+    FaFileDownload,
+    FaPaperclip
 } from 'react-icons/fa';
 import './MessageManagement.css';
 
@@ -138,6 +140,31 @@ const MessageManagement = () => {
         } catch (error) {
             console.error('Error deleting message:', error);
             toast.error('Failed to delete message');
+        }
+    };
+
+    const handleDownloadFile = async (messageId, fileName) => {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await axios.get(`/api/contacts/${messageId}/download`, {
+                headers: { Authorization: `Bearer ${token}` },
+                responseType: 'blob'
+            });
+
+            // Create a download link
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', fileName || 'download');
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+            window.URL.revokeObjectURL(url);
+
+            toast.success('File downloaded successfully');
+        } catch (error) {
+            console.error('Error downloading file:', error);
+            toast.error('Failed to download file');
         }
     };
 
@@ -335,11 +362,18 @@ const MessageManagement = () => {
                                     <div className="message-meta">
                                         <FaClock /> {formatDate(message.createdAt)}
                                     </div>
-                                    {message.phone && (
-                                        <div className="message-phone">
-                                            <FaPhone /> {message.phone}
-                                        </div>
-                                    )}
+                                    <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+                                        {message.phone && (
+                                            <div className="message-phone">
+                                                <FaPhone /> {message.phone}
+                                            </div>
+                                        )}
+                                        {message.file && (
+                                            <div className="message-attachment" title="Has attachment">
+                                                <FaPaperclip style={{ color: '#082A4E' }} />
+                                            </div>
+                                        )}
+                                    </div>
                                 </div>
                             </div>
                         ))}
@@ -391,6 +425,21 @@ const MessageManagement = () => {
                                 <label className="section-label">Message:</label>
                                 <div className="message-full">{selectedMessage.message}</div>
                             </div>
+
+                            {selectedMessage.file && (
+                                <div className="message-detail-section">
+                                    <label className="section-label"><FaPaperclip /> Attached File:</label>
+                                    <div className="file-info">
+                                        <span className="file-name">{selectedMessage.originalFileName || 'Attachment'}</span>
+                                        <button
+                                            className="btn btn-primary btn-download"
+                                            onClick={() => handleDownloadFile(selectedMessage._id, selectedMessage.originalFileName)}
+                                        >
+                                            <FaFileDownload /> Download
+                                        </button>
+                                    </div>
+                                </div>
+                            )}
 
                             <div className="message-detail-section">
                                 <label className="section-label"><FaStickyNote /> Admin Notes:</label>

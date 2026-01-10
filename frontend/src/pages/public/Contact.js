@@ -4,7 +4,7 @@ import api from '../../utils/api';
 import { toast } from 'react-toastify';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
-import { FaPhone, FaEnvelope, FaMapMarkerAlt, FaClock, FaFacebook, FaTwitter, FaLinkedin, FaInstagram, FaChevronDown } from 'react-icons/fa';
+import { FaPhone, FaEnvelope, FaMapMarkerAlt, FaClock, FaFacebook, FaTwitter, FaLinkedin, FaInstagram, FaChevronDown, FaUpload, FaTimes } from 'react-icons/fa';
 import './Contact.css';
 
 // Country codes database with validation rules
@@ -30,12 +30,14 @@ const Contact = () => {
         countryCode: COUNTRY_CODES[0], // Default to Pakistan
         phone: '',
         subject: '',
-        message: ''
+        message: '',
+        file: null
     });
     const [errors, setErrors] = useState({});
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [showCountryDropdown, setShowCountryDropdown] = useState(false);
     const [showSuccessModal, setShowSuccessModal] = useState(false);
+    const [fileName, setFileName] = useState('');
 
     const validateForm = () => {
         const newErrors = {};
@@ -159,6 +161,42 @@ const Contact = () => {
         }
     };
 
+    const handleFileChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            // Validate file size (max 5MB)
+            if (file.size > 5 * 1024 * 1024) {
+                setErrors({ ...errors, file: 'File size must be less than 5MB' });
+                return;
+            }
+
+            // Validate file type
+            const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg', 'application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+            if (!allowedTypes.includes(file.type)) {
+                setErrors({ ...errors, file: 'Only images (JPG, PNG) and documents (PDF, DOC, DOCX) are allowed' });
+                return;
+            }
+
+            setFormData({ ...formData, file: file });
+            setFileName(file.name);
+            if (errors.file) {
+                setErrors({ ...errors, file: '' });
+            }
+        }
+    };
+
+    const handleRemoveFile = () => {
+        setFormData({ ...formData, file: null });
+        setFileName('');
+        if (errors.file) {
+            setErrors({ ...errors, file: '' });
+        }
+    };
+
+    const handleUploadClick = () => {
+        document.getElementById('file').click();
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
 
@@ -176,13 +214,27 @@ const Contact = () => {
                 ? formData.countryCode.code + formData.phone.replace(/\D/g, '')
                 : null;
 
-            const response = await api.post('/contacts', {
-                name: formData.name.trim(),
-                email: formData.email.trim().toLowerCase(),
-                phone: formattedPhone,
-                countryCode: formData.countryCode.code,
-                subject: formData.subject.trim(),
-                message: formData.message.trim()
+            // Create FormData for file upload
+            const submitData = new FormData();
+            submitData.append('name', formData.name.trim());
+            submitData.append('email', formData.email.trim().toLowerCase());
+            submitData.append('subject', formData.subject.trim());
+            submitData.append('message', formData.message.trim());
+
+            if (formattedPhone) {
+                submitData.append('phone', formattedPhone);
+            }
+            submitData.append('countryCode', formData.countryCode.code);
+
+            // Add file if exists
+            if (formData.file) {
+                submitData.append('contactFile', formData.file);
+            }
+
+            const response = await api.post('/contacts', submitData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
             });
 
             if (response.data.success) {
@@ -193,8 +245,10 @@ const Contact = () => {
                     countryCode: COUNTRY_CODES[0],
                     phone: '',
                     subject: '',
-                    message: ''
+                    message: '',
+                    file: null
                 });
+                setFileName('');
                 setErrors({});
             }
 
@@ -420,13 +474,55 @@ const Contact = () => {
                                     {errors.message && <span className="error-message">{errors.message}</span>}
                                 </div>
 
-                                <button
-                                    type="submit"
-                                    className="btn btn-primary btn-submit"
-                                    disabled={isSubmitting}
-                                >
-                                    {isSubmitting ? 'Sending...' : 'Send Message'}
-                                </button>
+                                {/* File Upload Section */}
+                                <div className="form-group">
+                                    <label htmlFor="file">Attach File (Optional)</label>
+                                    <div className="file-upload-wrapper">
+                                        <input
+                                            type="file"
+                                            id="file"
+                                            name="file"
+                                            onChange={handleFileChange}
+                                            accept=".jpg,.jpeg,.png,.pdf,.doc,.docx"
+                                            style={{ display: 'none' }}
+                                        />
+                                        {fileName && (
+                                            <div className="file-selected">
+                                                <span className="file-name">{fileName}</span>
+                                                <button
+                                                    type="button"
+                                                    className="remove-file-btn"
+                                                    onClick={handleRemoveFile}
+                                                    title="Remove file"
+                                                >
+                                                    <FaTimes />
+                                                </button>
+                                            </div>
+                                        )}
+                                    </div>
+                                    <small className="form-helper">
+                                        Accepted formats: JPG, PNG, PDF, DOC, DOCX (Max 5MB)
+                                    </small>
+                                    {errors.file && <span className="error-message">{errors.file}</span>}
+                                </div>
+
+                                <div className="form-actions">
+                                    <button
+                                        type="button"
+                                        className="btn btn-upload-file"
+                                        onClick={handleUploadClick}
+                                    >
+                                        <FaUpload className="upload-icon" />
+                                        Click here to upload a file
+                                    </button>
+                                    <button
+                                        type="submit"
+                                        className="btn btn-primary btn-submit"
+                                        disabled={isSubmitting}
+                                    >
+                                        {isSubmitting ? 'Sending...' : 'Send Message'}
+                                    </button>
+                                </div>
                             </form>
                         </motion.div>
 

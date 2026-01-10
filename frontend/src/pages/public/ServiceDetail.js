@@ -452,9 +452,11 @@ const ServiceDetail = () => {
                             cursor: 'pointer',
                             display: 'flex',
                             alignItems: 'center',
+                            justifyContent: 'center',
                             gap: '8px',
                             marginBottom: '30px',
-                            fontSize: '1rem'
+                            fontSize: '1rem',
+                            textAlign: 'center'
                         }}
                     >
                         <FaArrowLeft /> Back
@@ -765,8 +767,10 @@ const ServiceDetail = () => {
                                 boxShadow: '0 10px 40px rgba(0, 100, 255, 0.4)',
                                 display: 'inline-flex',
                                 alignItems: 'center',
+                                justifyContent: 'center',
                                 gap: '12px',
-                                transition: 'all 0.3s ease'
+                                transition: 'all 0.3s ease',
+                                textAlign: 'center'
                             }}
                             onMouseOver={(e) => {
                                 e.target.style.transform = 'translateY(-3px)';

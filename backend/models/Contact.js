@@ -56,6 +56,14 @@ const contactSchema = new mongoose.Schema({
         minlength: [10, 'Message must be at least 10 characters'],
         maxlength: [2000, 'Message cannot exceed 2000 characters']
     },
+    file: {
+        type: String,
+        default: null
+    },
+    originalFileName: {
+        type: String,
+        default: null
+    },
     status: {
         type: String,
         enum: ['unread', 'read', 'replied'],

@@ -2,11 +2,12 @@ const express = require('express');
 const router = express.Router();
 const Contact = require('../models/Contact');
 const { protect, authorize } = require('../middleware/auth');
+const upload = require('../middleware/upload');
 
 // @route   POST /api/contacts
 // @desc    Submit a contact form (public)
 // @access  Public
-router.post('/', async (req, res) => {
+router.post('/', upload.single('contactFile'), async (req, res) => {
     try {
         const { name, email, phone, countryCode, subject, message } = req.body;
 
@@ -124,15 +125,24 @@ router.post('/', async (req, res) => {
             });
         }
 
-        // Create contact message
-        const contact = await Contact.create({
+        // Prepare contact data
+        const contactData = {
             name: name.trim(),
             email: email.toLowerCase().trim(),
             phone: phone ? phone.trim() : null,
             countryCode: countryCode || '+92',
             subject: subject.trim(),
             message: message.trim()
-        });
+        };
+
+        // Add file info if uploaded
+        if (req.file) {
+            contactData.file = req.file.path;
+            contactData.originalFileName = req.file.originalname;
+        }
+
+        // Create contact message
+        const contact = await Contact.create(contactData);
 
         res.status(201).json({
             success: true,
@@ -143,6 +153,8 @@ router.post('/', async (req, res) => {
                 email: contact.email,
                 phone: contact.phone,
                 countryCode: contact.countryCode,
+                file: contact.file,
+                originalFileName: contact.originalFileName,
                 createdAt: contact.createdAt
             }
         });
@@ -328,6 +340,15 @@ router.delete('/:id', protect, authorize('admin'), async (req, res) => {
             });
         }
 
+        // Delete associated file if exists
+        if (contact.file) {
+            const fs = require('fs');
+            const filePath = contact.file;
+            if (fs.existsSync(filePath)) {
+                fs.unlinkSync(filePath);
+            }
+        }
+
         await contact.deleteOne();
 
         res.status(200).json({
@@ -340,6 +361,50 @@ router.delete('/:id', protect, authorize('admin'), async (req, res) => {
         res.status(500).json({
             success: false,
             message: 'Error deleting contact message'
+        });
+    }
+});
+
+// @route   GET /api/contacts/:id/download
+// @desc    Download contact file
+// @access  Private (Admin only)
+router.get('/:id/download', protect, authorize('admin'), async (req, res) => {
+    try {
+        const contact = await Contact.findById(req.params.id);
+
+        if (!contact) {
+            return res.status(404).json({
+                success: false,
+                message: 'Contact message not found'
+            });
+        }
+
+        if (!contact.file) {
+            return res.status(404).json({
+                success: false,
+                message: 'No file attached to this message'
+            });
+        }
+
+        const path = require('path');
+        const fs = require('fs');
+        const filePath = path.resolve(contact.file);
+
+        if (!fs.existsSync(filePath)) {
+            return res.status(404).json({
+                success: false,
+                message: 'File not found on server'
+            });
+        }
+
+        // Send file
+        res.download(filePath, contact.originalFileName || 'download');
+
+    } catch (error) {
+        console.error('Download file error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error downloading file'
         });
     }
 });
