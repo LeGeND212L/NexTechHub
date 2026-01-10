@@ -3,7 +3,6 @@ import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../../components/Navbar';
 import HeroParticles from '../../components/HeroParticles';
-import Interactive3DObject from '../../components/Interactive3DObject';
 import Footer from '../../components/Footer';
 import './Home.css';
 
@@ -69,7 +68,7 @@ const Home = () => {
         <div className="home-page">
             <Navbar />
 
-            {/* Hero Section with 3D Object */}
+            {/* Hero Section with Floating Shapes */}
             <section className="hero">
                 <HeroParticles />
                 <div className="bg-glow" aria-hidden="true"></div>
@@ -78,21 +77,13 @@ const Home = () => {
                 <div className="floating-shape shape3"></div>
 
                 <div className="container">
-                    <div className="hero-split-layout">
-                        {/* Left Side - Text Content */}
-                        <div className="hero-content-left">
-                            <h1>Welcome to NexTechHubs</h1>
-                            <p>Your Trusted Partner for Professional IT Services</p>
-                            <p>We deliver excellence in Research Writing, Web Development, SEO, and more</p>
-                            <div className="hero-buttons">
-                                <a href="/services" className="btn btn-primary">Get Started</a>
-                                <a href="/contact" className="btn btn-secondary">Contact Us</a>
-                            </div>
-                        </div>
-
-                        {/* Right Side - 3D Interactive Object */}
-                        <div className="hero-3d-object">
-                            <Interactive3DObject />
+                    <div className="hero-content">
+                        <h1>Welcome to NexTechHubs</h1>
+                        <p>Your Trusted Partner for Professional IT Services</p>
+                        <p>We deliver excellence in Research Writing, Web Development, SEO, and more</p>
+                        <div className="hero-buttons">
+                            <a href="/services" className="btn btn-primary">Get Started</a>
+                            <a href="/contact" className="btn btn-secondary">Contact Us</a>
                         </div>
                     </div>
                 </div>
