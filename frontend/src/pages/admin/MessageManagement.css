@@ -749,6 +749,7 @@
   word-break: break-word;
 }
 
+.btn-view,
 .btn-download {
   display: inline-flex;
   align-items: center;
@@ -762,6 +763,15 @@
   cursor: pointer;
   transition: all 0.3s ease;
   white-space: nowrap;
+}
+
+.btn-view {
+  background: linear-gradient(135deg, #10b981, #059669);
+}
+
+.btn-view:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
 }
 
 .btn-download:hover {

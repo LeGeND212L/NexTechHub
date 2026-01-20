@@ -29,7 +29,9 @@ const ServiceDetail = () => {
                 'On-time delivery guaranteed',
                 'Confidential and secure process',
                 '24/7 customer support',
-                'Direct communication with writers'
+                'Direct communication with writers',
+                'Flexible revision policy',
+                'Competitive pricing options'
             ],
             process: [
                 { step: 'Consultation'},
@@ -58,7 +60,9 @@ const ServiceDetail = () => {
                 'Scalable and maintainable code',
                 'Cross-browser compatibility',
                 'Lifetime technical support',
-                'Regular updates and maintenance'
+                'Regular updates and maintenance',
+                'Fast loading speeds',
+                'Mobile-first approach'
             ],
             process: [
                 { step: 'Discovery' },
@@ -87,7 +91,9 @@ const ServiceDetail = () => {
                 'Performance-optimized applications',
                 'Regular updates and bug fixes',
                 'Analytics and user tracking',
-                'Cloud backend integration'
+                'Cloud backend integration',
+                'Seamless user experience',
+                'Dedicated app support'
             ],
             process: [
                 { step: 'Concept'},
@@ -116,7 +122,9 @@ const ServiceDetail = () => {
                 'Increased organic traffic',
                 'Higher search rankings',
                 'Better conversion rates',
-                'Long-term sustainable results'
+                'Long-term sustainable results',
+                'Competitive edge in your market',
+                'Transparent reporting'
             ],
             process: [
                 { step: 'Audit' },
@@ -145,7 +153,9 @@ const ServiceDetail = () => {
                 'Increased brand visibility',
                 'Higher engagement rates',
                 'Better lead generation',
-                'Measurable ROI'
+                'Measurable ROI',
+                'Targeted audience reach',
+                'Cost-effective campaigns'
             ],
             process: [
                 { step: 'Research' },
@@ -174,7 +184,9 @@ const ServiceDetail = () => {
                 'Expert medical writers',
                 'Regulatory compliance',
                 'Scientific accuracy',
-                'Peer-review ready content'
+                'Peer-review ready content',
+                'HIPAA compliant processes',
+                'Fast turnaround times'
             ],
             process: [
                 { step: 'Brief' },
@@ -203,7 +215,9 @@ const ServiceDetail = () => {
                 'Clear data visualization',
                 'Faster decision making',
                 'Automated reporting',
-                'Improved business intelligence'
+                'Improved business intelligence',
+                'Real-time insights',
+                'Custom dashboard design'
             ],
             process: [
                 { step: 'Discovery' },
@@ -232,7 +246,9 @@ const ServiceDetail = () => {
                 'Scalable architecture',
                 'Enhanced security',
                 'Clear documentation',
-                'Easy integration'
+                'Easy integration',
+                'High availability',
+                'Version control support'
             ],
             process: [
                 { step: 'Plan' },
@@ -261,7 +277,9 @@ const ServiceDetail = () => {
                 'Improved query performance',
                 'Data security and reliability',
                 'Scalable infrastructure',
-                'Reduced downtime'
+                'Reduced downtime',
+                'Automated backups',
+                'Expert DBA support'
             ],
             process: [
                 { step: 'Assess' },
@@ -290,7 +308,9 @@ const ServiceDetail = () => {
                 'Minimal downtime',
                 'Quick issue resolution',
                 'Proactive maintenance',
-                'Peace of mind'
+                'Peace of mind',
+                'Dedicated support team',
+                'SLA guaranteed response'
             ],
             process: [
                 { step: 'Setup' },
@@ -319,7 +339,9 @@ const ServiceDetail = () => {
                 'Increased website traffic',
                 'Higher conversion rates',
                 'Lower cost per acquisition',
-                'Detailed ROI tracking'
+                'Detailed ROI tracking',
+                'Expert campaign management',
+                'Continuous optimization'
             ],
             process: [
                 { step: 'Analyze' },
@@ -348,7 +370,9 @@ const ServiceDetail = () => {
                 'Increased online sales',
                 'Seamless shopping experience',
                 'Secure payment processing',
-                'Easy inventory management'
+                'Easy inventory management',
+                'Multi-platform integration',
+                '24/7 store availability'
             ],
             process: [
                 { step: 'Plan' },
@@ -377,7 +401,9 @@ const ServiceDetail = () => {
                 'Improved search rankings',
                 'Higher engagement',
                 'Brand authority',
-                'Consistent voice'
+                'Consistent voice',
+                'Original plagiarism-free content',
+                'Quick turnaround time'
             ],
             process: [
                 { step: 'Brief' },
@@ -406,7 +432,9 @@ const ServiceDetail = () => {
                 'Better user experience',
                 'Higher conversion rates',
                 'Reduced development costs',
-                'Consistent brand identity'
+                'Consistent brand identity',
+                'User-centered design',
+                'Accessibility compliance'
             ],
             process: [
                 { step: 'Research' },
@@ -525,6 +553,7 @@ const ServiceDetail = () => {
                         <motion.div
                             initial={{ opacity: 0, x: -30 }}
                             whileInView={{ opacity: 1, x: 0 }}
+                            whileHover={{ scale: 1.02, y: -5 }}
                             viewport={{ once: true }}
                             transition={{ duration: 0.6 }}
                             style={{
@@ -532,7 +561,9 @@ const ServiceDetail = () => {
                                 padding: '40px',
                                 borderRadius: '20px',
                                 border: '2px solid rgba(0, 100, 255, 0.3)',
-                                boxShadow: '0 10px 40px rgba(0, 100, 255, 0.2)'
+                                boxShadow: '0 10px 40px rgba(0, 100, 255, 0.2)',
+                                cursor: 'pointer',
+                                transition: 'all 0.3s ease'
                             }}
                         >
                             <h3 style={{
@@ -547,18 +578,28 @@ const ServiceDetail = () => {
                             </h3>
                             <ul style={{ listStyle: 'none', padding: 0 }}>
                                 {service.features.map((feature, index) => (
-                                    <li key={index} style={{
-                                        padding: '12px 0',
-                                        color: 'rgba(255, 255, 255, 0.9)',
-                                        fontSize: '1.05rem',
-                                        borderBottom: '1px solid rgba(0, 100, 255, 0.2)',
-                                        display: 'flex',
-                                        alignItems: 'start',
-                                        gap: '10px'
-                                    }}>
+                                    <motion.li 
+                                        key={index}
+                                        initial={{ opacity: 0, x: -20 }}
+                                        whileInView={{ opacity: 1, x: 0 }}
+                                        whileHover={{ x: 10, backgroundColor: 'rgba(0, 100, 255, 0.1)' }}
+                                        viewport={{ once: true }}
+                                        transition={{ duration: 0.3, delay: index * 0.05 }}
+                                        style={{
+                                            padding: '12px 10px',
+                                            color: 'rgba(255, 255, 255, 0.9)',
+                                            fontSize: '1.05rem',
+                                            borderBottom: '1px solid rgba(0, 100, 255, 0.2)',
+                                            display: 'flex',
+                                            alignItems: 'start',
+                                            gap: '10px',
+                                            borderRadius: '8px',
+                                            cursor: 'pointer'
+                                        }}
+                                    >
                                         <span style={{ color: service.color, marginTop: '3px' }}>✓</span>
                                         {feature}
-                                    </li>
+                                    </motion.li>
                                 ))}
                             </ul>
                         </motion.div>
@@ -567,6 +608,7 @@ const ServiceDetail = () => {
                         <motion.div
                             initial={{ opacity: 0, x: 30 }}
                             whileInView={{ opacity: 1, x: 0 }}
+                            whileHover={{ scale: 1.02, y: -5 }}
                             viewport={{ once: true }}
                             transition={{ duration: 0.6 }}
                             style={{
@@ -574,7 +616,9 @@ const ServiceDetail = () => {
                                 padding: '40px',
                                 borderRadius: '20px',
                                 border: '2px solid rgba(0, 100, 255, 0.3)',
-                                boxShadow: '0 10px 40px rgba(0, 100, 255, 0.2)'
+                                boxShadow: '0 10px 40px rgba(0, 100, 255, 0.2)',
+                                cursor: 'pointer',
+                                transition: 'all 0.3s ease'
                             }}
                         >
                             <h3 style={{
@@ -589,48 +633,30 @@ const ServiceDetail = () => {
                             </h3>
                             <ul style={{ listStyle: 'none', padding: 0 }}>
                                 {service.benefits.map((benefit, index) => (
-                                    <li key={index} style={{
-                                        padding: '12px 0',
-                                        color: 'rgba(255, 255, 255, 0.9)',
-                                        fontSize: '1.05rem',
-                                        borderBottom: '1px solid rgba(0, 100, 255, 0.2)',
-                                        display: 'flex',
-                                        alignItems: 'start',
-                                        gap: '10px'
-                                    }}>
-                                        <span style={{ color: service.color, marginTop: '3px' }}>✓</span>
+                                    <motion.li 
+                                        key={index}
+                                        initial={{ opacity: 0, x: 20 }}
+                                        whileInView={{ opacity: 1, x: 0 }}
+                                        whileHover={{ x: 10, backgroundColor: 'rgba(0, 100, 255, 0.1)' }}
+                                        viewport={{ once: true }}
+                                        transition={{ duration: 0.3, delay: index * 0.05 }}
+                                        style={{
+                                            padding: '12px 10px',
+                                            color: 'rgba(255, 255, 255, 0.9)',
+                                            fontSize: '1.05rem',
+                                            borderBottom: '1px solid rgba(0, 100, 255, 0.2)',
+                                            display: 'flex',
+                                            alignItems: 'start',
+                                            gap: '10px',
+                                            borderRadius: '8px',
+                                            cursor: 'pointer'
+                                        }}
+                                    >
+                                        <span style={{ color: service.color, marginTop: '3px' }}>★</span>
                                         {benefit}
-                                    </li>
+                                    </motion.li>
                                 ))}
                             </ul>
-
-                            {/* Additional Info Cards */}
-                            <div style={{ marginTop: '30px', display: 'grid', gap: '15px' }}>
-                                <div style={{
-                                    background: 'rgba(0, 100, 255, 0.15)',
-                                    padding: '15px 20px',
-                                    borderRadius: '12px',
-                                    border: '1px solid rgba(0, 150, 255, 0.3)',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    gap: '12px'
-                                }}>
-                                    <FaClock style={{ fontSize: '1.5rem', color: service.color }} />
-                                    <span style={{ color: '#fff', fontSize: '1rem' }}>Flexible timelines</span>
-                                </div>
-                                <div style={{
-                                    background: 'rgba(0, 100, 255, 0.15)',
-                                    padding: '15px 20px',
-                                    borderRadius: '12px',
-                                    border: '1px solid rgba(0, 150, 255, 0.3)',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    gap: '12px'
-                                }}>
-                                    <FaDollarSign style={{ fontSize: '1.5rem', color: service.color }} />
-                                    <span style={{ color: '#fff', fontSize: '1rem' }}>Competitive pricing</span>
-                                </div>
-                            </div>
                         </motion.div>
                     </div>
                 </div>
@@ -676,6 +702,11 @@ const ServiceDetail = () => {
                                 key={index}
                                 initial={{ opacity: 0, y: 30 }}
                                 whileInView={{ opacity: 1, y: 0 }}
+                                whileHover={{ 
+                                    scale: 1.05, 
+                                    y: -10,
+                                    boxShadow: '0 20px 50px rgba(0, 100, 255, 0.4)'
+                                }}
                                 viewport={{ once: true }}
                                 transition={{ duration: 0.5, delay: index * 0.1 }}
                                 style={{
@@ -685,7 +716,8 @@ const ServiceDetail = () => {
                                     border: '2px solid rgba(0, 100, 255, 0.3)',
                                     textAlign: 'center',
                                     position: 'relative',
-                                    overflow: 'hidden'
+                                    overflow: 'hidden',
+                                    cursor: 'pointer'
                                 }}
                             >
                                 <div style={{

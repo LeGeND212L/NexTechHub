@@ -64,7 +64,7 @@ const Footer = () => {
     // Handle navigation with smooth scroll
     const handleSectionClick = (e, path, sectionId) => {
         e.preventDefault();
-        
+
         // If we're already on the target page, just scroll
         if (location.pathname === path) {
             scrollToSection(sectionId);
@@ -129,8 +129,8 @@ const Footer = () => {
                                 <ul>
                                     <li><Link to="/">Welcome</Link></li>
                                     <li>
-                                        <a 
-                                            href="/#services" 
+                                        <a
+                                            href="/#services"
                                             onClick={(e) => handleSectionClick(e, '/', 'services')}
                                             style={{ cursor: 'pointer' }}
                                         >
@@ -138,8 +138,8 @@ const Footer = () => {
                                         </a>
                                     </li>
                                     <li>
-                                        <a 
-                                            href="/#technologies" 
+                                        <a
+                                            href="/#technologies"
                                             onClick={(e) => handleSectionClick(e, '/', 'technologies')}
                                             style={{ cursor: 'pointer' }}
                                         >
@@ -147,8 +147,8 @@ const Footer = () => {
                                         </a>
                                     </li>
                                     <li>
-                                        <a 
-                                            href="/#why-choose" 
+                                        <a
+                                            href="/#why-choose"
                                             onClick={(e) => handleSectionClick(e, '/', 'why-choose')}
                                             style={{ cursor: 'pointer' }}
                                         >
@@ -156,8 +156,8 @@ const Footer = () => {
                                         </a>
                                     </li>
                                     <li>
-                                        <a 
-                                            href="/#feedback" 
+                                        <a
+                                            href="/#feedback"
                                             onClick={(e) => handleSectionClick(e, '/', 'feedback')}
                                             style={{ cursor: 'pointer' }}
                                         >
@@ -197,8 +197,8 @@ const Footer = () => {
                                 <ul>
                                     <li><Link to="/about">About Us</Link></li>
                                     <li>
-                                        <a 
-                                            href="/about#mission" 
+                                        <a
+                                            href="/about#mission"
                                             onClick={(e) => handleSectionClick(e, '/about', 'mission')}
                                             style={{ cursor: 'pointer' }}
                                         >
@@ -206,8 +206,8 @@ const Footer = () => {
                                         </a>
                                     </li>
                                     <li>
-                                        <a 
-                                            href="/about#vision" 
+                                        <a
+                                            href="/about#vision"
                                             onClick={(e) => handleSectionClick(e, '/about', 'vision')}
                                             style={{ cursor: 'pointer' }}
                                         >
@@ -215,8 +215,8 @@ const Footer = () => {
                                         </a>
                                     </li>
                                     <li>
-                                        <a 
-                                            href="/about#team" 
+                                        <a
+                                            href="/about#team"
                                             onClick={(e) => handleSectionClick(e, '/about', 'team')}
                                             style={{ cursor: 'pointer' }}
                                         >

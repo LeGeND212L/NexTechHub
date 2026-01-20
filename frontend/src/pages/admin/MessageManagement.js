@@ -17,7 +17,8 @@ import {
     FaSignOutAlt,
     FaStickyNote,
     FaFileDownload,
-    FaPaperclip
+    FaPaperclip,
+    FaEye
 } from 'react-icons/fa';
 import './MessageManagement.css';
 
@@ -165,6 +166,31 @@ const MessageManagement = () => {
         } catch (error) {
             console.error('Error downloading file:', error);
             toast.error('Failed to download file');
+        }
+    };
+
+    const handleViewFile = async (messageId, fileName) => {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await axios.get(`/api/contacts/${messageId}/download`, {
+                headers: { Authorization: `Bearer ${token}` },
+                responseType: 'blob'
+            });
+
+            // Create a blob URL and open in new tab
+            const blob = new Blob([response.data]);
+            const url = window.URL.createObjectURL(blob);
+            window.open(url, '_blank');
+            
+            // Clean up after a delay
+            setTimeout(() => {
+                window.URL.revokeObjectURL(url);
+            }, 100);
+
+            toast.success('Opening file in new tab');
+        } catch (error) {
+            console.error('Error viewing file:', error);
+            toast.error('Failed to view file');
         }
     };
 
@@ -406,12 +432,22 @@ const MessageManagement = () => {
                                         <a href={`tel:${selectedMessage.phone}`}>{selectedMessage.phone}</a>
                                     </div>
                                 )}
-                                <div className="detail-row">
-                                    <label><FaClock /> Received:</label>
-                                    <span>{formatDate(selectedMessage.createdAt)}</span>
-                                </div>
-                                <div className="detail-row">
-                                    <label>Status:</label>
+                                <div clasdiv style={{ display: 'flex', gap: '10px' }}>
+                                            <button
+                                                className="btn btn-primary btn-view"
+                                                onClick={() => handleViewFile(selectedMessage._id, selectedMessage.originalFileName)}
+                                                title="View file in browser"
+                                            >
+                                                <FaEye /> View
+                                            </button>
+                                            <button
+                                                className="btn btn-primary btn-download"
+                                                onClick={() => handleDownloadFile(selectedMessage._id, selectedMessage.originalFileName)}
+                                                title="Download file"
+                                            >
+                                                <FaFileDownload /> Download
+                                            </button>
+                                        </divs:</label>
                                     {getStatusBadge(selectedMessage.status)}
                                 </div>
                             </div>
