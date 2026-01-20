@@ -1,6 +1,7 @@
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
+import { FaPhoneAlt } from 'react-icons/fa';
 import Navbar from '../../components/Navbar';
 import HeroParticles from '../../components/HeroParticles';
 import Footer from '../../components/Footer';
@@ -253,6 +254,107 @@ const Home = () => {
                 </div>
             </section>
 
+            {/* Customer Feedback Section */}
+            <section className="feedback-section" id="feedback">
+                <div className="container">
+                    <h2 className="section-title">What Our Clients Say</h2>
+                    <p className="section-subtitle">Trusted by businesses worldwide - Real stories from real clients</p>
+
+                    <div className="feedback-grid">
+                        <motion.div
+                            className="feedback-card"
+                            initial={{ opacity: 0, y: 30 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.5, delay: 0.1 }}
+                            viewport={{ once: true }}
+                        >
+                            <div className="feedback-quote">"</div>
+                            <p className="feedback-text">
+                                NexTechHubs transformed our outdated website into a modern, responsive platform.
+                                Their attention to detail and commitment to deadlines exceeded our expectations.
+                            </p>
+                            <div className="feedback-author">
+                                <div className="author-avatar">JM</div>
+                                <div className="author-info">
+                                    <h4>James Mitchell</h4>
+                                    <span>CEO, TechVentures Inc.</span>
+                                </div>
+                            </div>
+                            <div className="feedback-rating">
+                                <span>⭐</span><span>⭐</span><span>⭐</span><span>⭐</span><span>⭐</span>
+                            </div>
+                        </motion.div>
+
+                        <motion.div
+                            className="feedback-card featured"
+                            initial={{ opacity: 0, y: 30 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.5, delay: 0.2 }}
+                            viewport={{ once: true }}
+                        >
+                            <div className="feedback-quote">"</div>
+                            <p className="feedback-text">
+                                The mobile app they developed for us has received incredible feedback from our users.
+                                Professional team, excellent communication, and outstanding results. Highly recommended!
+                            </p>
+                            <div className="feedback-author">
+                                <div className="author-avatar">SK</div>
+                                <div className="author-info">
+                                    <h4>Sarah Khan</h4>
+                                    <span>Founder, HealthPlus App</span>
+                                </div>
+                            </div>
+                            <div className="feedback-rating">
+                                <span>⭐</span><span>⭐</span><span>⭐</span><span>⭐</span><span>⭐</span>
+                            </div>
+                        </motion.div>
+
+                        <motion.div
+                            className="feedback-card"
+                            initial={{ opacity: 0, y: 30 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.5, delay: 0.3 }}
+                            viewport={{ once: true }}
+                        >
+                            <div className="feedback-quote">"</div>
+                            <p className="feedback-text">
+                                Their SEO and digital marketing services boosted our online visibility by 300%.
+                                The team is knowledgeable, responsive, and truly cares about client success.
+                            </p>
+                            <div className="feedback-author">
+                                <div className="author-avatar">RA</div>
+                                <div className="author-info">
+                                    <h4>Robert Anderson</h4>
+                                    <span>Marketing Director, GlobalTrade</span>
+                                </div>
+                            </div>
+                            <div className="feedback-rating">
+                                <span>⭐</span><span>⭐</span><span>⭐</span><span>⭐</span><span>⭐</span>
+                            </div>
+                        </motion.div>
+                    </div>
+
+                    <div className="feedback-stats">
+                        <div className="stat-item">
+                            <span className="stat-number">500+</span>
+                            <span className="stat-label">Projects Completed</span>
+                        </div>
+                        <div className="stat-item">
+                            <span className="stat-number">98%</span>
+                            <span className="stat-label">Client Satisfaction</span>
+                        </div>
+                        <div className="stat-item">
+                            <span className="stat-number">50+</span>
+                            <span className="stat-label">Countries Served</span>
+                        </div>
+                        <div className="stat-item">
+                            <span className="stat-number">24/7</span>
+                            <span className="stat-label">Support Available</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
             {/* CTA Section */}
             <section className="cta-section">
                 <div className="container">
@@ -262,7 +364,7 @@ const Home = () => {
                         href="/contact"
                         className="btn btn-primary btn-large"
                     >
-                        Contact Us Today
+                        <FaPhoneAlt /> Contact Us Today
                     </a>
                 </div>
             </section>

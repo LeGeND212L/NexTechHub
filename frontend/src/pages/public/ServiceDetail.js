@@ -61,12 +61,12 @@ const ServiceDetail = () => {
                 'Regular updates and maintenance'
             ],
             process: [
-                { step: 'Discovery', desc: 'Understand business goals and requirements' },
-                { step: 'Design', desc: 'Create wireframes and UI/UX mockups' },
-                { step: 'Development', desc: 'Build with modern frameworks and best practices' },
-                { step: 'Testing', desc: 'Comprehensive QA across devices and browsers' },
-                { step: 'Deployment', desc: 'Launch on reliable hosting infrastructure' },
-                { step: 'Support', desc: 'Ongoing maintenance and feature updates' }
+                { step: 'Discovery'},
+                { step: 'Design'},
+                { step: 'Development'},
+                { step: 'Testing'},
+                { step: 'Deployment'},
+                { step: 'Support'}
             ]
         },
         'web-app-development': {

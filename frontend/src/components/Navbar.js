@@ -1,17 +1,39 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { FaHome, FaInfoCircle, FaPhoneAlt } from 'react-icons/fa';
+import { FaHome, FaInfoCircle, FaPhoneAlt, FaLaptopCode, FaChevronDown } from 'react-icons/fa';
 import logo from '../assets/logo_img.png';
 import './Navbar.css';
+
+const services = [
+    { name: 'Research & Academic Writing', description: 'Professional Research Papers & Dissertations', slug: 'research-writing' },
+    { name: 'Web Development', description: 'Custom Websites & Web Apps', slug: 'web-development' },
+    { name: 'Mobile App Development', description: 'iOS & Android Apps', slug: 'web-app-development' },
+    { name: 'SEO Services', description: 'Search Engine Optimization', slug: 'seo' },
+    { name: 'Medical Writing', description: 'Healthcare Documentation', slug: 'medical-writing' },
+    { name: 'Digital Marketing', description: 'Social Media & PPC Campaigns', slug: 'social-media-marketing' },
+    { name: 'Data Analytics', description: 'Business Intelligence & Visualization', slug: 'power-bi' },
+    { name: 'API Development', description: 'Robust RESTful APIs', slug: 'python' },
+    { name: 'Database Management', description: 'Database Design & Optimization', slug: 'networking' },
+    { name: 'Tech Support & Maintenance', description: '24/7 Technical Support', slug: 'devops' },
+    { name: 'Google Ads Management', description: 'PPC Campaign Management', slug: 'financial-analysis' },
+    { name: 'E-commerce Solutions', description: 'Shopping Platforms & Integration', slug: 'all-coding-projects' },
+    { name: 'Content Writing', description: 'Blog & Website Content', slug: 'business-writing' },
+    { name: 'UI/UX Design', description: 'User Interface Design', slug: 'ui-ux' }
+];
 
 const Navbar = () => {
     const location = useLocation();
     const [open, setOpen] = useState(false);
+    const [servicesOpen, setServicesOpen] = useState(false);
+    const [mobileServicesOpen, setMobileServicesOpen] = useState(false);
 
     const isActive = (path) => (location.pathname === path ? 'active' : '');
 
     const toggleMenu = () => setOpen((s) => !s);
-    const closeMenu = () => setOpen(false);
+    const closeMenu = () => {
+        setOpen(false);
+        setMobileServicesOpen(false);
+    };
 
     const backdropClick = (e) => {
         if (e.target.classList.contains('drawer-backdrop')) closeMenu();
@@ -62,22 +84,45 @@ const Navbar = () => {
                             <h2>NexTechHubs</h2>
                         </Link>
 
-                        <button
-                            className={`hamburger ${open ? 'open' : ''}`}
-                            aria-label={open ? 'Close menu' : 'Open menu'}
-                            aria-expanded={open}
-                            onClick={toggleMenu}
-                        >
-                            <span />
-                            <span />
-                            <span />
-                        </button>
-
                         <ul className="nav-links">
                             <li>
                                 <Link to="/" className={isActive('/')} onClick={closeMenu}>
                                     Home
                                 </Link>
+                            </li>
+                            <li
+                                className="services-dropdown"
+                                onMouseEnter={() => setServicesOpen(true)}
+                                onMouseLeave={() => setServicesOpen(false)}
+                            >
+                                <Link to="/services" className={`services-link ${isActive('/services')}`} onClick={closeMenu}>
+                                    Services <FaChevronDown className="dropdown-arrow" />
+                                </Link>
+                                {servicesOpen && (
+                                    <div className="mega-menu">
+                                        <div className="mega-menu-grid">
+                                            {services.map((service, index) => (
+                                                <Link
+                                                    key={index}
+                                                    to={`/services/${service.slug}`}
+                                                    className="mega-menu-item"
+                                                    onClick={() => {
+                                                        closeMenu();
+                                                        setServicesOpen(false);
+                                                    }}
+                                                >
+                                                    <span className="mega-menu-title">{service.name}</span>
+                                                    <span className="mega-menu-desc">{service.description}</span>
+                                                </Link>
+                                            ))}
+                                        </div>
+                                        <div className="mega-menu-footer">
+                                            <Link to="/services" onClick={() => { closeMenu(); setServicesOpen(false); }}>
+                                                View All Services →
+                                            </Link>
+                                        </div>
+                                    </div>
+                                )}
                             </li>
                             <li>
                                 <Link to="/about" className={isActive('/about')} onClick={closeMenu}>
@@ -89,12 +134,23 @@ const Navbar = () => {
                                     Contact
                                 </Link>
                             </li>
-                            <li>
-                                <Link to="/login" className="login-btn" onClick={closeMenu}>
-                                    Login
-                                </Link>
-                            </li>
                         </ul>
+
+                        <div className="nav-right">
+                            <Link to="/login" className="login-btn" onClick={closeMenu}>
+                                Login
+                            </Link>
+                            <button
+                                className={`hamburger ${open ? 'open' : ''}`}
+                                aria-label={open ? 'Close menu' : 'Open menu'}
+                                aria-expanded={open}
+                                onClick={toggleMenu}
+                            >
+                                <span />
+                                <span />
+                                <span />
+                            </button>
+                        </div>
 
                         <div className={`drawer-backdrop ${open ? 'visible' : ''}`} onClick={backdropClick}>
                             <aside className={`mobile-menu ${open ? 'show' : ''}`} role="dialog" aria-modal="true" aria-hidden={!open}>
@@ -112,6 +168,31 @@ const Navbar = () => {
                                             <Link to="/" onClick={closeMenu} className={isActive('/')}>
                                                 <FaHome className="drawer-icon" /> Home
                                             </Link>
+                                        </li>
+                                        <li className="mobile-services-dropdown">
+                                            <button
+                                                className={`mobile-services-toggle ${mobileServicesOpen ? 'open' : ''}`}
+                                                onClick={() => setMobileServicesOpen(!mobileServicesOpen)}
+                                            >
+                                                <FaLaptopCode className="drawer-icon" /> Services
+                                                <FaChevronDown className="mobile-dropdown-arrow" />
+                                            </button>
+                                            {mobileServicesOpen && (
+                                                <ul className="mobile-services-list">
+                                                    {services.slice(0, 8).map((service, index) => (
+                                                        <li key={index}>
+                                                            <Link to={`/services/${service.slug}`} onClick={closeMenu}>
+                                                                {service.name}
+                                                            </Link>
+                                                        </li>
+                                                    ))}
+                                                    <li className="view-all-mobile">
+                                                        <Link to="/services" onClick={closeMenu}>
+                                                            View All Services →
+                                                        </Link>
+                                                    </li>
+                                                </ul>
+                                            )}
                                         </li>
                                         <li>
                                             <Link to="/about" onClick={closeMenu} className={isActive('/about')}>
