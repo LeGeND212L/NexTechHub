@@ -193,7 +193,7 @@ const Footer = () => {
                 {/* Bottom Bar */}
                 <div className="footer-bottombar">
                     <div className="copyright">
-                        <p>&copy; 2015-{new Date().getFullYear()}</p>
+                        <p>&copy; {new Date().getFullYear()} NexTechHubs. All Rights Reserved.</p>
                     </div>
                 </div>
             </div>

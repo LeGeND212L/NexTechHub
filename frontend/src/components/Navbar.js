@@ -116,11 +116,6 @@ const Navbar = () => {
                                                 </Link>
                                             ))}
                                         </div>
-                                        <div className="mega-menu-footer">
-                                            <Link to="/services" onClick={() => { closeMenu(); setServicesOpen(false); }}>
-                                                View All Services →
-                                            </Link>
-                                        </div>
                                     </div>
                                 )}
                             </li>
@@ -179,18 +174,13 @@ const Navbar = () => {
                                             </button>
                                             {mobileServicesOpen && (
                                                 <ul className="mobile-services-list">
-                                                    {services.slice(0, 8).map((service, index) => (
+                                                    {services.map((service, index) => (
                                                         <li key={index}>
                                                             <Link to={`/services/${service.slug}`} onClick={closeMenu}>
                                                                 {service.name}
                                                             </Link>
                                                         </li>
                                                     ))}
-                                                    <li className="view-all-mobile">
-                                                        <Link to="/services" onClick={closeMenu}>
-                                                            View All Services →
-                                                        </Link>
-                                                    </li>
                                                 </ul>
                                             )}
                                         </li>

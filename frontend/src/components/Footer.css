@@ -494,6 +494,29 @@
   transform: translateX(5px);
 }
 
+/* Contact column specific styling */
+.contact-column ul li {
+  margin-bottom: 16px;
+}
+
+.contact-column .contact-link {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  width: 100%;
+}
+
+.contact-column .contact-icon {
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+.contact-column .contact-link span {
+  flex: 1;
+  line-height: 1.6;
+  word-break: break-word;
+}
+
 /* Social Media Icons */
 .social-section {
   margin-top: 32px;
@@ -850,43 +873,30 @@
 }
 
 .copyright {
-  text-align: left;
+  text-align: center;
 }
 
 .copyright p {
   color: rgba(255, 255, 255, 0.7);
-  font-size: 1rem;
+  font-size: 0.95rem;
   margin: 0;
+  letter-spacing: 0.5px;
 }
 
-/* Contact Column Links */
-.contact-column ul li {
-  margin-bottom: 14px;
-}
-
+/* Contact link styles */
 .contact-link {
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
   color: rgba(255, 255, 255, 0.8);
   text-decoration: none;
   transition: all 0.3s ease;
-  line-height: 1.5;
 }
 
 .contact-link:hover {
   color: #0099ff;
-  transform: translateX(5px);
 }
 
 .contact-link:hover .contact-icon {
   transform: scale(1.15);
   filter: drop-shadow(0 4px 12px rgba(0, 150, 255, 0.6));
-}
-
-.contact-link span {
-  flex: 1;
-  word-break: break-word;
 }
 
 /* Hide old footer-mid section */

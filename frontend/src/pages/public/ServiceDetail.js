@@ -61,12 +61,12 @@ const ServiceDetail = () => {
                 'Regular updates and maintenance'
             ],
             process: [
-                { step: 'Discovery'},
-                { step: 'Design'},
-                { step: 'Development'},
-                { step: 'Testing'},
-                { step: 'Deployment'},
-                { step: 'Support'}
+                { step: 'Discovery' },
+                { step: 'Design' },
+                { step: 'Development' },
+                { step: 'Testing' },
+                { step: 'Deployment' },
+                { step: 'Support' }
             ]
         },
         'web-app-development': {
@@ -756,30 +756,8 @@ const ServiceDetail = () => {
                         </p>
                         <button
                             onClick={() => navigate('/contact')}
-                            style={{
-                                background: 'linear-gradient(135deg, #0066ff, #0080ff)',
-                                color: '#fff',
-                                padding: '18px 50px',
-                                fontSize: '1.2rem',
-                                border: 'none',
-                                borderRadius: '50px',
-                                cursor: 'pointer',
-                                boxShadow: '0 10px 40px rgba(0, 100, 255, 0.4)',
-                                display: 'inline-flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                gap: '12px',
-                                transition: 'all 0.3s ease',
-                                textAlign: 'center'
-                            }}
-                            onMouseOver={(e) => {
-                                e.target.style.transform = 'translateY(-3px)';
-                                e.target.style.boxShadow = '0 15px 50px rgba(0, 100, 255, 0.6)';
-                            }}
-                            onMouseOut={(e) => {
-                                e.target.style.transform = 'translateY(0)';
-                                e.target.style.boxShadow = '0 10px 40px rgba(0, 100, 255, 0.4)';
-                            }}
+                            className="btn btn-primary btn-large"
+                            style={{ marginTop: '10px' }}
                         >
                             <FaPhoneAlt /> Contact Us Today
                         </button>
