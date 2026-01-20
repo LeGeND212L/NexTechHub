@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     FaTwitter,
     FaFacebookF,
@@ -14,7 +14,7 @@ import {
     FaMapMarkerAlt
 } from 'react-icons/fa';
 import { SiPayoneer } from 'react-icons/si';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import logo from '../assets/logo_img.png';
 import jazzcashLogo from '../assets/Jazzcash.png';
 import './Footer.css';
@@ -29,6 +29,50 @@ const footerServices = [
 
 const Footer = () => {
     const [hoveredService, setHoveredService] = useState(null);
+    const navigate = useNavigate();
+    const location = useLocation();
+
+    // Handle hash navigation on component mount or location change
+    useEffect(() => {
+        if (location.hash) {
+            const sectionId = location.hash.substring(1); // Remove the '#' from hash
+            setTimeout(() => {
+                const element = document.getElementById(sectionId);
+                if (element) {
+                    const offsetTop = element.offsetTop - 80;
+                    window.scrollTo({
+                        top: offsetTop,
+                        behavior: 'smooth'
+                    });
+                }
+            }, 100);
+        }
+    }, [location]);
+
+    // Smooth scroll to section
+    const scrollToSection = (sectionId) => {
+        const element = document.getElementById(sectionId);
+        if (element) {
+            const offsetTop = element.offsetTop - 80; // Account for fixed navbar
+            window.scrollTo({
+                top: offsetTop,
+                behavior: 'smooth'
+            });
+        }
+    };
+
+    // Handle navigation with smooth scroll
+    const handleSectionClick = (e, path, sectionId) => {
+        e.preventDefault();
+        
+        // If we're already on the target page, just scroll
+        if (location.pathname === path) {
+            scrollToSection(sectionId);
+        } else {
+            // Navigate to the page first, then scroll after navigation
+            navigate(path + '#' + sectionId);
+        }
+    };
 
     return (
         <footer className="footer">
@@ -84,10 +128,42 @@ const Footer = () => {
                                 <h4>Home</h4>
                                 <ul>
                                     <li><Link to="/">Welcome</Link></li>
-                                    <li><Link to="/#services">Our Services</Link></li>
-                                    <li><Link to="/#technologies">Technologies</Link></li>
-                                    <li><Link to="/#why-choose">Why Choose Us</Link></li>
-                                    <li><Link to="/#feedback">Client Feedback</Link></li>
+                                    <li>
+                                        <a 
+                                            href="/#services" 
+                                            onClick={(e) => handleSectionClick(e, '/', 'services')}
+                                            style={{ cursor: 'pointer' }}
+                                        >
+                                            Our Services
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a 
+                                            href="/#technologies" 
+                                            onClick={(e) => handleSectionClick(e, '/', 'technologies')}
+                                            style={{ cursor: 'pointer' }}
+                                        >
+                                            Technologies
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a 
+                                            href="/#why-choose" 
+                                            onClick={(e) => handleSectionClick(e, '/', 'why-choose')}
+                                            style={{ cursor: 'pointer' }}
+                                        >
+                                            Why Choose Us
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a 
+                                            href="/#feedback" 
+                                            onClick={(e) => handleSectionClick(e, '/', 'feedback')}
+                                            style={{ cursor: 'pointer' }}
+                                        >
+                                            Client Feedback
+                                        </a>
+                                    </li>
                                 </ul>
                             </div>
 
@@ -120,9 +196,33 @@ const Footer = () => {
                                 <h4>About</h4>
                                 <ul>
                                     <li><Link to="/about">About Us</Link></li>
-                                    <li><Link to="/about#mission">Our Mission</Link></li>
-                                    <li><Link to="/about#vision">Our Vision</Link></li>
-                                    <li><Link to="/about#team">Our Team</Link></li>
+                                    <li>
+                                        <a 
+                                            href="/about#mission" 
+                                            onClick={(e) => handleSectionClick(e, '/about', 'mission')}
+                                            style={{ cursor: 'pointer' }}
+                                        >
+                                            Our Mission
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a 
+                                            href="/about#vision" 
+                                            onClick={(e) => handleSectionClick(e, '/about', 'vision')}
+                                            style={{ cursor: 'pointer' }}
+                                        >
+                                            Our Vision
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a 
+                                            href="/about#team" 
+                                            onClick={(e) => handleSectionClick(e, '/about', 'team')}
+                                            style={{ cursor: 'pointer' }}
+                                        >
+                                            Our Team
+                                        </a>
+                                    </li>
                                     <li><Link to="/contact">Contact Us</Link></li>
                                 </ul>
                             </div>

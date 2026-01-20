@@ -32,12 +32,12 @@ const ServiceDetail = () => {
                 'Direct communication with writers'
             ],
             process: [
-                { step: 'Consultation', desc: 'Discuss your requirements and objectives' },
-                { step: 'Planning', desc: 'Outline structure and research methodology' },
-                { step: 'Research', desc: 'Conduct thorough literature review and data collection' },
-                { step: 'Writing', desc: 'Draft with proper citations and formatting' },
-                { step: 'Review', desc: 'Quality check and revisions as needed' },
-                { step: 'Delivery', desc: 'Final document with formatting and references' }
+                { step: 'Consultation'},
+                { step: 'Planning' },
+                { step: 'Research'},
+                { step: 'Writing' },
+                { step: 'Review' },
+                { step: 'Delivery' }
             ]
         },
         'web-development': {
@@ -90,12 +90,12 @@ const ServiceDetail = () => {
                 'Cloud backend integration'
             ],
             process: [
-                { step: 'Concept', desc: 'Define app vision and core features' },
-                { step: 'Design', desc: 'Create stunning UI/UX for mobile' },
-                { step: 'Development', desc: 'Build with native or cross-platform tech' },
-                { step: 'Testing', desc: 'Rigorous QA on real devices' },
-                { step: 'Launch', desc: 'Submit to App Store and Google Play' },
-                { step: 'Maintain', desc: 'Monitor performance and release updates' }
+                { step: 'Concept'},
+                { step: 'Design' },
+                { step: 'Development' },
+                { step: 'Testing' },
+                { step: 'Launch' },
+                { step: 'Maintain' }
             ]
         },
         'seo': {
@@ -119,12 +119,12 @@ const ServiceDetail = () => {
                 'Long-term sustainable results'
             ],
             process: [
-                { step: 'Audit', desc: 'Analyze current SEO performance' },
-                { step: 'Strategy', desc: 'Develop customized SEO roadmap' },
-                { step: 'Optimize', desc: 'Implement on-page and technical improvements' },
-                { step: 'Content', desc: 'Create SEO-optimized content' },
-                { step: 'Build', desc: 'Acquire quality backlinks' },
-                { step: 'Monitor', desc: 'Track rankings and adjust strategy' }
+                { step: 'Audit' },
+                { step: 'Strategy' },
+                { step: 'Optimize' },
+                { step: 'Content' },
+                { step: 'Build' },
+                { step: 'Monitor' }
             ]
         },
         'social-media-marketing': {
@@ -148,12 +148,12 @@ const ServiceDetail = () => {
                 'Measurable ROI'
             ],
             process: [
-                { step: 'Research', desc: 'Understand target audience and competitors' },
-                { step: 'Strategy', desc: 'Plan campaigns across channels' },
-                { step: 'Create', desc: 'Develop engaging content and creatives' },
-                { step: 'Launch', desc: 'Execute campaigns with precise targeting' },
-                { step: 'Optimize', desc: 'A/B test and refine for performance' },
-                { step: 'Report', desc: 'Provide detailed analytics and insights' }
+                { step: 'Research' },
+                { step: 'Strategy' },
+                { step: 'Create' },
+                { step: 'Launch' },
+                { step: 'Optimize' },
+                { step: 'Report' }
             ]
         },
         'medical-writing': {
@@ -177,12 +177,12 @@ const ServiceDetail = () => {
                 'Peer-review ready content'
             ],
             process: [
-                { step: 'Brief', desc: 'Understand medical topic and requirements' },
-                { step: 'Research', desc: 'Review literature and clinical data' },
-                { step: 'Draft', desc: 'Create scientifically accurate content' },
-                { step: 'Review', desc: 'Medical expert review and validation' },
-                { step: 'Edit', desc: 'Refine for clarity and compliance' },
-                { step: 'Submit', desc: 'Deliver publication-ready document' }
+                { step: 'Brief' },
+                { step: 'Research' },
+                { step: 'Draft' },
+                { step: 'Review' },
+                { step: 'Edit' },
+                { step: 'Submit' }
             ]
         },
         'power-bi': {
@@ -206,12 +206,12 @@ const ServiceDetail = () => {
                 'Improved business intelligence'
             ],
             process: [
-                { step: 'Discovery', desc: 'Identify data sources and KPIs' },
-                { step: 'Extract', desc: 'Collect and integrate data' },
-                { step: 'Model', desc: 'Structure data for analysis' },
-                { step: 'Visualize', desc: 'Create interactive dashboards' },
-                { step: 'Deploy', desc: 'Implement and train users' },
-                { step: 'Maintain', desc: 'Monitor and update analytics' }
+                { step: 'Discovery' },
+                { step: 'Extract' },
+                { step: 'Model' },
+                { step: 'Visualize' },
+                { step: 'Deploy' },
+                { step: 'Maintain' }
             ]
         },
         'python': {
@@ -235,12 +235,12 @@ const ServiceDetail = () => {
                 'Easy integration'
             ],
             process: [
-                { step: 'Plan', desc: 'Define API endpoints and data models' },
-                { step: 'Design', desc: 'Create API architecture and schema' },
-                { step: 'Develop', desc: 'Build with modern frameworks' },
-                { step: 'Test', desc: 'Comprehensive API testing' },
-                { step: 'Document', desc: 'Create detailed API documentation' },
-                { step: 'Deploy', desc: 'Launch with monitoring' }
+                { step: 'Plan' },
+                { step: 'Design' },
+                { step: 'Develop' },
+                { step: 'Test' },
+                { step: 'Document' },
+                { step: 'Deploy' }
             ]
         },
         'networking': {
@@ -264,12 +264,12 @@ const ServiceDetail = () => {
                 'Reduced downtime'
             ],
             process: [
-                { step: 'Assess', desc: 'Analyze current database setup' },
-                { step: 'Design', desc: 'Create optimal database schema' },
-                { step: 'Implement', desc: 'Deploy database solution' },
-                { step: 'Optimize', desc: 'Tune queries and indexes' },
-                { step: 'Secure', desc: 'Implement security measures' },
-                { step: 'Monitor', desc: 'Ongoing performance tracking' }
+                { step: 'Assess' },
+                { step: 'Design' },
+                { step: 'Implement' },
+                { step: 'Optimize' },
+                { step: 'Secure' },
+                { step: 'Monitor' }
             ]
         },
         'devops': {
@@ -293,12 +293,12 @@ const ServiceDetail = () => {
                 'Peace of mind'
             ],
             process: [
-                { step: 'Setup', desc: 'Configure monitoring and alerts' },
-                { step: 'Monitor', desc: 'Track system health 24/7' },
-                { step: 'Respond', desc: 'Quick incident response' },
-                { step: 'Fix', desc: 'Resolve issues efficiently' },
-                { step: 'Update', desc: 'Regular maintenance and updates' },
-                { step: 'Report', desc: 'Monthly performance reports' }
+                { step: 'Setup' },
+                { step: 'Monitor' },
+                { step: 'Respond' },
+                { step: 'Fix' },
+                { step: 'Update' },
+                { step: 'Report' }
             ]
         },
         'financial-analysis': {
@@ -322,12 +322,12 @@ const ServiceDetail = () => {
                 'Detailed ROI tracking'
             ],
             process: [
-                { step: 'Analyze', desc: 'Understand business goals and audience' },
-                { step: 'Setup', desc: 'Create campaigns and ad groups' },
-                { step: 'Launch', desc: 'Start campaigns with optimal bids' },
-                { step: 'Optimize', desc: 'Refine targeting and bids' },
-                { step: 'Test', desc: 'A/B test ad copy and landing pages' },
-                { step: 'Scale', desc: 'Expand successful campaigns' }
+                { step: 'Analyze' },
+                { step: 'Setup' },
+                { step: 'Launch' },
+                { step: 'Optimize' },
+                { step: 'Test' },
+                { step: 'Scale' }
             ]
         },
         'all-coding-projects': {
@@ -351,12 +351,12 @@ const ServiceDetail = () => {
                 'Easy inventory management'
             ],
             process: [
-                { step: 'Plan', desc: 'Define store requirements and features' },
-                { step: 'Design', desc: 'Create attractive storefront UI' },
-                { step: 'Develop', desc: 'Build e-commerce functionality' },
-                { step: 'Integrate', desc: 'Connect payment and shipping' },
-                { step: 'Test', desc: 'Comprehensive checkout testing' },
-                { step: 'Launch', desc: 'Deploy and start selling' }
+                { step: 'Plan' },
+                { step: 'Design' },
+                { step: 'Develop' },
+                { step: 'Integrate' },
+                { step: 'Test' },
+                { step: 'Launch' }
             ]
         },
         'business-writing': {
@@ -380,12 +380,12 @@ const ServiceDetail = () => {
                 'Consistent voice'
             ],
             process: [
-                { step: 'Brief', desc: 'Understand brand and target audience' },
-                { step: 'Research', desc: 'Topic research and keyword analysis' },
-                { step: 'Write', desc: 'Create compelling content' },
-                { step: 'Optimize', desc: 'SEO optimization and formatting' },
-                { step: 'Edit', desc: 'Proofread and refine' },
-                { step: 'Publish', desc: 'Deliver ready-to-publish content' }
+                { step: 'Brief' },
+                { step: 'Research' },
+                { step: 'Write' },
+                { step: 'Optimize' },
+                { step: 'Edit' },
+                { step: 'Publish' }
             ]
         },
         'ui-ux': {
@@ -409,12 +409,12 @@ const ServiceDetail = () => {
                 'Consistent brand identity'
             ],
             process: [
-                { step: 'Research', desc: 'User research and competitive analysis' },
-                { step: 'Wireframe', desc: 'Create low-fidelity wireframes' },
-                { step: 'Design', desc: 'High-fidelity visual design' },
-                { step: 'Prototype', desc: 'Interactive prototypes' },
-                { step: 'Test', desc: 'User testing and feedback' },
-                { step: 'Handoff', desc: 'Developer-ready design files' }
+                { step: 'Research' },
+                { step: 'Wireframe' },
+                { step: 'Design' },
+                { step: 'Prototype' },
+                { step: 'Test' },
+                { step: 'Handoff' }
             ]
         }
     }), []);

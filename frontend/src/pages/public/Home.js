@@ -1,6 +1,6 @@
-import React, { useCallback, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useMemo, useRef, useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { FaPhoneAlt } from 'react-icons/fa';
 import Navbar from '../../components/Navbar';
 import HeroParticles from '../../components/HeroParticles';
@@ -9,6 +9,24 @@ import './Home.css';
 
 const Home = () => {
     const navigate = useNavigate();
+    const location = useLocation();
+
+    // Handle hash navigation
+    useEffect(() => {
+        if (location.hash) {
+            const sectionId = location.hash.substring(1);
+            setTimeout(() => {
+                const element = document.getElementById(sectionId);
+                if (element) {
+                    const offsetTop = element.offsetTop - 80;
+                    window.scrollTo({
+                        top: offsetTop,
+                        behavior: 'smooth'
+                    });
+                }
+            }, 100);
+        }
+    }, [location]);
 
     const services = useMemo(() => ([
         { name: 'Research & Academic Writing', image: 'https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=400&h=300&fit=crop&q=80', color: '#082A4E', description: 'Professional Research Papers & Dissertations', slug: 'research-writing' },
@@ -91,7 +109,7 @@ const Home = () => {
             </section>
 
             {/* Services Section */}
-            <section className="services-section">
+            <section className="services-section" id="services">
                 <div className="container">
                     <div>
                         <h2 className="section-title">Our Services</h2>
@@ -166,7 +184,7 @@ const Home = () => {
             </section>
 
             {/* Technologies Section */}
-            <section className="technologies-section">
+            <section className="technologies-section" id="technologies">
                 <div className="container">
                     <div>
                         <h2 className="section-title">Technologies We Master</h2>
@@ -218,7 +236,7 @@ const Home = () => {
             </section>
 
             {/* Why Choose Us */}
-            <section className="why-us-section">
+            <section className="why-us-section" id="why-choose">
                 <div className="container">
                     <div>
                         <h2 className="section-title">Why Choose NexTechHubs?</h2>

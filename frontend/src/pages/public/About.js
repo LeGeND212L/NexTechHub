@@ -1,11 +1,31 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { useLocation } from 'react-router-dom';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
 import { FaLightbulb, FaUsers, FaRocket, FaHeart, FaAward, FaGlobeAmericas, FaLinkedin, FaGithub, FaTwitter, FaHandshake, FaShieldAlt } from 'react-icons/fa';
 import './About.css';
 
 const About = () => {
+    const location = useLocation();
+
+    // Handle hash navigation
+    useEffect(() => {
+        if (location.hash) {
+            const sectionId = location.hash.substring(1);
+            setTimeout(() => {
+                const element = document.getElementById(sectionId);
+                if (element) {
+                    const offsetTop = element.offsetTop - 80;
+                    window.scrollTo({
+                        top: offsetTop,
+                        behavior: 'smooth'
+                    });
+                }
+            }, 100);
+        }
+    }, [location]);
+
     const values = [
         {
             icon: <FaLightbulb />,
@@ -240,7 +260,7 @@ const About = () => {
             </section>
 
             {/* Mission & Vision Section */}
-            <section className="mission-vision">
+            <section className="mission-vision" id="vision">
                 <div className="container">
                     <div className="mv-grid">
                         <motion.div
@@ -312,7 +332,7 @@ const About = () => {
             </section>
 
             {/* Team Section */}
-            <section className="about-team">
+            <section className="about-team" id="team">
                 <div className="container">
                     <motion.div
                         initial={{ opacity: 0, y: 30 }}

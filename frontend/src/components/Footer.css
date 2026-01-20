@@ -514,7 +514,6 @@
 .contact-column .contact-link span {
   flex: 1;
   line-height: 1.6;
-  word-break: break-word;
 }
 
 /* Social Media Icons */
