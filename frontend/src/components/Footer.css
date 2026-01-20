@@ -3,9 +3,9 @@
   padding: 30px 0 0;
   margin-top: 0;
   position: relative;
-  overflow: hidden;
+  overflow: visible;
   background: linear-gradient(135deg, #000000 0%, #0a0e27 50%, #001633 100%);
-  background-attachment: fixed;
+  z-index: 1;
 }
 
 /* Animated gradient overlay */
@@ -16,6 +16,7 @@
   left: 0;
   right: 0;
   bottom: 0;
+  overflow: hidden;
   background-image:
     radial-gradient(
       circle at 20% 20%,
@@ -249,16 +250,23 @@
 
 .contact-icon {
   color: #0099ff;
-  font-size: 0.7rem;
+  font-size: 18px !important;
   flex-shrink: 0;
-  margin-top: 2px;
-  width: 14px;
-  height: 14px;
+  margin-top: 3px;
+  width: 18px !important;
+  height: 18px !important;
+  min-width: 18px;
+  max-width: 18px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   filter: drop-shadow(0 2px 8px rgba(0, 150, 255, 0.4));
   transition: all 0.3s ease;
+}
+
+.contact-icon svg {
+  width: 18px !important;
+  height: 18px !important;
 }
 
 .contact-section ul li:hover .contact-icon {
@@ -986,16 +994,34 @@
     justify-content: flex-start;
   }
 
+  .contact-icon {
+    font-size: 16px !important;
+    width: 16px !important;
+    height: 16px !important;
+    min-width: 16px !important;
+    max-width: 16px !important;
+  }
+
+  .contact-icon svg {
+    width: 16px !important;
+    height: 16px !important;
+  }
+
   .footer-section ul li {
     justify-content: flex-start;
   }
 
   .payment-methods {
     justify-content: center;
+    flex-wrap: wrap;
   }
 
   .payment-icon {
     font-size: 2rem;
+  }
+
+  .jazzcash-logo {
+    height: 36px;
   }
 
   .payment-title {
@@ -1077,6 +1103,12 @@
 
   .payment-methods {
     gap: 12px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .payment-item {
+    min-width: 50px;
   }
 
   .payment-icon {
@@ -1084,7 +1116,29 @@
   }
 
   .payment-label {
-    font-size: 0.7rem;
+    font-size: 0.65rem;
+  }
+
+  .jazzcash-logo {
+    height: 30px;
+    width: auto;
+  }
+
+  .contact-icon {
+    font-size: 15px !important;
+    width: 15px !important;
+    height: 15px !important;
+    min-width: 15px !important;
+    max-width: 15px !important;
+  }
+
+  .contact-icon svg {
+    width: 15px !important;
+    height: 15px !important;
+  }
+
+  .contact-link {
+    font-size: 0.85rem;
   }
 
   .copyright p {
