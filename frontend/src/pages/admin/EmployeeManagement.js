@@ -30,6 +30,8 @@ const EmployeeManagement = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [showModal, setShowModal] = useState(false);
     const [showLogoutModal, setShowLogoutModal] = useState(false);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [employeeToDelete, setEmployeeToDelete] = useState(null);
     const [modalType, setModalType] = useState('add'); // 'add' or 'edit'
     const [currentEmployee, setCurrentEmployee] = useState(null);
     const [showPassword, setShowPassword] = useState(false);
@@ -162,20 +164,25 @@ const EmployeeManagement = () => {
         }
     };
 
-    const handleDelete = async (id) => {
-        if (!window.confirm('Are you sure you want to delete this employee?')) {
-            return;
-        }
+    const handleDeleteClick = (employee) => {
+        setEmployeeToDelete(employee);
+        setShowDeleteModal(true);
+    };
+
+    const confirmDelete = async () => {
+        if (!employeeToDelete) return;
 
         try {
             const token = localStorage.getItem('token');
             const config = {
                 headers: { Authorization: `Bearer ${token}` }
             };
-            await axios.delete(`/api/admin/employees/${id}`, config);
+            await axios.delete(`/api/admin/employees/${employeeToDelete._id}`, config);
             toast.success('Employee deleted successfully!');
             // Remove employee from state immediately
-            setEmployees(prevEmployees => prevEmployees.filter(emp => emp._id !== id));
+            setEmployees(prevEmployees => prevEmployees.filter(emp => emp._id !== employeeToDelete._id));
+            setShowDeleteModal(false);
+            setEmployeeToDelete(null);
         } catch (error) {
             console.error('Error deleting employee:', error);
             toast.error('Failed to delete employee');
@@ -282,7 +289,7 @@ const EmployeeManagement = () => {
                                             </button>
                                             <button
                                                 className="btn-icon btn-delete"
-                                                onClick={() => handleDelete(employee._id)}
+                                                onClick={() => handleDeleteClick(employee)}
                                                 title="Delete Employee"
                                             >
                                                 <FaTrash />
@@ -441,6 +448,28 @@ const EmployeeManagement = () => {
                             </button>
                             <button className="btn btn-danger" onClick={confirmLogout}>
                                 <FaSignOutAlt /> Logout
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {showDeleteModal && (
+                <div className="modal-overlay" onClick={() => setShowDeleteModal(false)}>
+                    <div className="logout-modal-content" onClick={(e) => e.stopPropagation()}>
+                        <div className="logout-modal-header" style={{ color: '#ef4444' }}>
+                            <FaTrash />
+                            <h2>Delete Employee</h2>
+                        </div>
+                        <p className="logout-modal-message">
+                            Are you sure you want to delete <strong>{employeeToDelete?.name}</strong>? This action cannot be undone.
+                        </p>
+                        <div className="logout-modal-actions">
+                            <button className="btn btn-secondary" onClick={() => setShowDeleteModal(false)}>
+                                Cancel
+                            </button>
+                            <button className="btn btn-danger" onClick={confirmDelete}>
+                                <FaTrash /> Delete
                             </button>
                         </div>
                     </div>

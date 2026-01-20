@@ -57,6 +57,10 @@ const projectSchema = new mongoose.Schema({
         type: Date,
         required: true
     },
+    price: {
+        type: Number,
+        default: 0
+    },
     budget: {
         type: Number,
         default: 0
@@ -72,6 +76,17 @@ const projectSchema = new mongoose.Schema({
         filename: String,
         originalName: String,
         path: String,
+        fileData: Buffer,
+        fileMimeType: String,
+        source: {
+            type: String,
+            enum: ['local', 'contact'],
+            default: 'local'
+        },
+        contactId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Contact'
+        },
         uploadedBy: {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'User'

@@ -331,7 +331,9 @@
   outline: none;
   border-color: #00d4ff;
   background: #c0e8ff !important;
-  box-shadow: 0 0 0 4px rgba(0, 212, 255, 0.4), 0 0 20px rgba(0, 180, 255, 0.5);
+  box-shadow:
+    0 0 0 4px rgba(0, 212, 255, 0.4),
+    0 0 20px rgba(0, 180, 255, 0.5);
   color: #000000 !important;
 }
 
@@ -379,7 +381,9 @@
   outline: none;
   border-color: #00d4ff;
   background: #c0e8ff;
-  box-shadow: 0 0 0 4px rgba(0, 212, 255, 0.4), 0 0 20px rgba(0, 180, 255, 0.5);
+  box-shadow:
+    0 0 0 4px rgba(0, 212, 255, 0.4),
+    0 0 20px rgba(0, 180, 255, 0.5);
 }
 
 .form-group textarea::placeholder {
@@ -391,7 +395,9 @@
   outline: none;
   border-color: #00d4ff;
   background: #2563a8;
-  box-shadow: 0 0 0 4px rgba(0, 212, 255, 0.4), 0 0 20px rgba(0, 180, 255, 0.5);
+  box-shadow:
+    0 0 0 4px rgba(0, 212, 255, 0.4),
+    0 0 20px rgba(0, 180, 255, 0.5);
 }
 
 .form-group textarea::placeholder {
@@ -446,7 +452,8 @@
 
 .assign-select:focus {
   outline: none;
-  box-shadow: inset 0 0 0 2px rgba(0, 180, 255, 0.6),
+  box-shadow:
+    inset 0 0 0 2px rgba(0, 180, 255, 0.6),
     0 0 0 4px rgba(0, 212, 255, 0.25);
 }
 
@@ -630,4 +637,166 @@
 .btn-danger:hover {
   transform: translateY(-2px);
   box-shadow: 0 6px 16px rgba(239, 68, 68, 0.4);
+}
+
+/* Document Section Styles */
+.document-section {
+  margin-top: 20px;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #e2e8f0;
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.section-title svg {
+  color: #667eea;
+}
+
+.file-upload-area {
+  margin-top: 10px;
+}
+
+.file-upload-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 30px;
+  border: 2px dashed rgba(102, 126, 234, 0.5);
+  border-radius: 12px;
+  background: rgba(102, 126, 234, 0.1);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: #94a3b8;
+}
+
+.file-upload-btn:hover {
+  border-color: #667eea;
+  background: rgba(102, 126, 234, 0.2);
+  color: #667eea;
+}
+
+.file-upload-btn svg {
+  font-size: 32px;
+}
+
+.selected-files-list {
+  margin-top: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.selected-file-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 15px;
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  border-radius: 8px;
+  color: #10b981;
+}
+
+.selected-file-item span {
+  flex: 1;
+  font-size: 14px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.remove-file-btn {
+  background: rgba(239, 68, 68, 0.2);
+  border: none;
+  color: #ef4444;
+  padding: 5px;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.remove-file-btn:hover {
+  background: rgba(239, 68, 68, 0.4);
+}
+
+.contact-documents-list {
+  margin-top: 10px;
+  max-height: 250px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.contact-doc-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 15px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.contact-doc-item:hover {
+  background: rgba(102, 126, 234, 0.1);
+  border-color: rgba(102, 126, 234, 0.3);
+}
+
+.contact-doc-item.selected {
+  background: rgba(16, 185, 129, 0.15);
+  border-color: rgba(16, 185, 129, 0.4);
+}
+
+.doc-checkbox {
+  padding-top: 2px;
+}
+
+.doc-checkbox input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: #10b981;
+  cursor: pointer;
+}
+
+.doc-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.doc-name {
+  color: #e2e8f0;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.doc-meta {
+  color: #94a3b8;
+  font-size: 12px;
+}
+
+.doc-date {
+  color: #64748b;
+  font-size: 11px;
 }

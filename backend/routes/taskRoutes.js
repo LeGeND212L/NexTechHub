@@ -2,6 +2,9 @@ const express = require('express');
 const router = express.Router();
 const { protect, authorize } = require('../middleware/auth');
 const Task = require('../models/Task');
+const Contact = require('../models/Contact');
+const upload = require('../middleware/upload');
+const fs = require('fs');
 
 // All routes are protected
 router.use(protect);
@@ -247,6 +250,206 @@ router.delete('/:id', authorize('admin'), async (req, res) => {
         res.status(500).json({
             success: false,
             message: 'Failed to delete task',
+            error: error.message
+        });
+    }
+});
+
+// @route   POST /api/tasks/:id/upload
+// @desc    Upload file to task (admin)
+// @access  Private/Admin
+router.post('/:id/upload', authorize('admin'), upload.single('taskFile'), async (req, res) => {
+    try {
+        const task = await Task.findById(req.params.id);
+        if (!task) {
+            return res.status(404).json({
+                success: false,
+                message: 'Task not found'
+            });
+        }
+
+        if (!req.file) {
+            return res.status(400).json({
+                success: false,
+                message: 'Please upload a file'
+            });
+        }
+
+        // Read file data and store in MongoDB
+        const fileData = fs.readFileSync(req.file.path);
+
+        task.files.push({
+            filename: req.file.filename,
+            originalName: req.file.originalname,
+            path: req.file.path,
+            fileData: fileData,
+            fileMimeType: req.file.mimetype,
+            source: 'admin',
+            uploadedBy: req.user._id
+        });
+
+        await task.save();
+
+        // Delete the file from disk after storing in MongoDB
+        fs.unlinkSync(req.file.path);
+
+        res.json({
+            success: true,
+            message: 'File uploaded successfully',
+            data: task
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: 'Failed to upload file',
+            error: error.message
+        });
+    }
+});
+
+// @route   POST /api/tasks/:id/attach-contact-document
+// @desc    Attach a contact document to a task
+// @access  Private/Admin
+router.post('/:id/attach-contact-document', authorize('admin'), async (req, res) => {
+    try {
+        const { contactId } = req.body;
+
+        const task = await Task.findById(req.params.id);
+        if (!task) {
+            return res.status(404).json({
+                success: false,
+                message: 'Task not found'
+            });
+        }
+
+        const contact = await Contact.findById(contactId);
+        if (!contact || !contact.fileData) {
+            return res.status(404).json({
+                success: false,
+                message: 'Contact document not found'
+            });
+        }
+
+        // Check if document is already attached
+        const alreadyAttached = task.files.some(
+            file => file.contactId && file.contactId.toString() === contactId
+        );
+
+        if (alreadyAttached) {
+            return res.status(400).json({
+                success: false,
+                message: 'Document already attached to this task'
+            });
+        }
+
+        // Add the contact document to task files
+        task.files.push({
+            originalName: contact.originalFileName,
+            fileData: contact.fileData,
+            fileMimeType: contact.fileMimeType,
+            source: 'contact',
+            contactId: contact._id,
+            uploadedBy: req.user._id
+        });
+
+        await task.save();
+
+        res.json({
+            success: true,
+            message: 'Contact document attached successfully',
+            data: task
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: 'Failed to attach document',
+            error: error.message
+        });
+    }
+});
+
+// @route   GET /api/tasks/:id/files/:fileId/view
+// @desc    View task file
+// @access  Private (both admin and assigned employee)
+router.get('/:id/files/:fileId/view', async (req, res) => {
+    try {
+        const task = await Task.findById(req.params.id);
+        if (!task) {
+            return res.status(404).json({
+                success: false,
+                message: 'Task not found'
+            });
+        }
+
+        // Check if employee has access to this task
+        if (req.user.role === 'employee') {
+            if (task.assignedTo.toString() !== req.user._id.toString()) {
+                return res.status(403).json({
+                    success: false,
+                    message: 'Not authorized to access this file'
+                });
+            }
+        }
+
+        const file = task.files.id(req.params.fileId);
+        if (!file || !file.fileData) {
+            return res.status(404).json({
+                success: false,
+                message: 'File not found'
+            });
+        }
+
+        res.setHeader('Content-Type', file.fileMimeType || 'application/octet-stream');
+        res.setHeader('Content-Disposition', `inline; filename="${file.originalName || 'file'}"`);
+        res.send(file.fileData);
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: 'Failed to view file',
+            error: error.message
+        });
+    }
+});
+
+// @route   GET /api/tasks/:id/files/:fileId/download
+// @desc    Download task file
+// @access  Private (both admin and assigned employee)
+router.get('/:id/files/:fileId/download', async (req, res) => {
+    try {
+        const task = await Task.findById(req.params.id);
+        if (!task) {
+            return res.status(404).json({
+                success: false,
+                message: 'Task not found'
+            });
+        }
+
+        // Check if employee has access to this task
+        if (req.user.role === 'employee') {
+            if (task.assignedTo.toString() !== req.user._id.toString()) {
+                return res.status(403).json({
+                    success: false,
+                    message: 'Not authorized to download this file'
+                });
+            }
+        }
+
+        const file = task.files.id(req.params.fileId);
+        if (!file || !file.fileData) {
+            return res.status(404).json({
+                success: false,
+                message: 'File not found'
+            });
+        }
+
+        res.setHeader('Content-Type', file.fileMimeType || 'application/octet-stream');
+        res.setHeader('Content-Disposition', `attachment; filename="${file.originalName || 'download'}"`);
+        res.setHeader('Content-Length', file.fileData.length);
+        res.send(file.fileData);
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: 'Failed to download file',
             error: error.message
         });
     }

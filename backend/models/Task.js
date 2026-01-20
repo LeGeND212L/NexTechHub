@@ -58,6 +58,21 @@ const taskSchema = new mongoose.Schema({
         filename: String,
         originalName: String,
         path: String,
+        fileData: Buffer,
+        fileMimeType: String,
+        source: {
+            type: String,
+            enum: ['local', 'contact', 'admin'],
+            default: 'local'
+        },
+        contactId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Contact'
+        },
+        uploadedBy: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'User'
+        },
         uploadedAt: {
             type: Date,
             default: Date.now

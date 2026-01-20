@@ -17,7 +17,11 @@ import {
     FaFlag,
     FaFile,
     FaArrowLeft,
-    FaSignOutAlt
+    FaSignOutAlt,
+    FaProjectDiagram,
+    FaFileAlt,
+    FaUpload,
+    FaCloudUploadAlt
 } from 'react-icons/fa';
 import './TaskManagement.css';
 import { getSocket } from '../../utils/socket';
@@ -27,15 +31,23 @@ const TaskManagement = () => {
     const { logout } = useAuth();
     const [tasks, setTasks] = useState([]);
     const [employees, setEmployees] = useState([]);
+    const [projects, setProjects] = useState([]);
+    const [contactDocuments, setContactDocuments] = useState([]);
     const [loading, setLoading] = useState(true);
     const [showModal, setShowModal] = useState(false);
     const [showLogoutModal, setShowLogoutModal] = useState(false);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [taskToDelete, setTaskToDelete] = useState(null);
     const [modalType, setModalType] = useState('add');
     const [currentTask, setCurrentTask] = useState(null);
+    const [selectedContactDocs, setSelectedContactDocs] = useState([]);
+    const [localFiles, setLocalFiles] = useState([]);
+    const [uploadingFiles, setUploadingFiles] = useState(false);
     const [formData, setFormData] = useState({
         title: '',
         description: '',
         assignedTo: '',
+        project: '',
         priority: 'medium',
         deadline: '',
         status: 'pending'
@@ -92,12 +104,24 @@ const TaskManagement = () => {
             const config = {
                 headers: { Authorization: `Bearer ${token}` }
             };
-            const [tasksRes, employeesRes] = await Promise.all([
+            const [tasksRes, employeesRes, projectsRes] = await Promise.all([
                 axios.get('/api/tasks', config),
-                axios.get('/api/admin/employees', config)
+                axios.get('/api/admin/employees', config),
+                axios.get('/api/projects', config)
             ]);
             setTasks(tasksRes.data.data || []);
             setEmployees(employeesRes.data.data || []);
+            setProjects(projectsRes.data.data || []);
+
+            // Fetch contact documents separately (optional)
+            try {
+                const contactDocsRes = await axios.get('/api/projects/contact-documents', config);
+                setContactDocuments(contactDocsRes.data.data || []);
+            } catch (docError) {
+                console.error('Error fetching contact documents:', docError);
+                setContactDocuments([]);
+            }
+
             setLoading(false);
         } catch (error) {
             console.error('Error fetching data:', error);
@@ -120,12 +144,15 @@ const TaskManagement = () => {
 
     const handleOpenModal = (type, task = null) => {
         setModalType(type);
+        setSelectedContactDocs([]);
+        setLocalFiles([]);
         if (type === 'edit' && task) {
             setCurrentTask(task);
             setFormData({
                 title: task.title || '',
                 description: task.description || '',
                 assignedTo: task.assignedTo?._id || task.assignedTo || '',
+                project: task.project?._id || task.project || '',
                 priority: task.priority || 'medium',
                 deadline: task.deadline ? new Date(task.deadline).toISOString().split('T')[0] : '',
                 status: task.status || 'pending'
@@ -136,6 +163,7 @@ const TaskManagement = () => {
                 title: '',
                 description: '',
                 assignedTo: '',
+                project: '',
                 priority: 'medium',
                 deadline: '',
                 status: 'pending'
@@ -147,6 +175,8 @@ const TaskManagement = () => {
     const handleCloseModal = () => {
         setShowModal(false);
         setCurrentTask(null);
+        setSelectedContactDocs([]);
+        setLocalFiles([]);
     };
 
     const handleChange = (e) => {
@@ -156,12 +186,31 @@ const TaskManagement = () => {
         });
     };
 
+    const handleContactDocSelect = (docId) => {
+        setSelectedContactDocs(prev => {
+            if (prev.includes(docId)) {
+                return prev.filter(id => id !== docId);
+            } else {
+                return [...prev, docId];
+            }
+        });
+    };
+
+    const handleLocalFileChange = (e) => {
+        const files = Array.from(e.target.files);
+        setLocalFiles(prev => [...prev, ...files]);
+    };
+
+    const removeLocalFile = (index) => {
+        setLocalFiles(prev => prev.filter((_, i) => i !== index));
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
 
         // Validation
-        if (!formData.title || !formData.description || !formData.assignedTo || !formData.deadline) {
-            toast.error('Please fill in all required fields');
+        if (!formData.title || !formData.description || !formData.assignedTo || !formData.deadline || !formData.project) {
+            toast.error('Please fill in all required fields including project selection');
             return;
         }
 
@@ -171,33 +220,77 @@ const TaskManagement = () => {
                 headers: { Authorization: `Bearer ${token}` }
             };
 
-            // Get first project as default if not specified
             const taskData = { ...formData };
-            if (!taskData.project) {
-                // Fetch projects to get first one
-                const projectsRes = await axios.get('/api/projects', config);
-                if (projectsRes.data.data && projectsRes.data.data.length > 0) {
-                    taskData.project = projectsRes.data.data[0]._id;
-                } else {
-                    toast.error('Please create a project first before assigning tasks');
-                    return;
-                }
-            }
+            let taskId;
 
             if (modalType === 'add') {
                 const response = await axios.post('/api/tasks', taskData, config);
+                taskId = response.data.data._id;
                 toast.success('Task created successfully!');
-                // Add new task to state immediately
-                setTasks(prevTasks => [response.data.data, ...prevTasks]);
+
+                // Upload files after task creation
+                if (localFiles.length > 0 || selectedContactDocs.length > 0) {
+                    setUploadingFiles(true);
+
+                    // Upload local files
+                    for (const file of localFiles) {
+                        const formDataUpload = new FormData();
+                        formDataUpload.append('taskFile', file);
+                        await axios.post(`/api/tasks/${taskId}/upload`, formDataUpload, {
+                            headers: {
+                                Authorization: `Bearer ${token}`,
+                                'Content-Type': 'multipart/form-data'
+                            }
+                        });
+                    }
+
+                    // Attach contact documents
+                    for (const contactId of selectedContactDocs) {
+                        await axios.post(`/api/tasks/${taskId}/attach-contact-document`,
+                            { contactId },
+                            config
+                        );
+                    }
+
+                    setUploadingFiles(false);
+                }
+
+                // Refresh to get updated task with files
+                fetchData();
             } else {
-                const response = await axios.put(`/api/tasks/${currentTask._id}`, taskData, config);
+                await axios.put(`/api/tasks/${currentTask._id}`, taskData, config);
+                taskId = currentTask._id;
                 toast.success('Task updated successfully!');
-                // Update task in state immediately
-                setTasks(prevTasks =>
-                    prevTasks.map(task =>
-                        task._id === currentTask._id ? response.data.data : task
-                    )
-                );
+
+                // Upload any new files
+                if (localFiles.length > 0 || selectedContactDocs.length > 0) {
+                    setUploadingFiles(true);
+
+                    // Upload local files
+                    for (const file of localFiles) {
+                        const formDataUpload = new FormData();
+                        formDataUpload.append('taskFile', file);
+                        await axios.post(`/api/tasks/${taskId}/upload`, formDataUpload, {
+                            headers: {
+                                Authorization: `Bearer ${token}`,
+                                'Content-Type': 'multipart/form-data'
+                            }
+                        });
+                    }
+
+                    // Attach contact documents
+                    for (const contactId of selectedContactDocs) {
+                        await axios.post(`/api/tasks/${taskId}/attach-contact-document`,
+                            { contactId },
+                            config
+                        );
+                    }
+
+                    setUploadingFiles(false);
+                }
+
+                // Refresh to get updated task with files
+                fetchData();
             }
 
             handleCloseModal();
@@ -207,20 +300,25 @@ const TaskManagement = () => {
         }
     };
 
-    const handleDelete = async (id) => {
-        if (!window.confirm('Are you sure you want to delete this task?')) {
-            return;
-        }
+    const handleDeleteClick = (task) => {
+        setTaskToDelete(task);
+        setShowDeleteModal(true);
+    };
+
+    const confirmDelete = async () => {
+        if (!taskToDelete) return;
 
         try {
             const token = localStorage.getItem('token');
             const config = {
                 headers: { Authorization: `Bearer ${token}` }
             };
-            await axios.delete(`/api/tasks/${id}`, config);
+            await axios.delete(`/api/tasks/${taskToDelete._id}`, config);
             toast.success('Task deleted successfully!');
             // Remove task from state immediately
-            setTasks(prevTasks => prevTasks.filter(task => task._id !== id));
+            setTasks(prevTasks => prevTasks.filter(task => task._id !== taskToDelete._id));
+            setShowDeleteModal(false);
+            setTaskToDelete(null);
         } catch (error) {
             console.error('Error deleting task:', error);
             toast.error('Failed to delete task');
@@ -296,7 +394,7 @@ const TaskManagement = () => {
                                     <button className="btn-icon btn-edit" onClick={() => handleOpenModal('edit', task)}>
                                         <FaEdit />
                                     </button>
-                                    <button className="btn-icon btn-delete" onClick={() => handleDelete(task._id)}>
+                                    <button className="btn-icon btn-delete" onClick={() => handleDeleteClick(task)}>
                                         <FaTrash />
                                     </button>
                                 </div>
@@ -389,6 +487,23 @@ const TaskManagement = () => {
 
                             <div className="form-row">
                                 <div className="form-group">
+                                    <label><FaProjectDiagram /> Select Project</label>
+                                    <select
+                                        name="project"
+                                        value={formData.project}
+                                        onChange={handleChange}
+                                        required
+                                    >
+                                        <option value="">Select Project</option>
+                                        {projects.map(proj => (
+                                            <option key={proj._id} value={proj._id}>
+                                                {proj.title} - {proj.client?.name || proj.client}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+
+                                <div className="form-group">
                                     <label>Assign To</label>
                                     <select
                                         name="assignedTo"
@@ -404,7 +519,9 @@ const TaskManagement = () => {
                                         ))}
                                     </select>
                                 </div>
+                            </div>
 
+                            <div className="form-row">
                                 <div className="form-group">
                                     <label>Priority</label>
                                     <select
@@ -417,19 +534,6 @@ const TaskManagement = () => {
                                         <option value="medium">Medium</option>
                                         <option value="high">High</option>
                                     </select>
-                                </div>
-                            </div>
-
-                            <div className="form-row">
-                                <div className="form-group">
-                                    <label>Deadline</label>
-                                    <input
-                                        type="date"
-                                        name="deadline"
-                                        value={formData.deadline}
-                                        onChange={handleChange}
-                                        required
-                                    />
                                 </div>
 
                                 <div className="form-group">
@@ -447,12 +551,99 @@ const TaskManagement = () => {
                                 </div>
                             </div>
 
+                            <div className="form-row">
+                                <div className="form-group">
+                                    <label>Deadline</label>
+                                    <input
+                                        type="date"
+                                        name="deadline"
+                                        value={formData.deadline}
+                                        onChange={handleChange}
+                                        required
+                                    />
+                                </div>
+                            </div>
+
+                            {/* Document Upload Section */}
+                            <div className="form-section document-section">
+                                <h3 className="section-title"><FaFileAlt /> Task Documents</h3>
+
+                                {/* Local File Upload */}
+                                <div className="form-group">
+                                    <label><FaUpload /> Upload from Computer</label>
+                                    <div className="file-upload-area">
+                                        <input
+                                            type="file"
+                                            id="taskLocalFileUpload"
+                                            onChange={handleLocalFileChange}
+                                            multiple
+                                            accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.jpg,.jpeg,.png,.gif,.zip"
+                                            style={{ display: 'none' }}
+                                        />
+                                        <label htmlFor="taskLocalFileUpload" className="file-upload-btn">
+                                            <FaCloudUploadAlt />
+                                            <span>Click to upload files</span>
+                                        </label>
+                                    </div>
+                                    {localFiles.length > 0 && (
+                                        <div className="selected-files-list">
+                                            {localFiles.map((file, index) => (
+                                                <div key={index} className="selected-file-item">
+                                                    <FaFile />
+                                                    <span>{file.name}</span>
+                                                    <button
+                                                        type="button"
+                                                        className="remove-file-btn"
+                                                        onClick={() => removeLocalFile(index)}
+                                                    >
+                                                        <FaTimes />
+                                                    </button>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
+
+                                {/* Contact Documents Selection */}
+                                {contactDocuments.length > 0 && (
+                                    <div className="form-group">
+                                        <label><FaFileAlt /> Select from Client Submissions</label>
+                                        <div className="contact-documents-list">
+                                            {contactDocuments.map(doc => (
+                                                <div
+                                                    key={doc._id}
+                                                    className={`contact-doc-item ${selectedContactDocs.includes(doc._id) ? 'selected' : ''}`}
+                                                    onClick={() => handleContactDocSelect(doc._id)}
+                                                >
+                                                    <div className="doc-checkbox">
+                                                        <input
+                                                            type="checkbox"
+                                                            checked={selectedContactDocs.includes(doc._id)}
+                                                            onChange={() => { }}
+                                                        />
+                                                    </div>
+                                                    <div className="doc-info">
+                                                        <span className="doc-name">{doc.fileName}</span>
+                                                        <span className="doc-meta">
+                                                            From: {doc.name} ({doc.email}) - {doc.subject}
+                                                        </span>
+                                                        <span className="doc-date">
+                                                            Uploaded: {new Date(doc.uploadedAt).toLocaleDateString()}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+
                             <div className="form-actions">
                                 <button type="button" className="btn btn-secondary" onClick={handleCloseModal}>
                                     Cancel
                                 </button>
-                                <button type="submit" className="btn btn-primary">
-                                    {modalType === 'add' ? 'Assign Task' : 'Update Task'}
+                                <button type="submit" className="btn btn-primary" disabled={uploadingFiles}>
+                                    {uploadingFiles ? 'Uploading Files...' : (modalType === 'add' ? 'Assign Task' : 'Update Task')}
                                 </button>
                             </div>
                         </form>
@@ -474,6 +665,28 @@ const TaskManagement = () => {
                             </button>
                             <button className="btn btn-danger" onClick={confirmLogout}>
                                 <FaSignOutAlt /> Logout
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {showDeleteModal && (
+                <div className="modal-overlay" onClick={() => setShowDeleteModal(false)}>
+                    <div className="logout-modal-content" onClick={(e) => e.stopPropagation()}>
+                        <div className="logout-modal-header" style={{ color: '#ef4444' }}>
+                            <FaTrash />
+                            <h2>Delete Task</h2>
+                        </div>
+                        <p className="logout-modal-message">
+                            Are you sure you want to delete <strong>{taskToDelete?.title}</strong>? This action cannot be undone.
+                        </p>
+                        <div className="logout-modal-actions">
+                            <button className="btn btn-secondary" onClick={() => setShowDeleteModal(false)}>
+                                Cancel
+                            </button>
+                            <button className="btn btn-danger" onClick={confirmDelete}>
+                                <FaTrash /> Delete
                             </button>
                         </div>
                     </div>

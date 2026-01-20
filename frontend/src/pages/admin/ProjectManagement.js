@@ -23,10 +23,11 @@ const ProjectManagement = () => {
     const navigate = useNavigate();
     const { logout } = useAuth();
     const [projects, setProjects] = useState([]);
-    const [employees, setEmployees] = useState([]);
     const [loading, setLoading] = useState(true);
     const [showModal, setShowModal] = useState(false);
     const [showLogoutModal, setShowLogoutModal] = useState(false);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [projectToDelete, setProjectToDelete] = useState(null);
     const [modalType, setModalType] = useState('add');
     const [currentProject, setCurrentProject] = useState(null);
     const [formData, setFormData] = useState({
@@ -34,8 +35,9 @@ const ProjectManagement = () => {
         description: '',
         client: '',
         deadline: '',
-        assignedTo: [],
-        status: 'pending'
+        status: 'pending',
+        service: 'Web Development',
+        price: ''
     });
 
     useEffect(() => {
@@ -59,16 +61,13 @@ const ProjectManagement = () => {
             const config = {
                 headers: { Authorization: `Bearer ${token}` }
             };
-            const [projectsRes, employeesRes] = await Promise.all([
-                axios.get('/api/projects', config),
-                axios.get('/api/admin/employees', config)
-            ]);
+
+            const projectsRes = await axios.get('/api/projects', config);
             setProjects(projectsRes.data.data || []);
-            setEmployees(employeesRes.data.data || []);
             setLoading(false);
         } catch (error) {
             console.error('Error fetching data:', error);
-            toast.error('Failed to fetch data');
+            toast.error(error.response?.data?.message || 'Failed to fetch data');
             setLoading(false);
         }
     };
@@ -82,9 +81,9 @@ const ProjectManagement = () => {
                 description: project.description || '',
                 client: project.client?.name || project.client || '',
                 deadline: project.deadline ? new Date(project.deadline).toISOString().split('T')[0] : '',
-                assignedTo: project.assignedTo?.map(emp => emp._id || emp) || [],
                 status: project.status || 'pending',
-                service: project.service || 'Web Development'
+                service: project.service || 'Web Development',
+                price: project.price || ''
             });
         } else {
             setCurrentProject(null);
@@ -93,9 +92,9 @@ const ProjectManagement = () => {
                 description: '',
                 client: '',
                 deadline: '',
-                assignedTo: [],
                 status: 'pending',
-                service: 'Web Development'
+                service: 'Web Development',
+                price: ''
             });
         }
         setShowModal(true);
@@ -113,28 +112,11 @@ const ProjectManagement = () => {
         });
     };
 
-    const handleEmployeeSelect = (e) => {
-        const options = e.target.options;
-        const selected = [];
-        for (let i = 0; i < options.length; i++) {
-            if (options[i].selected) {
-                selected.push(options[i].value);
-            }
-        }
-        setFormData({ ...formData, assignedTo: selected });
-    };
-
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        // Validation
         if (!formData.name || !formData.description || !formData.client || !formData.deadline) {
             toast.error('Please fill in all required fields');
-            return;
-        }
-
-        if (formData.assignedTo.length === 0) {
-            toast.error('Please assign at least one team member');
             return;
         }
 
@@ -144,35 +126,25 @@ const ProjectManagement = () => {
                 headers: { Authorization: `Bearer ${token}` }
             };
 
-            // Transform data to match backend model
             const projectData = {
                 title: formData.name,
                 description: formData.description,
-                client: {
-                    name: formData.client
-                },
+                client: { name: formData.client },
                 service: formData.service,
-                assignedTo: formData.assignedTo,
                 status: formData.status,
-                deadline: formData.deadline
+                deadline: formData.deadline,
+                price: formData.price ? parseFloat(formData.price) : 0
             };
 
             if (modalType === 'add') {
-                const response = await axios.post('/api/projects', projectData, config);
+                await axios.post('/api/projects', projectData, config);
                 toast.success('Project created successfully!');
-                // Add new project to state immediately
-                setProjects(prevProjects => [response.data.data, ...prevProjects]);
             } else {
-                const response = await axios.put(`/api/projects/${currentProject._id}`, projectData, config);
+                await axios.put(`/api/projects/${currentProject._id}`, projectData, config);
                 toast.success('Project updated successfully!');
-                // Update project in state immediately
-                setProjects(prevProjects =>
-                    prevProjects.map(proj =>
-                        proj._id === currentProject._id ? response.data.data : proj
-                    )
-                );
             }
 
+            fetchData();
             handleCloseModal();
         } catch (error) {
             console.error('Error saving project:', error);
@@ -180,20 +152,25 @@ const ProjectManagement = () => {
         }
     };
 
-    const handleDelete = async (id) => {
-        if (!window.confirm('Are you sure you want to delete this project?')) {
-            return;
-        }
+    const handleDeleteClick = (project) => {
+        setProjectToDelete(project);
+        setShowDeleteModal(true);
+    };
+
+    const confirmDelete = async () => {
+        if (!projectToDelete) return;
 
         try {
             const token = localStorage.getItem('token');
             const config = {
                 headers: { Authorization: `Bearer ${token}` }
             };
-            await axios.delete(`/api/projects/${id}`, config);
+            await axios.delete(`/api/projects/${projectToDelete._id}`, config);
             toast.success('Project deleted successfully!');
             // Remove project from state immediately
-            setProjects(prevProjects => prevProjects.filter(proj => proj._id !== id));
+            setProjects(prevProjects => prevProjects.filter(proj => proj._id !== projectToDelete._id));
+            setShowDeleteModal(false);
+            setProjectToDelete(null);
         } catch (error) {
             console.error('Error deleting project:', error);
             toast.error('Failed to delete project');
@@ -254,7 +231,7 @@ const ProjectManagement = () => {
                                     <button className="btn-icon btn-edit" onClick={() => handleOpenModal('edit', project)}>
                                         <FaEdit />
                                     </button>
-                                    <button className="btn-icon btn-delete" onClick={() => handleDelete(project._id)}>
+                                    <button className="btn-icon btn-delete" onClick={() => handleDeleteClick(project)}>
                                         <FaTrash />
                                     </button>
                                 </div>
@@ -268,19 +245,6 @@ const ProjectManagement = () => {
                                 <div className="info-item">
                                     <FaCalendar />
                                     <span>{new Date(project.deadline).toLocaleDateString()}</span>
-                                </div>
-                            </div>
-                            <div className="project-team">
-                                <span className="team-label">Team:</span>
-                                <div className="team-avatars">
-                                    {project.assignedTo?.slice(0, 3).map((emp, idx) => (
-                                        <div key={idx} className="team-avatar" title={emp.name}>
-                                            {emp.name?.charAt(0).toUpperCase()}
-                                        </div>
-                                    ))}
-                                    {project.assignedTo?.length > 3 && (
-                                        <div className="team-avatar more">+{project.assignedTo.length - 3}</div>
-                                    )}
                                 </div>
                             </div>
                         </div>
@@ -395,25 +359,18 @@ const ProjectManagement = () => {
                                 </div>
                             </div>
 
-                            <div className="form-row assign-row">
-                                <div className="form-group assign-group">
-                                    <label>Assign Team Members (Hold Ctrl/Cmd for multiple)</label>
-                                    <div className="assign-select-wrapper">
-                                        <select
-                                            multiple
-                                            value={formData.assignedTo}
-                                            onChange={handleEmployeeSelect}
-                                            required
-                                            size={Math.min(8, Math.max(5, employees.length || 0))}
-                                            className="assign-select"
-                                        >
-                                            {employees.map(emp => (
-                                                <option key={emp._id} value={emp._id}>
-                                                    {emp.name} - {emp.department}
-                                                </option>
-                                            ))}
-                                        </select>
-                                    </div>
+                            <div className="form-row">
+                                <div className="form-group">
+                                    <label>Project Price ($)</label>
+                                    <input
+                                        type="number"
+                                        name="price"
+                                        value={formData.price}
+                                        onChange={handleChange}
+                                        placeholder="Enter project price"
+                                        min="0"
+                                        step="0.01"
+                                    />
                                 </div>
                             </div>
 
@@ -444,6 +401,28 @@ const ProjectManagement = () => {
                             </button>
                             <button className="btn btn-danger" onClick={confirmLogout}>
                                 <FaSignOutAlt /> Logout
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {showDeleteModal && (
+                <div className="modal-overlay" onClick={() => setShowDeleteModal(false)}>
+                    <div className="logout-modal-content" onClick={(e) => e.stopPropagation()}>
+                        <div className="logout-modal-header" style={{ color: '#ef4444' }}>
+                            <FaTrash />
+                            <h2>Delete Project</h2>
+                        </div>
+                        <p className="logout-modal-message">
+                            Are you sure you want to delete <strong>{projectToDelete?.title || projectToDelete?.name}</strong>? This action cannot be undone.
+                        </p>
+                        <div className="logout-modal-actions">
+                            <button className="btn btn-secondary" onClick={() => setShowDeleteModal(false)}>
+                                Cancel
+                            </button>
+                            <button className="btn btn-danger" onClick={confirmDelete}>
+                                <FaTrash /> Delete
                             </button>
                         </div>
                     </div>

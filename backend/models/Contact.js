@@ -60,6 +60,14 @@ const contactSchema = new mongoose.Schema({
         type: String,
         default: null
     },
+    fileData: {
+        type: Buffer,
+        default: null
+    },
+    fileMimeType: {
+        type: String,
+        default: null
+    },
     originalFileName: {
         type: String,
         default: null

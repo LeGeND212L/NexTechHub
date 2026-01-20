@@ -13,19 +13,20 @@ export const useAuth = () => {
 };
 
 export const AuthProvider = ({ children }) => {
-    const [user, setUser] = useState(null);
-    const [loading, setLoading] = useState(true);
+    const [user, setUser] = useState(() => {
+        const userData = localStorage.getItem('user');
+        return userData ? JSON.parse(userData) : null;
+    });
+    const [loading] = useState(false);
 
     useEffect(() => {
-        // Check if user is logged in
+        // Refresh user profile in background (non-blocking)
         const token = localStorage.getItem('token');
         const userData = localStorage.getItem('user');
-
         if (token && userData) {
-            setUser(JSON.parse(userData));
             loadUserProfile();
         }
-        setLoading(false);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const loadUserProfile = async () => {

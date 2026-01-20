@@ -308,7 +308,9 @@
   outline: none;
   border-color: #00d4ff;
   background: #c0e8ff !important;
-  box-shadow: 0 0 0 4px rgba(0, 212, 255, 0.4), 0 0 20px rgba(0, 180, 255, 0.5);
+  box-shadow:
+    0 0 0 4px rgba(0, 212, 255, 0.4),
+    0 0 20px rgba(0, 180, 255, 0.5);
   color: #000000 !important;
 }
 
@@ -527,4 +529,160 @@
 .btn-danger:hover {
   transform: translateY(-2px);
   box-shadow: 0 6px 16px rgba(239, 68, 68, 0.4);
+}
+
+/* Document Upload Section */
+.form-section.document-section {
+  background: rgba(102, 126, 234, 0.05);
+  border: 1px solid rgba(102, 126, 234, 0.2);
+  border-radius: 12px;
+  padding: 20px;
+  margin: 20px 0;
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 16px;
+  font-weight: 500;
+  color: #667eea;
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(102, 126, 234, 0.2);
+}
+
+.file-upload-area {
+  margin-bottom: 15px;
+}
+
+.file-upload-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 30px;
+  border: 2px dashed rgba(102, 126, 234, 0.4);
+  border-radius: 12px;
+  background: rgba(102, 126, 234, 0.05);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: #667eea;
+}
+
+.file-upload-btn:hover {
+  border-color: #667eea;
+  background: rgba(102, 126, 234, 0.1);
+}
+
+.file-upload-btn svg {
+  font-size: 32px;
+}
+
+.file-upload-btn span {
+  font-size: 14px;
+}
+
+.selected-files-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 15px;
+}
+
+.selected-file-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  background: rgba(102, 126, 234, 0.1);
+  border-radius: 8px;
+  font-size: 13px;
+}
+
+.selected-file-item svg {
+  color: #667eea;
+}
+
+.selected-file-item span {
+  flex: 1;
+  color: #1a202c;
+}
+
+.remove-file-btn {
+  background: none;
+  border: none;
+  color: #ef4444;
+  cursor: pointer;
+  padding: 4px;
+  transition: all 0.2s ease;
+}
+
+.remove-file-btn:hover {
+  transform: scale(1.2);
+}
+
+.contact-documents-list {
+  max-height: 250px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.contact-doc-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px;
+  border: 2px solid #e2e8f0;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: white;
+}
+
+.contact-doc-item:hover {
+  border-color: #667eea;
+  background: rgba(102, 126, 234, 0.05);
+}
+
+.contact-doc-item.selected {
+  border-color: #667eea;
+  background: rgba(102, 126, 234, 0.1);
+}
+
+.doc-checkbox {
+  padding-top: 2px;
+}
+
+.doc-checkbox input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  accent-color: #667eea;
+}
+
+.doc-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.doc-name {
+  font-weight: 500;
+  color: #1a202c;
+  font-size: 14px;
+}
+
+.doc-meta {
+  font-size: 12px;
+  color: #64748b;
+}
+
+.doc-date {
+  font-size: 11px;
+  color: #94a3b8;
 }

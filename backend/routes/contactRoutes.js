@@ -135,10 +135,20 @@ router.post('/', upload.single('contactFile'), async (req, res) => {
             message: message.trim()
         };
 
-        // Add file info if uploaded
+        // Add file info if uploaded - store in MongoDB
         if (req.file) {
-            contactData.file = req.file.path;
+            const fs = require('fs');
+            const path = require('path');
+
+            // Read file and store as buffer in MongoDB
+            const filePath = req.file.path;
+            contactData.fileData = fs.readFileSync(filePath);
+            contactData.fileMimeType = req.file.mimetype;
             contactData.originalFileName = req.file.originalname;
+            contactData.file = req.file.originalname; // Keep for backward compatibility
+
+            // Delete the file from disk after reading
+            fs.unlinkSync(filePath);
         }
 
         // Create contact message
@@ -340,15 +350,7 @@ router.delete('/:id', protect, authorize('admin'), async (req, res) => {
             });
         }
 
-        // Delete associated file if exists
-        if (contact.file) {
-            const fs = require('fs');
-            const filePath = contact.file;
-            if (fs.existsSync(filePath)) {
-                fs.unlinkSync(filePath);
-            }
-        }
-
+        // File is stored in MongoDB, will be deleted with the document
         await contact.deleteOne();
 
         res.status(200).json({
@@ -361,6 +363,45 @@ router.delete('/:id', protect, authorize('admin'), async (req, res) => {
         res.status(500).json({
             success: false,
             message: 'Error deleting contact message'
+        });
+    }
+});
+
+// @route   GET /api/contacts/:id/view
+// @desc    View contact file in browser
+// @access  Private (Admin only)
+router.get('/:id/view', protect, authorize('admin'), async (req, res) => {
+    try {
+        const contact = await Contact.findById(req.params.id);
+
+        if (!contact) {
+            return res.status(404).json({
+                success: false,
+                message: 'Contact message not found'
+            });
+        }
+
+        // Check if file exists in MongoDB
+        if (!contact.fileData) {
+            return res.status(404).json({
+                success: false,
+                message: 'No file attached to this message'
+            });
+        }
+
+        // Set headers for inline viewing
+        res.setHeader('Content-Type', contact.fileMimeType || 'application/octet-stream');
+        res.setHeader('Content-Disposition', `inline; filename="${contact.originalFileName || 'file'}"`);
+        res.setHeader('Content-Length', contact.fileData.length);
+
+        // Send the file buffer
+        res.send(contact.fileData);
+
+    } catch (error) {
+        console.error('View file error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error viewing file'
         });
     }
 });
@@ -379,26 +420,21 @@ router.get('/:id/download', protect, authorize('admin'), async (req, res) => {
             });
         }
 
-        if (!contact.file) {
+        // Check if file exists in MongoDB
+        if (!contact.fileData) {
             return res.status(404).json({
                 success: false,
                 message: 'No file attached to this message'
             });
         }
 
-        const path = require('path');
-        const fs = require('fs');
-        const filePath = path.resolve(contact.file);
+        // Set headers for download
+        res.setHeader('Content-Type', contact.fileMimeType || 'application/octet-stream');
+        res.setHeader('Content-Disposition', `attachment; filename="${contact.originalFileName || 'download'}"`);
+        res.setHeader('Content-Length', contact.fileData.length);
 
-        if (!fs.existsSync(filePath)) {
-            return res.status(404).json({
-                success: false,
-                message: 'File not found on server'
-            });
-        }
-
-        // Send file
-        res.download(filePath, contact.originalFileName || 'download');
+        // Send the file buffer
+        res.send(contact.fileData);
 
     } catch (error) {
         console.error('Download file error:', error);

@@ -7,13 +7,12 @@ import {
     FaUsers,
     FaProjectDiagram,
     FaTasks,
-    FaUserTie,
-    FaClock,
-    FaDollarSign,
     FaArrowUp,
     FaArrowDown,
     FaSignOutAlt,
-    FaInbox
+    FaInbox,
+    FaDollarSign,
+    FaClock
 } from 'react-icons/fa';
 import './AdminDashboard.css';
 
@@ -25,11 +24,11 @@ const AdminDashboard = () => {
         totalEmployees: 0,
         activeProjects: 0,
         pendingTasks: 0,
-        totalClients: 0,
+        unreadMessages: 0,
         employeeTrend: 0,
         projectTrend: 0,
         taskTrend: 0,
-        clientTrend: 0
+        messageTrend: 0
     });
     const [loading, setLoading] = useState(true);
 
@@ -54,27 +53,27 @@ const AdminDashboard = () => {
                 headers: { Authorization: `Bearer ${token}` }
             };
 
-            const [employeesRes, projectsRes, tasksRes, reviewsRes] = await Promise.all([
+            const [employeesRes, projectsRes, tasksRes, contactsRes] = await Promise.all([
                 axios.get('/api/admin/employees', config),
                 axios.get('/api/projects', config),
                 axios.get('/api/tasks', config),
-                axios.get('/api/reviews', config)
+                axios.get('/api/contacts', config)
             ]);
 
             const employees = employeesRes.data.data || [];
             const projects = projectsRes.data.data || [];
             const tasks = tasksRes.data.data || [];
-            const reviews = reviewsRes.data.data || [];
+            const unreadCount = contactsRes.data.counts?.unread || 0;
 
             setStats({
                 totalEmployees: employees.length,
                 activeProjects: projects.filter(p => p.status !== 'completed').length,
                 pendingTasks: tasks.filter(t => t.status === 'pending').length,
-                totalClients: reviews.length,
+                unreadMessages: unreadCount,
                 employeeTrend: 12,
                 projectTrend: 8,
                 taskTrend: -5,
-                clientTrend: 15
+                messageTrend: unreadCount > 0 ? 100 : 0
             });
 
             setLoading(false);
@@ -84,11 +83,11 @@ const AdminDashboard = () => {
                 totalEmployees: 0,
                 activeProjects: 0,
                 pendingTasks: 0,
-                totalClients: 0,
+                unreadMessages: 0,
                 employeeTrend: 0,
                 projectTrend: 0,
                 taskTrend: 0,
-                clientTrend: 0
+                messageTrend: 0
             });
             setLoading(false);
         }
@@ -120,12 +119,12 @@ const AdminDashboard = () => {
             trend: stats.taskTrend
         },
         {
-            title: 'Total Clients',
-            value: stats.totalClients,
-            icon: <FaUserTie />,
+            title: 'New Messages',
+            value: stats.unreadMessages,
+            icon: <FaInbox />,
             color: '#ef4444',
-            link: '/admin/reviews',
-            trend: stats.clientTrend
+            link: '/admin/messages',
+            trend: stats.messageTrend
         }
     ];
 

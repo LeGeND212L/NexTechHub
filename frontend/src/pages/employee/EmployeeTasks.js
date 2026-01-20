@@ -7,10 +7,14 @@ import {
     FaTasks,
     FaCalendar,
     FaFlag,
-    FaUpload,
     FaFile,
     FaArrowLeft,
-    FaSignOutAlt
+    FaSignOutAlt,
+    FaEye,
+    FaDownload,
+    FaFolderOpen,
+    FaProjectDiagram,
+    FaFileAlt
 } from 'react-icons/fa';
 import './EmployeeTasks.css';
 import { getSocket } from '../../utils/socket';
@@ -22,9 +26,73 @@ const EmployeeTasks = () => {
     const [tasks, setTasks] = useState([]);
     const [loading, setLoading] = useState(true);
     const [filter, setFilter] = useState(location.state?.filter || 'all');
-    const [selectedTask, setSelectedTask] = useState(null);
-    const [file, setFile] = useState(null);
     const [showLogoutModal, setShowLogoutModal] = useState(false);
+    const [expandedProjectDocs, setExpandedProjectDocs] = useState({});
+    const [expandedTaskDocs, setExpandedTaskDocs] = useState({});
+
+    const toggleProjectDocs = (taskId) => {
+        setExpandedProjectDocs(prev => ({
+            ...prev,
+            [taskId]: !prev[taskId]
+        }));
+    };
+
+    const toggleTaskDocs = (taskId) => {
+        setExpandedTaskDocs(prev => ({
+            ...prev,
+            [taskId]: !prev[taskId]
+        }));
+    };
+
+    const handleViewFile = (projectId, fileId) => {
+        const token = localStorage.getItem('token');
+        // Use hardcoded base URL to avoid double /api issue
+        const baseUrl = window.location.hostname === 'localhost'
+            ? 'http://localhost:5000'
+            : 'https://vender-hao6.onrender.com';
+        const url = `${baseUrl}/api/projects/${projectId}/files/${fileId}/view?token=${token}`;
+        window.open(url, '_blank');
+    };
+
+    const handleDownloadFile = (projectId, fileId, fileName) => {
+        const token = localStorage.getItem('token');
+        const baseUrl = window.location.hostname === 'localhost'
+            ? 'http://localhost:5000'
+            : 'https://vender-hao6.onrender.com';
+        const url = `${baseUrl}/api/projects/${projectId}/files/${fileId}/download?token=${token}`;
+
+        // Create a temporary anchor to trigger download
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = fileName;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    };
+
+    const handleViewTaskFile = (taskId, fileId) => {
+        const token = localStorage.getItem('token');
+        const baseUrl = window.location.hostname === 'localhost'
+            ? 'http://localhost:5000'
+            : 'https://vender-hao6.onrender.com';
+        const url = `${baseUrl}/api/employees/tasks/${taskId}/files/${fileId}/view?token=${token}`;
+        window.open(url, '_blank');
+    };
+
+    const handleDownloadTaskFile = (taskId, fileId, fileName) => {
+        const token = localStorage.getItem('token');
+        const baseUrl = window.location.hostname === 'localhost'
+            ? 'http://localhost:5000'
+            : 'https://vender-hao6.onrender.com';
+        const url = `${baseUrl}/api/employees/tasks/${taskId}/files/${fileId}/download?token=${token}`;
+
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = fileName;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    };
 
     useEffect(() => {
         fetchTasks();
@@ -130,34 +198,6 @@ const EmployeeTasks = () => {
         }
     };
 
-    const handleFileUpload = async (taskId) => {
-        if (!file) {
-            toast.error('Please select a file');
-            return;
-        }
-
-        const formData = new FormData();
-        formData.append('taskFile', file);
-
-        try {
-            const token = localStorage.getItem('token');
-            const config = {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    'Content-Type': 'multipart/form-data'
-                }
-            };
-            await axios.post(`/api/employees/tasks/${taskId}/upload`, formData, config);
-            toast.success('File uploaded successfully!');
-            setFile(null);
-            setSelectedTask(null);
-            fetchTasks();
-        } catch (error) {
-            console.error('Error uploading file:', error);
-            toast.error(error.response?.data?.message || 'Failed to upload file');
-        }
-    };
-
     const getPriorityColor = (priority) => {
         switch (priority) {
             case 'high': return '#ef4444';
@@ -248,6 +288,14 @@ const EmployeeTasks = () => {
 
                             <p className="task-description">{task.description}</p>
 
+                            {/* Project Info */}
+                            {task.project && (
+                                <div className="task-project-info">
+                                    <FaProjectDiagram />
+                                    <span>Project: {task.project.title}</span>
+                                </div>
+                            )}
+
                             <div className="task-info">
                                 <div className="info-item">
                                     <FaCalendar />
@@ -255,11 +303,103 @@ const EmployeeTasks = () => {
                                 </div>
                                 {task.files?.length > 0 && (
                                     <div className="info-item">
-                                        <FaFile />
-                                        <span>Uploads: {task.files.length}</span>
+                                        <FaFileAlt />
+                                        <span>Task Attachments: {task.files.length}</span>
                                     </div>
                                 )}
                             </div>
+
+                            {/* Task Documents Section (Admin Attachments) */}
+                            {task.files && task.files.length > 0 && (
+                                <div className="project-documents-section">
+                                    <button
+                                        className="toggle-docs-btn"
+                                        onClick={() => toggleTaskDocs(task._id)}
+                                    >
+                                        <FaFileAlt />
+                                        Task Attachments ({task.files.length})
+                                        <span className={`toggle-arrow ${expandedTaskDocs[task._id] ? 'expanded' : ''}`}>▼</span>
+                                    </button>
+
+                                    {expandedTaskDocs[task._id] && (
+                                        <div className="project-docs-list">
+                                            {task.files.map((file) => (
+                                                <div key={file._id} className="project-doc-item">
+                                                    <div className="doc-info">
+                                                        <FaFile />
+                                                        <span className="doc-name">{file.originalName}</span>
+                                                        <span className="doc-source">
+                                                            {file.source === 'contact' ? '(Client Upload)' : '(Admin Upload)'}
+                                                        </span>
+                                                    </div>
+                                                    <div className="doc-actions">
+                                                        <button
+                                                            className="btn-view-doc"
+                                                            onClick={() => handleViewTaskFile(task._id, file._id)}
+                                                            title="View File"
+                                                        >
+                                                            <FaEye />
+                                                        </button>
+                                                        <button
+                                                            className="btn-download-doc"
+                                                            onClick={() => handleDownloadTaskFile(task._id, file._id, file.originalName)}
+                                                            title="Download File"
+                                                        >
+                                                            <FaDownload />
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+
+                            {/* Project Documents Section */}
+                            {task.project?.files && task.project.files.length > 0 && (
+                                <div className="project-documents-section">
+                                    <button
+                                        className="toggle-docs-btn"
+                                        onClick={() => toggleProjectDocs(task._id)}
+                                    >
+                                        <FaFolderOpen />
+                                        Project Documents ({task.project.files.length})
+                                        <span className={`toggle-arrow ${expandedProjectDocs[task._id] ? 'expanded' : ''}`}>▼</span>
+                                    </button>
+
+                                    {expandedProjectDocs[task._id] && (
+                                        <div className="project-docs-list">
+                                            {task.project.files.map((file) => (
+                                                <div key={file._id} className="project-doc-item">
+                                                    <div className="doc-info">
+                                                        <FaFile />
+                                                        <span className="doc-name">{file.originalName}</span>
+                                                        <span className="doc-source">
+                                                            {file.source === 'contact' ? '(Client Upload)' : '(Admin Upload)'}
+                                                        </span>
+                                                    </div>
+                                                    <div className="doc-actions">
+                                                        <button
+                                                            className="btn-view-doc"
+                                                            onClick={() => handleViewFile(task.project._id, file._id)}
+                                                            title="View File"
+                                                        >
+                                                            <FaEye />
+                                                        </button>
+                                                        <button
+                                                            className="btn-download-doc"
+                                                            onClick={() => handleDownloadFile(task.project._id, file._id, file.originalName)}
+                                                            title="Download File"
+                                                        >
+                                                            <FaDownload />
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
+                            )}
 
                             <div className="task-actions">
                                 <select
@@ -271,38 +411,7 @@ const EmployeeTasks = () => {
                                     <option value="in-progress">In Progress</option>
                                     <option value="completed">Completed</option>
                                 </select>
-
-                                <button
-                                    className="upload-btn"
-                                    onClick={() => setSelectedTask(task._id)}
-                                >
-                                    <FaUpload /> Upload File
-                                </button>
                             </div>
-
-                            {selectedTask === task._id && (
-                                <div className="file-upload-section">
-                                    <input
-                                        type="file"
-                                        onChange={(e) => setFile(e.target.files[0])}
-                                        className="file-input"
-                                    />
-                                    <div className="upload-actions">
-                                        <button
-                                            className="btn-upload"
-                                            onClick={() => handleFileUpload(task._id)}
-                                        >
-                                            Upload
-                                        </button>
-                                        <button
-                                            className="btn-cancel"
-                                            onClick={() => { setSelectedTask(null); setFile(null); }}
-                                        >
-                                            Cancel
-                                        </button>
-                                    </div>
-                                </div>
-                            )}
                         </div>
                     ))
                 ) : (

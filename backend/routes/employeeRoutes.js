@@ -3,6 +3,7 @@ const router = express.Router();
 const { protect, authorize } = require('../middleware/auth');
 const Task = require('../models/Task');
 const User = require('../models/User');
+const Project = require('../models/Project');
 const upload = require('../middleware/upload');
 
 // All routes are protected
@@ -41,19 +42,152 @@ router.get('/profile', async (req, res) => {
 router.get('/tasks', async (req, res) => {
     try {
         const tasks = await Task.find({ assignedTo: req.user._id })
-            .populate('project', 'title client service')
+            .populate({
+                path: 'project',
+                select: 'title client service files',
+                populate: { path: 'service', select: 'name' }
+            })
             .populate('assignedBy', 'name email')
             .sort({ deadline: 1 });
 
+        // Transform files to exclude binary data (for both project and task files)
+        const tasksWithFileMeta = tasks.map(task => {
+            const taskObj = task.toObject();
+
+            // Transform project files
+            if (taskObj.project && taskObj.project.files && taskObj.project.files.length > 0) {
+                taskObj.project.files = taskObj.project.files.map(file => ({
+                    _id: file._id,
+                    originalName: file.originalName,
+                    fileMimeType: file.fileMimeType,
+                    source: file.source,
+                    uploadedAt: file.uploadedAt
+                }));
+            }
+
+            // Transform task files (admin attachments)
+            if (taskObj.files && taskObj.files.length > 0) {
+                taskObj.files = taskObj.files.map(file => ({
+                    _id: file._id,
+                    originalName: file.originalName,
+                    fileMimeType: file.fileMimeType,
+                    source: file.source || 'admin',
+                    uploadedAt: file.uploadedAt
+                }));
+            }
+
+            return taskObj;
+        });
+
         res.json({
             success: true,
-            count: tasks.length,
-            data: tasks
+            count: tasksWithFileMeta.length,
+            data: tasksWithFileMeta
         });
     } catch (error) {
         res.status(500).json({
             success: false,
             message: 'Failed to fetch tasks',
+            error: error.message
+        });
+    }
+});
+
+// @route   GET /api/employees/tasks/:id/files/:fileId/view
+// @desc    View task file inline (for employees)
+// @access  Private/Employee
+router.get('/tasks/:id/files/:fileId/view', async (req, res) => {
+    try {
+        const task = await Task.findById(req.params.id);
+
+        if (!task) {
+            return res.status(404).json({
+                success: false,
+                message: 'Task not found'
+            });
+        }
+
+        // Check if task belongs to logged in employee
+        if (task.assignedTo.toString() !== req.user._id.toString() && req.user.role !== 'admin') {
+            return res.status(403).json({
+                success: false,
+                message: 'Not authorized to access this task'
+            });
+        }
+
+        const file = task.files.id(req.params.fileId);
+
+        if (!file) {
+            return res.status(404).json({
+                success: false,
+                message: 'File not found'
+            });
+        }
+
+        if (!file.fileData) {
+            return res.status(404).json({
+                success: false,
+                message: 'File data not available'
+            });
+        }
+
+        res.set('Content-Type', file.fileMimeType || 'application/octet-stream');
+        res.set('Content-Disposition', `inline; filename="${file.originalName}"`);
+        res.send(file.fileData);
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: 'Failed to view file',
+            error: error.message
+        });
+    }
+});
+
+// @route   GET /api/employees/tasks/:id/files/:fileId/download
+// @desc    Download task file (for employees)
+// @access  Private/Employee
+router.get('/tasks/:id/files/:fileId/download', async (req, res) => {
+    try {
+        const task = await Task.findById(req.params.id);
+
+        if (!task) {
+            return res.status(404).json({
+                success: false,
+                message: 'Task not found'
+            });
+        }
+
+        // Check if task belongs to logged in employee
+        if (task.assignedTo.toString() !== req.user._id.toString() && req.user.role !== 'admin') {
+            return res.status(403).json({
+                success: false,
+                message: 'Not authorized to access this task'
+            });
+        }
+
+        const file = task.files.id(req.params.fileId);
+
+        if (!file) {
+            return res.status(404).json({
+                success: false,
+                message: 'File not found'
+            });
+        }
+
+        if (!file.fileData) {
+            return res.status(404).json({
+                success: false,
+                message: 'File data not available'
+            });
+        }
+
+        res.set('Content-Type', file.fileMimeType || 'application/octet-stream');
+        res.set('Content-Disposition', `attachment; filename="${file.originalName}"`);
+        res.send(file.fileData);
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: 'Failed to download file',
             error: error.message
         });
     }
@@ -305,6 +439,98 @@ router.get('/dashboard', async (req, res) => {
         res.status(500).json({
             success: false,
             message: 'Failed to fetch dashboard data',
+            error: error.message
+        });
+    }
+});
+
+// @route   GET /api/employees/projects
+// @desc    Get all projects assigned to the logged in employee
+// @access  Private/Employee
+router.get('/projects', async (req, res) => {
+    try {
+        const projects = await Project.find({ assignedTo: req.user._id })
+            .select('title client service status startDate deadline files')
+            .populate('service', 'name')
+            .sort({ createdAt: -1 });
+
+        // Transform files to exclude binary data (just send metadata)
+        const projectsWithFileMeta = projects.map(project => {
+            const projectObj = project.toObject();
+            if (projectObj.files && projectObj.files.length > 0) {
+                projectObj.files = projectObj.files.map(file => ({
+                    _id: file._id,
+                    originalName: file.originalName,
+                    fileMimeType: file.fileMimeType,
+                    source: file.source,
+                    uploadedAt: file.uploadedAt
+                }));
+            }
+            return projectObj;
+        });
+
+        res.json({
+            success: true,
+            count: projectsWithFileMeta.length,
+            data: projectsWithFileMeta
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: 'Failed to fetch projects',
+            error: error.message
+        });
+    }
+});
+
+// @route   GET /api/employees/projects/:id
+// @desc    Get single project with files for assigned employee
+// @access  Private/Employee
+router.get('/projects/:id', async (req, res) => {
+    try {
+        const project = await Project.findById(req.params.id)
+            .populate('service', 'name')
+            .populate('assignedTo', 'name email');
+
+        if (!project) {
+            return res.status(404).json({
+                success: false,
+                message: 'Project not found'
+            });
+        }
+
+        // Check if employee is assigned to this project
+        const isAssigned = project.assignedTo.some(
+            emp => emp._id.toString() === req.user._id.toString()
+        );
+
+        if (!isAssigned && req.user.role !== 'admin') {
+            return res.status(403).json({
+                success: false,
+                message: 'Not authorized to access this project'
+            });
+        }
+
+        // Transform files to exclude binary data
+        const projectObj = project.toObject();
+        if (projectObj.files && projectObj.files.length > 0) {
+            projectObj.files = projectObj.files.map(file => ({
+                _id: file._id,
+                originalName: file.originalName,
+                fileMimeType: file.fileMimeType,
+                source: file.source,
+                uploadedAt: file.uploadedAt
+            }));
+        }
+
+        res.json({
+            success: true,
+            data: projectObj
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: 'Failed to fetch project',
             error: error.message
         });
     }

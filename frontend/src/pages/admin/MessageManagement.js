@@ -32,6 +32,8 @@ const MessageManagement = () => {
     const [selectedMessage, setSelectedMessage] = useState(null);
     const [showModal, setShowModal] = useState(false);
     const [showLogoutModal, setShowLogoutModal] = useState(false);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [messageToDelete, setMessageToDelete] = useState(null);
     const [statusCounts, setStatusCounts] = useState({
         unread: 0,
         read: 0,
@@ -121,14 +123,17 @@ const MessageManagement = () => {
         }
     };
 
-    const handleDeleteMessage = async (messageId) => {
-        if (!window.confirm('Are you sure you want to delete this message?')) {
-            return;
-        }
+    const handleDeleteClick = (messageId) => {
+        setMessageToDelete(messageId);
+        setShowDeleteModal(true);
+    };
+
+    const confirmDeleteMessage = async () => {
+        if (!messageToDelete) return;
 
         try {
             const token = localStorage.getItem('token');
-            const response = await axios.delete(`/api/contacts/${messageId}`, {
+            const response = await axios.delete(`/api/contacts/${messageToDelete}`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
 
@@ -138,6 +143,8 @@ const MessageManagement = () => {
                 setShowModal(false);
                 setSelectedMessage(null);
             }
+            setShowDeleteModal(false);
+            setMessageToDelete(null);
         } catch (error) {
             console.error('Error deleting message:', error);
             toast.error('Failed to delete message');
@@ -172,20 +179,13 @@ const MessageManagement = () => {
     const handleViewFile = async (messageId, fileName) => {
         try {
             const token = localStorage.getItem('token');
-            const response = await axios.get(`/api/contacts/${messageId}/download`, {
-                headers: { Authorization: `Bearer ${token}` },
-                responseType: 'blob'
-            });
+            // Open file in new tab using the view endpoint
+            // Use full backend URL since window.open doesn't go through proxy
+            const baseUrl = 'http://localhost:5000';
+            const viewUrl = `${baseUrl}/api/contacts/${messageId}/view`;
 
-            // Create a blob URL and open in new tab
-            const blob = new Blob([response.data]);
-            const url = window.URL.createObjectURL(blob);
-            window.open(url, '_blank');
-            
-            // Clean up after a delay
-            setTimeout(() => {
-                window.URL.revokeObjectURL(url);
-            }, 100);
+            // For viewing, we'll open the URL directly with token in query
+            window.open(`${viewUrl}?token=${token}`, '_blank');
 
             toast.success('Opening file in new tab');
         } catch (error) {
@@ -432,22 +432,8 @@ const MessageManagement = () => {
                                         <a href={`tel:${selectedMessage.phone}`}>{selectedMessage.phone}</a>
                                     </div>
                                 )}
-                                <div clasdiv style={{ display: 'flex', gap: '10px' }}>
-                                            <button
-                                                className="btn btn-primary btn-view"
-                                                onClick={() => handleViewFile(selectedMessage._id, selectedMessage.originalFileName)}
-                                                title="View file in browser"
-                                            >
-                                                <FaEye /> View
-                                            </button>
-                                            <button
-                                                className="btn btn-primary btn-download"
-                                                onClick={() => handleDownloadFile(selectedMessage._id, selectedMessage.originalFileName)}
-                                                title="Download file"
-                                            >
-                                                <FaFileDownload /> Download
-                                            </button>
-                                        </divs:</label>
+                                <div className="detail-row">
+                                    <label><FaClock /> Status:</label>
                                     {getStatusBadge(selectedMessage.status)}
                                 </div>
                             </div>
@@ -467,12 +453,22 @@ const MessageManagement = () => {
                                     <label className="section-label"><FaPaperclip /> Attached File:</label>
                                     <div className="file-info">
                                         <span className="file-name">{selectedMessage.originalFileName || 'Attachment'}</span>
-                                        <button
-                                            className="btn btn-primary btn-download"
-                                            onClick={() => handleDownloadFile(selectedMessage._id, selectedMessage.originalFileName)}
-                                        >
-                                            <FaFileDownload /> Download
-                                        </button>
+                                        <div style={{ display: 'flex', gap: '10px' }}>
+                                            <button
+                                                className="btn btn-primary btn-view"
+                                                onClick={() => handleViewFile(selectedMessage._id, selectedMessage.originalFileName)}
+                                                title="View file in browser"
+                                            >
+                                                <FaEye /> View
+                                            </button>
+                                            <button
+                                                className="btn btn-primary btn-download"
+                                                onClick={() => handleDownloadFile(selectedMessage._id, selectedMessage.originalFileName)}
+                                                title="Download file"
+                                            >
+                                                <FaFileDownload /> Download
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             )}
@@ -497,14 +493,8 @@ const MessageManagement = () => {
                                 Close
                             </button>
                             <button
-                                className="btn btn-success"
-                                onClick={() => handleUpdateStatus(selectedMessage._id, 'replied')}
-                            >
-                                <FaReply /> Mark as Replied
-                            </button>
-                            <button
                                 className="btn btn-danger"
-                                onClick={() => handleDeleteMessage(selectedMessage._id)}
+                                onClick={() => handleDeleteClick(selectedMessage._id)}
                             >
                                 <FaTrash /> Delete
                             </button>
@@ -528,6 +518,29 @@ const MessageManagement = () => {
                             </button>
                             <button className="btn btn-danger" onClick={confirmLogout}>
                                 <FaSignOutAlt /> Logout
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Delete Confirmation Modal */}
+            {showDeleteModal && (
+                <div className="modal-overlay" onClick={() => setShowDeleteModal(false)}>
+                    <div className="logout-modal-content" onClick={(e) => e.stopPropagation()}>
+                        <div className="logout-modal-header" style={{ color: '#ef4444' }}>
+                            <FaTrash />
+                            <h2>Delete Message</h2>
+                        </div>
+                        <p className="logout-modal-message">
+                            Are you sure you want to delete this message? This action cannot be undone.
+                        </p>
+                        <div className="logout-modal-actions">
+                            <button className="btn btn-secondary" onClick={() => setShowDeleteModal(false)}>
+                                Cancel
+                            </button>
+                            <button className="btn btn-danger" onClick={confirmDeleteMessage}>
+                                <FaTrash /> Delete
                             </button>
                         </div>
                     </div>
