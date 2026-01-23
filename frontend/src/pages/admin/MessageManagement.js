@@ -161,8 +161,7 @@ const MessageManagement = () => {
         try {
             const token = localStorage.getItem('token');
             // Open file in new tab using the view endpoint
-            // Use full backend URL since window.open doesn't go through proxy
-            const baseUrl = 'http://localhost:5000';
+            const baseUrl = process.env.REACT_APP_SOCKET_URL || 'http://localhost:5000';
             const viewUrl = `${baseUrl}/api/contacts/${messageId}/view`;
 
             // For viewing, we'll open the URL directly with token in query

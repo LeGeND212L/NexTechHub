@@ -46,19 +46,14 @@ const EmployeeTasks = () => {
 
     const handleViewFile = (projectId, fileId) => {
         const token = localStorage.getItem('token');
-        // Use hardcoded base URL to avoid double /api issue
-        const baseUrl = window.location.hostname === 'localhost'
-            ? 'http://localhost:5000'
-            : 'https://vender-hao6.onrender.com';
+        const baseUrl = process.env.REACT_APP_SOCKET_URL || 'http://localhost:5000';
         const url = `${baseUrl}/api/projects/${projectId}/files/${fileId}/view?token=${token}`;
         window.open(url, '_blank');
     };
 
     const handleDownloadFile = (projectId, fileId, fileName) => {
         const token = localStorage.getItem('token');
-        const baseUrl = window.location.hostname === 'localhost'
-            ? 'http://localhost:5000'
-            : 'https://vender-hao6.onrender.com';
+        const baseUrl = process.env.REACT_APP_SOCKET_URL || 'http://localhost:5000';
         const url = `${baseUrl}/api/projects/${projectId}/files/${fileId}/download?token=${token}`;
 
         // Create a temporary anchor to trigger download
@@ -72,18 +67,14 @@ const EmployeeTasks = () => {
 
     const handleViewTaskFile = (taskId, fileId) => {
         const token = localStorage.getItem('token');
-        const baseUrl = window.location.hostname === 'localhost'
-            ? 'http://localhost:5000'
-            : 'https://vender-hao6.onrender.com';
+        const baseUrl = process.env.REACT_APP_SOCKET_URL || 'http://localhost:5000';
         const url = `${baseUrl}/api/employees/tasks/${taskId}/files/${fileId}/view?token=${token}`;
         window.open(url, '_blank');
     };
 
     const handleDownloadTaskFile = (taskId, fileId, fileName) => {
         const token = localStorage.getItem('token');
-        const baseUrl = window.location.hostname === 'localhost'
-            ? 'http://localhost:5000'
-            : 'https://vender-hao6.onrender.com';
+        const baseUrl = process.env.REACT_APP_SOCKET_URL || 'http://localhost:5000';
         const url = `${baseUrl}/api/employees/tasks/${taskId}/files/${fileId}/download?token=${token}`;
 
         const link = document.createElement('a');
