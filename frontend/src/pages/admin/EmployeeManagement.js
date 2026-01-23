@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import api from '../../utils/api';
 import { toast } from 'react-toastify';
 import { useAuth } from '../../context/AuthContext';
 import {
@@ -50,11 +50,7 @@ const EmployeeManagement = () => {
 
     const fetchEmployees = async () => {
         try {
-            const token = localStorage.getItem('token');
-            const config = {
-                headers: { Authorization: `Bearer ${token}` }
-            };
-            const res = await axios.get('/api/admin/employees', config);
+            const res = await api.get('/admin/employees');
             setEmployees(res.data.data || []);
             setLoading(false);
         } catch (error) {
@@ -132,13 +128,8 @@ const EmployeeManagement = () => {
         }
 
         try {
-            const token = localStorage.getItem('token');
-            const config = {
-                headers: { Authorization: `Bearer ${token}` }
-            };
-
             if (modalType === 'add') {
-                const response = await axios.post('/api/admin/employees', formData, config);
+                const response = await api.post('/admin/employees', formData);
                 toast.success('Employee added successfully!');
                 // Add new employee to state immediately
                 setEmployees(prevEmployees => [...prevEmployees, response.data.data]);
@@ -147,7 +138,7 @@ const EmployeeManagement = () => {
                 if (!updateData.password) {
                     delete updateData.password;
                 }
-                const response = await axios.put(`/api/admin/employees/${currentEmployee._id}`, updateData, config);
+                const response = await api.put(`/admin/employees/${currentEmployee._id}`, updateData);
                 toast.success('Employee updated successfully!');
                 // Update employee in state immediately
                 setEmployees(prevEmployees =>
@@ -173,11 +164,7 @@ const EmployeeManagement = () => {
         if (!employeeToDelete) return;
 
         try {
-            const token = localStorage.getItem('token');
-            const config = {
-                headers: { Authorization: `Bearer ${token}` }
-            };
-            await axios.delete(`/api/admin/employees/${employeeToDelete._id}`, config);
+            await api.delete(`/admin/employees/${employeeToDelete._id}`);
             toast.success('Employee deleted successfully!');
             // Remove employee from state immediately
             setEmployees(prevEmployees => prevEmployees.filter(emp => emp._id !== employeeToDelete._id));

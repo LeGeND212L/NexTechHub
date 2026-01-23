@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import api from '../../utils/api';
 import { toast } from 'react-toastify';
 import { useAuth } from '../../context/AuthContext';
 import {
@@ -50,13 +50,9 @@ const PaymentManagement = () => {
 
     const fetchData = async () => {
         try {
-            const token = localStorage.getItem('token');
-            const config = {
-                headers: { Authorization: `Bearer ${token}` }
-            };
             const [paymentsRes, employeesRes] = await Promise.all([
-                axios.get('/api/payments', config),
-                axios.get('/api/admin/employees', config)
+                api.get('/payments'),
+                api.get('/admin/employees')
             ]);
             setPayments(paymentsRes.data.data || []);
             setEmployees(employeesRes.data.data || []);
@@ -171,11 +167,6 @@ const PaymentManagement = () => {
         }
 
         try {
-            const token = localStorage.getItem('token');
-            const config = {
-                headers: { Authorization: `Bearer ${token}` }
-            };
-
             // Prepare payment data with proper types and required fields
             const paymentData = {
                 employee: formData.employee,
@@ -190,7 +181,7 @@ const PaymentManagement = () => {
 
             console.log('Creating payment with data:', paymentData);
 
-            const response = await axios.post('/api/payments', paymentData, config);
+            const response = await api.post('/payments', paymentData);
             console.log('Payment response:', response.data);
 
             // Add new payment to state immediately
@@ -206,9 +197,7 @@ const PaymentManagement = () => {
 
     const downloadPayslip = async (paymentId) => {
         try {
-            const token = localStorage.getItem('token');
-            const response = await axios.get(`/api/payments/${paymentId}/payslip`, {
-                headers: { Authorization: `Bearer ${token}` },
+            const response = await api.get(`/payments/${paymentId}/payslip`, {
                 responseType: 'blob'
             });
 

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../../utils/api';
 import { toast } from 'react-toastify';
 import {
     FaStar,
@@ -24,11 +24,7 @@ const ReviewManagement = () => {
 
     const fetchReviews = async () => {
         try {
-            const token = localStorage.getItem('token');
-            const config = {
-                headers: { Authorization: `Bearer ${token}` }
-            };
-            const res = await axios.get('/api/reviews', config);
+            const res = await api.get('/reviews');
             setReviews(res.data.data || []);
             setLoading(false);
         } catch (error) {
@@ -40,11 +36,7 @@ const ReviewManagement = () => {
 
     const handleStatusUpdate = async (id, status) => {
         try {
-            const token = localStorage.getItem('token');
-            const config = {
-                headers: { Authorization: `Bearer ${token}` }
-            };
-            await axios.put(`/api/reviews/${id}`, { status }, config);
+            await api.put(`/reviews/${id}`, { status });
             toast.success(`Review ${status} successfully!`);
             fetchReviews();
         } catch (error) {

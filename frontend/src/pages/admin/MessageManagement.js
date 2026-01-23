@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import api from '../../utils/api';
 import { toast } from 'react-toastify';
 import { useAuth } from '../../context/AuthContext';
 import {
@@ -48,7 +48,6 @@ const MessageManagement = () => {
 
     const fetchMessages = async () => {
         try {
-            const token = localStorage.getItem('token');
             const params = {};
 
             if (statusFilter !== 'all') {
@@ -59,10 +58,7 @@ const MessageManagement = () => {
                 params.search = searchTerm;
             }
 
-            const response = await axios.get('/api/contacts', {
-                headers: { Authorization: `Bearer ${token}` },
-                params
-            });
+            const response = await api.get('/contacts', { params });
 
             if (response.data.success) {
                 setMessages(response.data.data);
@@ -89,12 +85,7 @@ const MessageManagement = () => {
         // Mark as read if unread
         if (message.status === 'unread') {
             try {
-                const token = localStorage.getItem('token');
-                await axios.put(
-                    `/api/contacts/${message._id}`,
-                    { status: 'read' },
-                    { headers: { Authorization: `Bearer ${token}` } }
-                );
+                await api.put(`/contacts/${message._id}`, { status: 'read' });
                 fetchMessages();
             } catch (error) {
                 console.error('Error updating message status:', error);
@@ -104,12 +95,7 @@ const MessageManagement = () => {
 
     const handleUpdateStatus = async (messageId, newStatus) => {
         try {
-            const token = localStorage.getItem('token');
-            const response = await axios.put(
-                `/api/contacts/${messageId}`,
-                { status: newStatus, notes },
-                { headers: { Authorization: `Bearer ${token}` } }
-            );
+            const response = await api.put(`/contacts/${messageId}`, { status: newStatus, notes });
 
             if (response.data.success) {
                 toast.success('Message status updated successfully');
@@ -132,10 +118,7 @@ const MessageManagement = () => {
         if (!messageToDelete) return;
 
         try {
-            const token = localStorage.getItem('token');
-            const response = await axios.delete(`/api/contacts/${messageToDelete}`, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
+            const response = await api.delete(`/contacts/${messageToDelete}`);
 
             if (response.data.success) {
                 toast.success('Message deleted successfully');
@@ -153,9 +136,7 @@ const MessageManagement = () => {
 
     const handleDownloadFile = async (messageId, fileName) => {
         try {
-            const token = localStorage.getItem('token');
-            const response = await axios.get(`/api/contacts/${messageId}/download`, {
-                headers: { Authorization: `Bearer ${token}` },
+            const response = await api.get(`/contacts/${messageId}/download`, {
                 responseType: 'blob'
             });
 

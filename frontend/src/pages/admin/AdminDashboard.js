@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import api from '../../utils/api';
 import { useAuth } from '../../context/AuthContext';
 import { toast } from 'react-toastify';
 import {
@@ -57,13 +57,8 @@ const AdminDashboard = () => {
 
     const fetchDashboardData = async () => {
         try {
-            const token = localStorage.getItem('token');
-            const config = {
-                headers: { Authorization: `Bearer ${token}` }
-            };
-
             // Use single optimized dashboard endpoint
-            const res = await axios.get('/api/admin/dashboard', config);
+            const res = await api.get('/admin/dashboard');
             const data = res.data.data;
 
             const newStats = {

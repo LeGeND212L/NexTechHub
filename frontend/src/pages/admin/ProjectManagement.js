@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import api from '../../utils/api';
 import { toast } from 'react-toastify';
 import { useAuth } from '../../context/AuthContext';
 import {
@@ -57,12 +57,7 @@ const ProjectManagement = () => {
 
     const fetchData = async () => {
         try {
-            const token = localStorage.getItem('token');
-            const config = {
-                headers: { Authorization: `Bearer ${token}` }
-            };
-
-            const projectsRes = await axios.get('/api/projects', config);
+            const projectsRes = await api.get('/projects');
             setProjects(projectsRes.data.data || []);
             setLoading(false);
         } catch (error) {
@@ -121,11 +116,6 @@ const ProjectManagement = () => {
         }
 
         try {
-            const token = localStorage.getItem('token');
-            const config = {
-                headers: { Authorization: `Bearer ${token}` }
-            };
-
             const projectData = {
                 title: formData.name,
                 description: formData.description,
@@ -137,10 +127,10 @@ const ProjectManagement = () => {
             };
 
             if (modalType === 'add') {
-                await axios.post('/api/projects', projectData, config);
+                await api.post('/projects', projectData);
                 toast.success('Project created successfully!');
             } else {
-                await axios.put(`/api/projects/${currentProject._id}`, projectData, config);
+                await api.put(`/projects/${currentProject._id}`, projectData);
                 toast.success('Project updated successfully!');
             }
 
@@ -161,11 +151,7 @@ const ProjectManagement = () => {
         if (!projectToDelete) return;
 
         try {
-            const token = localStorage.getItem('token');
-            const config = {
-                headers: { Authorization: `Bearer ${token}` }
-            };
-            await axios.delete(`/api/projects/${projectToDelete._id}`, config);
+            await api.delete(`/projects/${projectToDelete._id}`);
             toast.success('Project deleted successfully!');
             // Remove project from state immediately
             setProjects(prevProjects => prevProjects.filter(proj => proj._id !== projectToDelete._id));

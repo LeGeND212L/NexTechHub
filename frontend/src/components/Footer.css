@@ -3,7 +3,7 @@
   padding: 30px 0 0;
   margin-top: 0;
   position: relative;
-  overflow: visible;
+  overflow-x: hidden;
   background: linear-gradient(135deg, #000000 0%, #0a0e27 50%, #001633 100%);
   z-index: 1;
 }
@@ -1045,6 +1045,7 @@
 @media (max-width: 480px) {
   .footer-container {
     padding: 0 16px;
+    overflow-x: hidden;
   }
 
   .footer-content {
@@ -1068,6 +1069,18 @@
   .brand-description {
     font-size: 0.9rem;
     text-align: center;
+    padding: 0 10px;
+  }
+
+  .social-media {
+    gap: 16px;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding: 0 10px;
+  }
+
+  .social-icon {
+    font-size: 1.5rem;
   }
 
   .links-columns {
@@ -1096,14 +1109,6 @@
   .footer-section ul li {
     font-size: 0.88rem;
     margin-bottom: 10px;
-  }
-
-  .social-icon {
-    font-size: 1.6rem;
-  }
-
-  .social-media {
-    gap: 20px;
   }
 
   .payment-title {

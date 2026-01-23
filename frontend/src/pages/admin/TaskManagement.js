@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import api from '../../utils/api';
 import { toast } from 'react-toastify';
 import { useAuth } from '../../context/AuthContext';
 import {
@@ -100,14 +100,10 @@ const TaskManagement = () => {
 
     const fetchData = async () => {
         try {
-            const token = localStorage.getItem('token');
-            const config = {
-                headers: { Authorization: `Bearer ${token}` }
-            };
             const [tasksRes, employeesRes, projectsRes] = await Promise.all([
-                axios.get('/api/tasks', config),
-                axios.get('/api/admin/employees', config),
-                axios.get('/api/projects', config)
+                api.get('/tasks'),
+                api.get('/admin/employees'),
+                api.get('/projects')
             ]);
             setTasks(tasksRes.data.data || []);
             setEmployees(employeesRes.data.data || []);
@@ -115,7 +111,7 @@ const TaskManagement = () => {
 
             // Fetch contact documents separately (optional)
             try {
-                const contactDocsRes = await axios.get('/api/projects/contact-documents', config);
+                const contactDocsRes = await api.get('/projects/contact-documents');
                 setContactDocuments(contactDocsRes.data.data || []);
             } catch (docError) {
                 console.error('Error fetching contact documents:', docError);
@@ -215,16 +211,11 @@ const TaskManagement = () => {
         }
 
         try {
-            const token = localStorage.getItem('token');
-            const config = {
-                headers: { Authorization: `Bearer ${token}` }
-            };
-
             const taskData = { ...formData };
             let taskId;
 
             if (modalType === 'add') {
-                const response = await axios.post('/api/tasks', taskData, config);
+                const response = await api.post('/tasks', taskData);
                 taskId = response.data.data._id;
                 toast.success('Task created successfully!');
 
@@ -236,9 +227,8 @@ const TaskManagement = () => {
                     for (const file of localFiles) {
                         const formDataUpload = new FormData();
                         formDataUpload.append('taskFile', file);
-                        await axios.post(`/api/tasks/${taskId}/upload`, formDataUpload, {
+                        await api.post(`/tasks/${taskId}/upload`, formDataUpload, {
                             headers: {
-                                Authorization: `Bearer ${token}`,
                                 'Content-Type': 'multipart/form-data'
                             }
                         });
@@ -246,10 +236,7 @@ const TaskManagement = () => {
 
                     // Attach contact documents
                     for (const contactId of selectedContactDocs) {
-                        await axios.post(`/api/tasks/${taskId}/attach-contact-document`,
-                            { contactId },
-                            config
-                        );
+                        await api.post(`/tasks/${taskId}/attach-contact-document`, { contactId });
                     }
 
                     setUploadingFiles(false);
@@ -258,7 +245,7 @@ const TaskManagement = () => {
                 // Refresh to get updated task with files
                 fetchData();
             } else {
-                await axios.put(`/api/tasks/${currentTask._id}`, taskData, config);
+                await api.put(`/tasks/${currentTask._id}`, taskData);
                 taskId = currentTask._id;
                 toast.success('Task updated successfully!');
 
@@ -270,9 +257,8 @@ const TaskManagement = () => {
                     for (const file of localFiles) {
                         const formDataUpload = new FormData();
                         formDataUpload.append('taskFile', file);
-                        await axios.post(`/api/tasks/${taskId}/upload`, formDataUpload, {
+                        await api.post(`/tasks/${taskId}/upload`, formDataUpload, {
                             headers: {
-                                Authorization: `Bearer ${token}`,
                                 'Content-Type': 'multipart/form-data'
                             }
                         });
@@ -280,10 +266,7 @@ const TaskManagement = () => {
 
                     // Attach contact documents
                     for (const contactId of selectedContactDocs) {
-                        await axios.post(`/api/tasks/${taskId}/attach-contact-document`,
-                            { contactId },
-                            config
-                        );
+                        await api.post(`/tasks/${taskId}/attach-contact-document`, { contactId });
                     }
 
                     setUploadingFiles(false);
@@ -309,11 +292,7 @@ const TaskManagement = () => {
         if (!taskToDelete) return;
 
         try {
-            const token = localStorage.getItem('token');
-            const config = {
-                headers: { Authorization: `Bearer ${token}` }
-            };
-            await axios.delete(`/api/tasks/${taskToDelete._id}`, config);
+            await api.delete(`/tasks/${taskToDelete._id}`);
             toast.success('Task deleted successfully!');
             // Remove task from state immediately
             setTasks(prevTasks => prevTasks.filter(task => task._id !== taskToDelete._id));

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import axios from 'axios';
+import api from '../../utils/api';
 import { toast } from 'react-toastify';
 import { useAuth } from '../../context/AuthContext';
 import {
@@ -152,13 +152,8 @@ const EmployeeTasks = () => {
 
     const fetchTasks = async () => {
         try {
-            const token = localStorage.getItem('token');
-            const config = {
-                headers: { Authorization: `Bearer ${token}` }
-            };
-
             // Use the employee-specific tasks endpoint
-            const res = await axios.get('/api/employees/tasks', config);
+            const res = await api.get('/employees/tasks');
             const myTasks = res.data.data || [];
 
             console.log('Employee tasks:', myTasks);
@@ -175,13 +170,8 @@ const EmployeeTasks = () => {
 
     const handleStatusUpdate = async (taskId, newStatus) => {
         try {
-            const token = localStorage.getItem('token');
-            const config = {
-                headers: { Authorization: `Bearer ${token}` }
-            };
-
             // Use the employee-specific status update endpoint
-            await axios.put(`/api/employees/tasks/${taskId}/status`, { status: newStatus }, config);
+            await api.put(`/employees/tasks/${taskId}/status`, { status: newStatus });
 
             // Update state immediately without refetching
             setTasks(prevTasks =>

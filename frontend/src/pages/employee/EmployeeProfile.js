@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import api from '../../utils/api';
 import { toast } from 'react-toastify';
 import { useAuth } from '../../context/AuthContext';
 import {
@@ -43,16 +43,11 @@ const EmployeeProfile = () => {
 
     const fetchProfileData = async () => {
         try {
-            const token = localStorage.getItem('token');
-            const config = {
-                headers: { Authorization: `Bearer ${token}` }
-            };
-
             console.log('Fetching employee profile...');
 
             const [employeeRes, paymentsRes] = await Promise.all([
-                axios.get('/api/employees/profile', config),
-                axios.get('/api/payments', config)
+                api.get('/employees/profile'),
+                api.get('/payments')
             ]);
 
             console.log('Employee data:', employeeRes.data);
@@ -79,9 +74,7 @@ const EmployeeProfile = () => {
 
     const downloadPayslip = async (paymentId) => {
         try {
-            const token = localStorage.getItem('token');
-            const response = await axios.get(`/api/payments/${paymentId}/payslip`, {
-                headers: { Authorization: `Bearer ${token}` },
+            const response = await api.get(`/payments/${paymentId}/payslip`, {
                 responseType: 'blob'
             });
 

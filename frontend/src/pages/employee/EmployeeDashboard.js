@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import api from '../../utils/api';
 import { useAuth } from '../../context/AuthContext';
 import { toast } from 'react-toastify';
 import {
@@ -60,13 +60,8 @@ const EmployeeDashboard = () => {
 
     const fetchDashboardData = async () => {
         try {
-            const token = localStorage.getItem('token');
-            const config = {
-                headers: { Authorization: `Bearer ${token}` }
-            };
-
             // Use the employee-specific dashboard endpoint
-            const res = await axios.get('/api/employees/dashboard', config);
+            const res = await api.get('/employees/dashboard');
             const dashboardData = res.data.data;
 
             const newStats = {
