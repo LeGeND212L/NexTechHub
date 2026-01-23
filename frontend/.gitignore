@@ -1,26 +1,43 @@
 # Dependencies
 node_modules/
-package-lock.json
-yarn.lock
 
-# Production build
+# Production build (upload this to Hostinger)
 /build
 
 # Testing
 /coverage
 
-# Misc
-.DS_Store
+# Environment files
+.env
 .env.local
 .env.development.local
 .env.test.local
 .env.production.local
+.env.production
 
 # Logs
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
+# OS files
+.DS_Store
+Thumbs.db
+
 # Editor
 .vscode/
 .idea/
+*.swp
+*.swo
+*~
+
+# Optional npm cache
+.npm/
+
+# Optional eslint cache
+.eslintcache
+
+# Temporary files
+tmp/
+temp/
+.tmp/

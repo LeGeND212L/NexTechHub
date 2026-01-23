@@ -333,6 +333,27 @@ REACT_APP_SOCKET_URL=https://api.yourdomain.com
 
 ## 🚀 **Deployment**
 
+### **Hostinger Deployment (Recommended)**
+
+📖 **See full guide:** [HOSTINGER_DEPLOYMENT.md](./HOSTINGER_DEPLOYMENT.md)
+
+#### Quick Overview:
+
+**Backend (Node.js API):**
+
+1. Upload backend folder to Hostinger VPS/Node.js hosting
+2. Configure environment variables in `.env`
+3. Install dependencies: `npm install --production`
+4. Start with PM2: `pm2 start ecosystem.config.js --env production`
+5. Setup subdomain: `api.yourdomain.com`
+
+**Frontend (React App):**
+
+1. Create `.env.production` with your API URL
+2. Build: `npm run build`
+3. Upload `build` folder contents to `public_html`
+4. Ensure `.htaccess` is uploaded for SPA routing
+
 ### **Backend (Render/Railway)**
 
 ```bash

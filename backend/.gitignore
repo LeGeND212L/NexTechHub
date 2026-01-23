@@ -1,24 +1,32 @@
 # Dependencies
 node_modules/
-package-lock.json
-yarn.lock
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 
-# Environment variables
+# Environment files
 .env
 .env.local
+.env.development
 .env.production
 
 # Logs
-logs/
+logs/*.log
+pm2-*.log
 *.log
-npm-debug.log*
 
-# Uploads
-uploads/
+# Runtime data
+pids/
+*.pid
+*.seed
+*.pid.lock
 
-# OS files
-.DS_Store
-Thumbs.db
+# Coverage directory
+coverage/
+
+# Build output
+dist/
+build/
 
 # IDE
 .vscode/
@@ -26,3 +34,29 @@ Thumbs.db
 *.swp
 *.swo
 *~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Uploaded files (keep structure, ignore content)
+uploads/contacts/*
+uploads/payslips/*
+uploads/tasks/*
+!uploads/contacts/.gitkeep
+!uploads/payslips/.gitkeep
+!uploads/tasks/.gitkeep
+
+# Temporary files
+tmp/
+temp/
+.tmp/
+
+# Debug
+debug.log
+
+# Optional npm cache
+.npm/
+
+# Optional eslint cache
+.eslintcache

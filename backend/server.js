@@ -20,15 +20,21 @@ const server = http.createServer(app);
 // Connect to MongoDB
 connectDB();
 
-// CORS Configuration - Allow multiple Vercel deployments
+// CORS Configuration - Allow Hostinger and development origins
 const allowedOrigins = [
+    // Production - Add your Hostinger domains here
+    process.env.FRONTEND_URL,
+    // Legacy Vercel deployments (remove if not needed)
     'https://nex-tech-e7pwupc3h-danishs-projects-3d11e95b.vercel.app',
     'https://nex-tech-hub.vercel.app',
+    // Development
     'http://localhost:3000',
     'http://localhost:3001',
     'http://localhost:5000',
+    // Hostinger subdomains pattern (update with your domain)
+    /https:\/\/.*\.yourdomain\.com$/,
     /https:\/\/nex-tech-.*\.vercel\.app$/ // Allow all Vercel preview deployments
-];
+].filter(Boolean); // Remove undefined values
 
 // Middleware
 app.use(cors({
@@ -50,7 +56,12 @@ app.use(cors({
             callback(null, true);
         } else {
             console.log('CORS blocked origin:', origin);
-            callback(null, true); // Allow all origins temporarily for development
+            // In production, be strict about CORS
+            if (process.env.NODE_ENV === 'production') {
+                callback(new Error('Not allowed by CORS'));
+            } else {
+                callback(null, true); // Allow all origins in development
+            }
         }
     },
     credentials: true,
@@ -61,12 +72,31 @@ app.use(cors({
     preflightContinue: false,
     optionsSuccessStatus: 204
 }));
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(morgan('dev'));
 
-// Serve uploaded files
-app.use('/uploads', express.static('uploads'));
+// Security headers for production
+if (process.env.NODE_ENV === 'production') {
+    app.use((req, res, next) => {
+        res.setHeader('X-Content-Type-Options', 'nosniff');
+        res.setHeader('X-Frame-Options', 'SAMEORIGIN');
+        res.setHeader('X-XSS-Protection', '1; mode=block');
+        res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+        next();
+    });
+}
+
+// Trust proxy for Hostinger reverse proxy
+app.set('trust proxy', 1);
+
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+// Use 'combined' format in production for better logging
+app.use(morgan(process.env.NODE_ENV === 'production' ? 'combined' : 'dev'));
+
+// Serve uploaded files with proper headers
+app.use('/uploads', express.static('uploads', {
+    maxAge: '1d',
+    etag: true
+}));
 
 // Socket.IO setup (real-time updates)
 const io = new Server(server, {
@@ -121,12 +151,28 @@ io.on('connection', (socket) => {
     });
 });
 
-// Test route
+// Health check route (for monitoring services like UptimeRobot)
+app.get('/health', (req, res) => {
+    res.status(200).json({
+        status: 'healthy',
+        timestamp: new Date().toISOString(),
+        uptime: process.uptime(),
+        environment: process.env.NODE_ENV || 'development'
+    });
+});
+
+// API Info route
 app.get('/', (req, res) => {
     res.json({
         message: 'NexTechHubs API Server is running!',
         version: '1.0.0',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
+        environment: process.env.NODE_ENV || 'development',
+        endpoints: {
+            health: '/health',
+            api: '/api',
+            docs: 'Contact admin for API documentation'
+        }
     });
 });
 
