@@ -22,8 +22,11 @@ connectDB();
 
 // CORS Configuration - Allow Hostinger and development origins
 const allowedOrigins = [
-    // Production - Add your Hostinger domains here
+    // Production - Hostinger domains
     process.env.FRONTEND_URL,
+    'https://nextechubs.com',
+    'https://www.nextechubs.com',
+    'https://next.nextechubs.com',
     // Legacy Vercel deployments (remove if not needed)
     'https://nex-tech-e7pwupc3h-danishs-projects-3d11e95b.vercel.app',
     'https://nex-tech-hub.vercel.app',
@@ -31,8 +34,8 @@ const allowedOrigins = [
     'http://localhost:3000',
     'http://localhost:3001',
     'http://localhost:5000',
-    // Hostinger subdomains pattern (update with your domain)
-    /https:\/\/.*\.yourdomain\.com$/,
+    // Hostinger subdomains pattern
+    /https:\/\/.*\.nextechubs\.com$/,
     /https:\/\/nex-tech-.*\.vercel\.app$/ // Allow all Vercel preview deployments
 ].filter(Boolean); // Remove undefined values
 
