@@ -1,8 +1,20 @@
 # Hostinger React App Configuration
 # This file handles SPA routing and optimizations
 
+# Force index.html as default - Override any PHP defaults
+DirectoryIndex index.html
+
+# Disable PHP processing in this directory (optional safety)
+<FilesMatch "\.php$">
+    Deny from all
+</FilesMatch>
+
 # Enable Rewrite Engine
 RewriteEngine On
+
+# Force www to non-www (optional, choose one)
+# RewriteCond %{HTTP_HOST} ^www\.(.*)$ [NC]
+# RewriteRule ^(.*)$ https://%1/$1 [R=301,L]
 
 # Redirect all HTTP traffic to HTTPS
 RewriteCond %{HTTPS} off
@@ -12,7 +24,11 @@ RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 # Redirect all requests to index.html if file doesn't exist
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_URI} !\.php$ [NC]
 RewriteRule ^ index.html [L]
+
+# Block any PHP file access
+RewriteRule \.php$ - [F,L]
 
 # Security Headers
 <IfModule mod_headers.c>
@@ -23,6 +39,13 @@ RewriteRule ^ index.html [L]
     
     # Remove PHP version header
     Header unset X-Powered-By
+    
+    # Prevent caching of HTML to ensure fresh content
+    <FilesMatch "\.(html)$">
+        Header set Cache-Control "no-cache, no-store, must-revalidate"
+        Header set Pragma "no-cache"
+        Header set Expires 0
+    </FilesMatch>
 </IfModule>
 
 # Prevent directory listing
