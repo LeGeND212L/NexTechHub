@@ -5,6 +5,7 @@ const User = require('../models/User');
 const Project = require('../models/Project');
 const Task = require('../models/Task');
 const Payment = require('../models/Payment');
+const Contact = require('../models/Contact');
 
 // All routes are protected and admin only
 router.use(protect);
@@ -15,14 +16,28 @@ router.use(authorize('admin'));
 // @access  Private/Admin
 router.get('/dashboard', async (req, res) => {
     try {
-        const totalEmployees = await User.countDocuments({ role: 'employee' });
-        const activeEmployees = await User.countDocuments({ role: 'employee', isActive: true });
-        const totalProjects = await Project.countDocuments();
-        const activeProjects = await Project.countDocuments({ status: 'in-progress' });
-        const completedProjects = await Project.countDocuments({ status: 'completed' });
-        const pendingTasks = await Task.countDocuments({ status: 'pending' });
-        const inProgressTasks = await Task.countDocuments({ status: 'in-progress' });
-        const completedTasks = await Task.countDocuments({ status: 'completed' });
+        // Use Promise.all for parallel execution - much faster
+        const [
+            totalEmployees,
+            activeEmployees,
+            totalProjects,
+            activeProjects,
+            completedProjects,
+            pendingTasks,
+            inProgressTasks,
+            completedTasks,
+            unreadMessages
+        ] = await Promise.all([
+            User.countDocuments({ role: 'employee' }),
+            User.countDocuments({ role: 'employee', isActive: true }),
+            Project.countDocuments(),
+            Project.countDocuments({ status: 'in-progress' }),
+            Project.countDocuments({ status: 'completed' }),
+            Task.countDocuments({ status: 'pending' }),
+            Task.countDocuments({ status: 'in-progress' }),
+            Task.countDocuments({ status: 'completed' }),
+            Contact.countDocuments({ status: 'unread' })
+        ]);
 
         // Calculate total salary paid this month
         const currentMonth = new Date().toLocaleString('default', { month: 'long' });
@@ -76,6 +91,9 @@ router.get('/dashboard', async (req, res) => {
                         pending: pendingTasks,
                         inProgress: inProgressTasks,
                         completed: completedTasks
+                    },
+                    messages: {
+                        unread: unreadMessages
                     },
                     payments: {
                         monthlyTotal: totalSalaryPaid

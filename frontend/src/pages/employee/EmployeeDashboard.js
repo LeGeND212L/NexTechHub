@@ -20,14 +20,25 @@ const EmployeeDashboard = () => {
     const { user, logout } = useAuth();
     const navigate = useNavigate();
     const [showLogoutModal, setShowLogoutModal] = useState(false);
-    const [stats, setStats] = useState({
-        totalTasks: 0,
-        pendingTasks: 0,
-        inProgressTasks: 0,
-        completedTasks: 0
+    const [stats, setStats] = useState(() => {
+        // Try to load cached stats for instant display
+        const cached = sessionStorage.getItem('employeeDashboardStats');
+        return cached ? JSON.parse(cached) : {
+            totalTasks: 0,
+            pendingTasks: 0,
+            inProgressTasks: 0,
+            completedTasks: 0,
+            overdueTasks: 0
+        };
     });
-    const [recentTasks, setRecentTasks] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const [recentTasks, setRecentTasks] = useState(() => {
+        const cached = sessionStorage.getItem('employeeRecentTasks');
+        return cached ? JSON.parse(cached) : [];
+    });
+    const [loading, setLoading] = useState(() => {
+        // If we have cached data, don't show loading
+        return !sessionStorage.getItem('employeeDashboardStats');
+    });
 
     useEffect(() => {
         fetchDashboardData();
@@ -40,6 +51,9 @@ const EmployeeDashboard = () => {
 
     const confirmLogout = () => {
         logout();
+        // Clear cached dashboard data on logout
+        sessionStorage.removeItem('employeeDashboardStats');
+        sessionStorage.removeItem('employeeRecentTasks');
         navigate('/login');
         toast.success('Logged out successfully');
     };
@@ -55,23 +69,23 @@ const EmployeeDashboard = () => {
             const res = await axios.get('/api/employees/dashboard', config);
             const dashboardData = res.data.data;
 
-            console.log('Dashboard data:', dashboardData);
-
-            setStats({
+            const newStats = {
                 totalTasks: dashboardData.statistics.total,
                 pendingTasks: dashboardData.statistics.pending,
                 inProgressTasks: dashboardData.statistics.inProgress,
                 completedTasks: dashboardData.statistics.completed,
                 overdueTasks: dashboardData.statistics.overdue
-            });
+            };
 
-            // Show upcoming tasks
+            setStats(newStats);
             setRecentTasks(dashboardData.upcomingTasks || []);
+
+            // Cache for instant display on next visit
+            sessionStorage.setItem('employeeDashboardStats', JSON.stringify(newStats));
+            sessionStorage.setItem('employeeRecentTasks', JSON.stringify(dashboardData.upcomingTasks || []));
             setLoading(false);
         } catch (error) {
             console.error('Error fetching dashboard data:', error);
-            console.error('Error response:', error.response?.data);
-            toast.error(error.response?.data?.message || 'Failed to fetch dashboard data');
             setLoading(false);
         }
     };

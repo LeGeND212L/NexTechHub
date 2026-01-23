@@ -20,17 +20,24 @@ const AdminDashboard = () => {
     const navigate = useNavigate();
     const { logout } = useAuth();
     const [showLogoutModal, setShowLogoutModal] = useState(false);
-    const [stats, setStats] = useState({
-        totalEmployees: 0,
-        activeProjects: 0,
-        pendingTasks: 0,
-        unreadMessages: 0,
-        employeeTrend: 0,
-        projectTrend: 0,
-        taskTrend: 0,
-        messageTrend: 0
+    const [stats, setStats] = useState(() => {
+        // Try to load cached stats for instant display
+        const cached = sessionStorage.getItem('adminDashboardStats');
+        return cached ? JSON.parse(cached) : {
+            totalEmployees: 0,
+            activeProjects: 0,
+            pendingTasks: 0,
+            unreadMessages: 0,
+            employeeTrend: 0,
+            projectTrend: 0,
+            taskTrend: 0,
+            messageTrend: 0
+        };
     });
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(() => {
+        // If we have cached data, don't show loading
+        return !sessionStorage.getItem('adminDashboardStats');
+    });
 
     useEffect(() => {
         fetchDashboardData();
@@ -42,6 +49,8 @@ const AdminDashboard = () => {
 
     const confirmLogout = () => {
         logout();
+        // Clear cached dashboard data on logout
+        sessionStorage.removeItem('adminDashboardStats');
         navigate('/login');
         toast.success('Logged out successfully');
     };
@@ -53,42 +62,27 @@ const AdminDashboard = () => {
                 headers: { Authorization: `Bearer ${token}` }
             };
 
-            const [employeesRes, projectsRes, tasksRes, contactsRes] = await Promise.all([
-                axios.get('/api/admin/employees', config),
-                axios.get('/api/projects', config),
-                axios.get('/api/tasks', config),
-                axios.get('/api/contacts', config)
-            ]);
+            // Use single optimized dashboard endpoint
+            const res = await axios.get('/api/admin/dashboard', config);
+            const data = res.data.data;
 
-            const employees = employeesRes.data.data || [];
-            const projects = projectsRes.data.data || [];
-            const tasks = tasksRes.data.data || [];
-            const unreadCount = contactsRes.data.counts?.unread || 0;
-
-            setStats({
-                totalEmployees: employees.length,
-                activeProjects: projects.filter(p => p.status !== 'completed').length,
-                pendingTasks: tasks.filter(t => t.status === 'pending').length,
-                unreadMessages: unreadCount,
+            const newStats = {
+                totalEmployees: data.statistics.employees.total,
+                activeProjects: data.statistics.projects.active,
+                pendingTasks: data.statistics.tasks.pending,
+                unreadMessages: data.statistics.messages?.unread || 0,
                 employeeTrend: 12,
                 projectTrend: 8,
                 taskTrend: -5,
-                messageTrend: unreadCount > 0 ? 100 : 0
-            });
+                messageTrend: data.statistics.messages?.unread > 0 ? 100 : 0
+            };
 
+            setStats(newStats);
+            // Cache for instant display on next visit
+            sessionStorage.setItem('adminDashboardStats', JSON.stringify(newStats));
             setLoading(false);
         } catch (error) {
             console.error('Error fetching dashboard data:', error);
-            setStats({
-                totalEmployees: 0,
-                activeProjects: 0,
-                pendingTasks: 0,
-                unreadMessages: 0,
-                employeeTrend: 0,
-                projectTrend: 0,
-                taskTrend: 0,
-                messageTrend: 0
-            });
             setLoading(false);
         }
     };
