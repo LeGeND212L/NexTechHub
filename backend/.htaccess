@@ -1,6 +1,0 @@
-# Hostinger Node.js Application
-# Note: Node.js apps on Hostinger are managed by PM2, not Apache
-
-RewriteEngine On
-RewriteCond %{HTTPS} off
-RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]

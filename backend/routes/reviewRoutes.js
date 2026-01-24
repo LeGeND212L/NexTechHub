@@ -3,15 +3,43 @@ const router = express.Router();
 const { protect, authorize } = require('../middleware/auth');
 const Review = require('../models/Review');
 
+// Optional auth middleware - populates req.user if token provided, but doesn't require it
+const optionalAuth = async (req, res, next) => {
+    try {
+        let token;
+        if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
+            token = req.headers.authorization.split(' ')[1];
+        }
+
+        if (token) {
+            const jwt = require('jsonwebtoken');
+            const User = require('../models/User');
+            try {
+                const decoded = jwt.verify(token, process.env.JWT_SECRET);
+                req.user = await User.findById(decoded.id).select('-password');
+            } catch (err) {
+                // Token invalid, continue without user
+                req.user = null;
+            }
+        } else {
+            req.user = null;
+        }
+        next();
+    } catch (error) {
+        req.user = null;
+        next();
+    }
+};
+
 // @route   GET /api/reviews
 // @desc    Get all approved reviews (public) or all reviews (admin)
 // @access  Public / Private
-router.get('/', async (req, res) => {
+router.get('/', optionalAuth, async (req, res) => {
     try {
         let query = {};
 
         // Check if user is authenticated and is admin
-        const isAdmin = req.headers.authorization && req.user && req.user.role === 'admin';
+        const isAdmin = req.user && req.user.role === 'admin';
 
         // Only show approved reviews to public
         if (!isAdmin) {

@@ -211,12 +211,50 @@ app.use((req, res) => {
 // Start server
 const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => {
-    console.log(`🚀 Server running in ${process.env.NODE_ENV} mode on port ${PORT}`);
+    console.log(`🚀 Server running in ${process.env.NODE_ENV || 'development'} mode on port ${PORT}`);
 });
 
-// Handle unhandled promise rejections
+// Graceful shutdown handler
+const gracefulShutdown = (signal) => {
+    console.log(`\n${signal} received. Starting graceful shutdown...`);
+
+    // Stop accepting new connections
+    server.close(() => {
+        console.log('HTTP server closed.');
+
+        // Close database connection
+        const mongoose = require('mongoose');
+        mongoose.connection.close(false, () => {
+            console.log('MongoDB connection closed.');
+            process.exit(0);
+        });
+    });
+
+    // Force close after 30 seconds
+    setTimeout(() => {
+        console.error('Could not close connections in time, forcefully shutting down');
+        process.exit(1);
+    }, 30000);
+};
+
+// Handle shutdown signals
+process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
+process.on('SIGINT', () => gracefulShutdown('SIGINT'));
+
+// Handle unhandled promise rejections - log but don't crash immediately
 process.on('unhandledRejection', (err) => {
-    console.log('❌ UNHANDLED REJECTION! Shutting down...');
-    console.error(err.name, err.message);
-    process.exit(1);
+    console.error('❌ UNHANDLED REJECTION!');
+    console.error('Error:', err.name, err.message);
+    console.error('Stack:', err.stack);
+    // Don't exit in production, just log the error
+    // The process manager (PM2) will restart if needed
+});
+
+// Handle uncaught exceptions
+process.on('uncaughtException', (err) => {
+    console.error('❌ UNCAUGHT EXCEPTION!');
+    console.error('Error:', err.name, err.message);
+    console.error('Stack:', err.stack);
+    // For uncaught exceptions, we should exit but let PM2 restart
+    gracefulShutdown('UNCAUGHT_EXCEPTION');
 });
